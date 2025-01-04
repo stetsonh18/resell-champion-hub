@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      products: {
+        Row: {
+          category_id: string | null
+          condition: string
+          created_at: string
+          id: string
+          last_updated: string
+          name: string
+          notes: string | null
+          purchase_price: number
+          quantity: number
+          sku: string
+          target_price: number
+          user_id: string
+        }
+        Insert: {
+          category_id?: string | null
+          condition: string
+          created_at?: string
+          id?: string
+          last_updated?: string
+          name: string
+          notes?: string | null
+          purchase_price: number
+          quantity?: number
+          sku: string
+          target_price: number
+          user_id: string
+        }
+        Update: {
+          category_id?: string | null
+          condition?: string
+          created_at?: string
+          id?: string
+          last_updated?: string
+          name?: string
+          notes?: string | null
+          purchase_price?: number
+          quantity?: number
+          sku?: string
+          target_price?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -35,6 +80,59 @@ export type Database = {
           subscription_tier?: string | null
         }
         Relationships: []
+      }
+      sales: {
+        Row: {
+          fees: number
+          id: string
+          net_profit: number
+          order_number: string
+          platform_id: string | null
+          product_id: string
+          sale_date: string
+          sale_price: number
+          shipping_cost: number
+          store_id: string | null
+          tracking_number: string | null
+          user_id: string
+        }
+        Insert: {
+          fees?: number
+          id?: string
+          net_profit: number
+          order_number: string
+          platform_id?: string | null
+          product_id: string
+          sale_date?: string
+          sale_price: number
+          shipping_cost?: number
+          store_id?: string | null
+          tracking_number?: string | null
+          user_id: string
+        }
+        Update: {
+          fees?: number
+          id?: string
+          net_profit?: number
+          order_number?: string
+          platform_id?: string | null
+          product_id?: string
+          sale_date?: string
+          sale_price?: number
+          shipping_cost?: number
+          store_id?: string | null
+          tracking_number?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
