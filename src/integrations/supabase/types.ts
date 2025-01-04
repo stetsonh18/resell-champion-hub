@@ -9,7 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          stripe_customer_id: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          stripe_customer_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          stripe_customer_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
