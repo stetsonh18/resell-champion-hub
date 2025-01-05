@@ -46,9 +46,14 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
     );
   }
 
+  console.log("All categories:", categories);
+
   // First, separate categories and subcategories
   const mainCategories = categories.filter(cat => !cat.parent_id) || [];
   const subcategories = categories.filter(cat => cat.parent_id) || [];
+
+  console.log("Main categories:", mainCategories);
+  console.log("Subcategories:", subcategories);
 
   // Create the grouped structure
   const groupedCategories = mainCategories.reduce((acc, category) => {
@@ -58,6 +63,8 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
     };
     return acc;
   }, {} as Record<string, any>);
+
+  console.log("Grouped categories:", groupedCategories);
 
   return (
     <div className="space-y-2">
