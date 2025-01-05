@@ -1,31 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { CurrencySelect } from "@/components/profile/CurrencySelect";
+import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
-const profileFormSchema = z.object({
-  display_name: z.string().min(2, "Display name must be at least 2 characters"),
-  full_name: z.string().min(2, "Full name must be at least 2 characters"),
-  business_name: z.string().optional(),
-  tax_id: z.string().optional(),
-  shipping_address: z.string(),
-  preferred_currency: z.string(),
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+import { PersonalInfoForm } from "./forms/PersonalInfoForm";
+import { BusinessInfoForm } from "./forms/BusinessInfoForm";
+import { AddressForm } from "./forms/AddressForm";
+import { profileFormSchema, type ProfileFormValues } from "./types/profile";
 
 export const ProfileForm = () => {
   const { toast } = useToast();
@@ -75,97 +57,10 @@ export const ProfileForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="display_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Display Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Display name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="full_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Full name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="business_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Business Name (Optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="Business name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="tax_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tax ID (Optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="Tax ID" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="shipping_address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Shipping Address</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Enter your shipping address"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="preferred_currency"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Preferred Currency</FormLabel>
-              <FormControl>
-                <CurrencySelect
-                  value={field.value}
-                  onValueChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <PersonalInfoForm form={form} />
+        <BusinessInfoForm form={form} />
+        <AddressForm form={form} />
         <Button type="submit">Save Changes</Button>
       </form>
     </Form>
