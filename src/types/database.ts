@@ -3,12 +3,15 @@ export interface Product {
   user_id: string;
   name: string;
   sku: string;
-  category_id: string;
+  category_id: string | null;
+  categories?: {
+    name: string;
+  };
   purchase_price: number;
   target_price: number;
   quantity: number;
   condition: string;
-  notes: string;
+  notes: string | null;
   created_at: string;
   last_updated: string;
 }

@@ -44,7 +44,7 @@ export const InventoryTable = ({ filters }: InventoryTableProps) => {
       }
 
       if (filters.selectedCategory !== "all") {
-        query = query.eq("categories.name", filters.selectedCategory);
+        query = query.eq("category_id", filters.selectedCategory);
       }
 
       const { data, error } = await query;
