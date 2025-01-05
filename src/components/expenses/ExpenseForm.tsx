@@ -1,17 +1,14 @@
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-interface ExpenseFormData {
-  category: string;
-  description: string;
-  amount: string;
-  date: string;
-}
+import { CategoryField } from "./form-fields/CategoryField";
+import { DescriptionField } from "./form-fields/DescriptionField";
+import { AmountField } from "./form-fields/AmountField";
+import { DateField } from "./form-fields/DateField";
+import { ExpenseFormData } from "./types";
 
 interface ExpenseFormProps {
   onSuccess?: () => void;
@@ -72,62 +69,10 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="e.g., Utilities" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="e.g., Electricity bill" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input {...field} type="number" step="0.01" placeholder="0.00" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Date</FormLabel>
-              <FormControl>
-                <Input {...field} type="date" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        <CategoryField form={form} />
+        <DescriptionField form={form} />
+        <AmountField form={form} />
+        <DateField form={form} />
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? "Adding..." : "Add Expense"}
         </Button>
