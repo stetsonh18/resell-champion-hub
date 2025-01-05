@@ -15,7 +15,7 @@ import { CategoryResponse } from "@/hooks/use-categories";
 
 const categoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  code: z.string().min(1, "Code is required"),
+  code: z.string().min(3, "Code must be 3 characters").max(3, "Code must be 3 characters"),
   type: z.enum(["category", "subcategory"]),
   parent_id: z.string().optional().nullable(),
 });
@@ -26,6 +26,15 @@ interface AddCategoryDialogProps {
   categories: CategoryResponse[];
 }
 
+const generateRandomCode = () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < 3; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+};
+
 export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
@@ -35,7 +44,7 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
       name: "",
-      code: "",
+      code: generateRandomCode(),
       type: "category",
       parent_id: null,
     },
@@ -67,7 +76,12 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
 
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       setOpen(false);
-      form.reset();
+      form.reset({
+        name: "",
+        code: generateRandomCode(),
+        type: "category",
+        parent_id: null,
+      });
     } catch (error) {
       console.error("Error creating category:", error);
       toast({
@@ -114,7 +128,7 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
                 <FormItem>
                   <FormLabel>Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter category code" {...field} />
+                    <Input placeholder="3-letter code" {...field} readOnly />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
