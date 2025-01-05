@@ -5,10 +5,16 @@ export const columns = [
   {
     header: "Name",
     accessorKey: "name",
+    cell: ({ row }: { row: { original: Product } }) => (
+      <span>{row.original.name}</span>
+    ),
   },
   {
     header: "SKU",
     accessorKey: "sku",
+    cell: ({ row }: { row: { original: Product } }) => (
+      <span>{row.original.sku}</span>
+    ),
   },
   {
     header: "Category",

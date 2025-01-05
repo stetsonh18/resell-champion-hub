@@ -74,7 +74,7 @@ export const InventoryTable = ({ filters }: InventoryTableProps) => {
                   {column.cell ? (
                     column.cell({ row: { original: product } })
                   ) : (
-                    product[column.accessorKey as keyof typeof product]
+                    <span>{String(product[column.accessorKey as keyof typeof product] || '')}</span>
                   )}
                 </TableCell>
               ))}
