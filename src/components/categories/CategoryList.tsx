@@ -23,10 +23,12 @@ export const CategoryList = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select(`
+        .select(
+          `
           *,
-          parent:categories(name)
-        `)
+          parent:parent_id(name)
+        `
+        )
         .order("created_at", { ascending: false });
 
       if (error) {
