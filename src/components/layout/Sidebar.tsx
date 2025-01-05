@@ -29,7 +29,7 @@ export const Sidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="w-64 min-h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 animate-slide-in">
+    <aside className="w-64 min-h-screen bg-background/60 backdrop-blur-sm border-r border-border/40 animate-slide-in">
       <nav className="mt-8 px-4">
         <ul className="space-y-2">
           {menuItems.map((item) => {
@@ -39,10 +39,10 @@ export const Sidebar = () => {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive
-                      ? "bg-secondary text-white"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "bg-gradient-to-r from-secondary/80 to-secondary text-secondary-foreground shadow-lg"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
                 >
                   <Icon className="w-5 h-5 mr-3" />
