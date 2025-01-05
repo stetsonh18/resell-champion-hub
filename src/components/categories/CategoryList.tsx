@@ -28,7 +28,7 @@ export const CategoryList = () => {
 
   // Group categories by parent
   const groupedCategories = categories?.reduce((acc, category) => {
-    if (!category.parent_id) {
+    if (category.type === "category") {
       if (!acc[category.id]) {
         acc[category.id] = {
           ...category,
@@ -40,7 +40,7 @@ export const CategoryList = () => {
           subcategories: acc[category.id].subcategories,
         };
       }
-    } else {
+    } else if (category.type === "subcategory" && category.parent_id) {
       if (!acc[category.parent_id]) {
         acc[category.parent_id] = {
           subcategories: [category],
