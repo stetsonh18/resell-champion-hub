@@ -15,9 +15,9 @@ interface StoreFiltersProps {
   setSearchQuery: (query: string) => void;
   hideInactive: boolean;
   setHideInactive: (hide: boolean) => void;
-  selectedLocation: string;
-  setSelectedLocation: (location: string) => void;
-  locations: string[];
+  selectedStoreName: string;
+  setSelectedStoreName: (name: string) => void;
+  storeNames: string[];
 }
 
 export const StoreFilters = ({
@@ -25,9 +25,9 @@ export const StoreFilters = ({
   setSearchQuery,
   hideInactive,
   setHideInactive,
-  selectedLocation,
-  setSelectedLocation,
-  locations,
+  selectedStoreName,
+  setSelectedStoreName,
+  storeNames,
 }: StoreFiltersProps) => {
   return (
     <div className="space-y-4">
@@ -59,19 +59,19 @@ export const StoreFilters = ({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label className="text-sm font-medium">Location</Label>
+          <Label className="text-sm font-medium">Store Name</Label>
           <Select
-            value={selectedLocation}
-            onValueChange={setSelectedLocation}
+            value={selectedStoreName}
+            onValueChange={setSelectedStoreName}
           >
             <SelectTrigger>
-              <SelectValue placeholder="All Locations" />
+              <SelectValue placeholder="All Stores" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Locations</SelectItem>
-              {locations.map((location) => (
-                <SelectItem key={location} value={location}>
-                  {location}
+              <SelectItem value="all">All Stores</SelectItem>
+              {storeNames.map((name) => (
+                <SelectItem key={name} value={name}>
+                  {name}
                 </SelectItem>
               ))}
             </SelectContent>

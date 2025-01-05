@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Stores = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [hideInactive, setHideInactive] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedStoreName, setSelectedStoreName] = useState("all");
 
   const { data: stores } = useQuery({
     queryKey: ["stores"],
@@ -24,16 +24,16 @@ const Stores = () => {
     },
   });
 
-  const locations = [...new Set(stores?.map((store) => store.location) || [])];
+  const storeNames = [...new Set(stores?.map((store) => store.name) || [])];
 
   const filteredStores = stores?.filter((store) => {
     const matchesSearch =
       store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       store.location.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = hideInactive ? store.status === "active" : true;
-    const matchesLocation =
-      selectedLocation === "all" || store.location === selectedLocation;
-    return matchesSearch && matchesStatus && matchesLocation;
+    const matchesStoreName =
+      selectedStoreName === "all" || store.name === selectedStoreName;
+    return matchesSearch && matchesStatus && matchesStoreName;
   });
 
   return (
@@ -56,9 +56,9 @@ const Stores = () => {
           setSearchQuery={setSearchQuery}
           hideInactive={hideInactive}
           setHideInactive={setHideInactive}
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
-          locations={locations}
+          selectedStoreName={selectedStoreName}
+          setSelectedStoreName={setSelectedStoreName}
+          storeNames={storeNames}
         />
 
         <StoresTable stores={filteredStores} />
