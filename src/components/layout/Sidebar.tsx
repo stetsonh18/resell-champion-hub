@@ -1,15 +1,28 @@
-import { Home, Package, ShoppingCart, TrendingUp, Truck, RotateCcw, DollarSign, Settings } from "lucide-react";
+import { 
+  Home, 
+  Package, 
+  ShoppingCart, 
+  Truck, 
+  RotateCcw, 
+  Server,
+  Grid,
+  Layers,
+  DollarSign, 
+  TrendingUp 
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   { icon: Home, label: "Dashboard", path: "/dashboard" },
   { icon: Package, label: "Inventory", path: "/inventory" },
   { icon: ShoppingCart, label: "Sales", path: "/sales" },
-  { icon: Truck, label: "Shipments", path: "/shipments" },
+  { icon: Truck, label: "Pending Shipments", path: "/shipments" },
   { icon: RotateCcw, label: "Returns", path: "/returns" },
-  { icon: TrendingUp, label: "Analytics", path: "/analytics" },
+  { icon: Server, label: "Platforms", path: "/platforms" },
+  { icon: Grid, label: "Stores", path: "/stores" },
+  { icon: Layers, label: "Categories", path: "/categories" },
   { icon: DollarSign, label: "Expenses", path: "/expenses" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: TrendingUp, label: "Analytics", path: "/analytics" },
 ];
 
 export const Sidebar = () => {

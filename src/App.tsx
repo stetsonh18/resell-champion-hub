@@ -62,7 +62,23 @@ const App = () => {
               }
             />
             <Route
-              path="/analytics"
+              path="/platforms"
+              element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/stores"
+              element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories"
               element={
                 <ProtectedRoute>
                   <Index />
@@ -78,7 +94,7 @@ const App = () => {
               }
             />
             <Route
-              path="/settings"
+              path="/analytics"
               element={
                 <ProtectedRoute>
                   <Index />
