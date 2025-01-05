@@ -20,13 +20,22 @@ serve(async (req) => {
 
   try {
     const body = await req.text();
-    console.log('Received webhook. Verifying signature...');
+    let event;
     
-    const event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      endpointSecret
-    );
+    try {
+      // Use await here since constructEvent is now async
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        endpointSecret
+      );
+    } catch (err) {
+      console.error('Error verifying webhook signature:', err);
+      return new Response(
+        JSON.stringify({ error: 'Invalid signature' }), 
+        { status: 400 }
+      );
+    }
     
     console.log('Webhook signature verified. Processing event:', event.type);
 
