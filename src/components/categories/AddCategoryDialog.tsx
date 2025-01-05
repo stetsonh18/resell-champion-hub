@@ -40,6 +40,15 @@ interface AddCategoryDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const generateRandomCode = () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < 3; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+};
+
 export const AddCategoryDialog = ({
   open,
   onOpenChange,
@@ -77,11 +86,7 @@ export const AddCategoryDialog = ({
 
       if (!user) throw new Error("No user found");
 
-      const code = values.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
+      const code = generateRandomCode();
 
       const { error } = await supabase.from("categories").insert({
         name: values.name,
