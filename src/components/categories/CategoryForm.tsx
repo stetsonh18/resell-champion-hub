@@ -10,9 +10,10 @@ interface CategoryFormProps {
   form: UseFormReturn<CategoryFormValues>;
   onSubmit: () => void;
   categories: CategoryResponse[];
+  isEditing?: boolean;
 }
 
-export function CategoryForm({ form, onSubmit, categories }: CategoryFormProps) {
+export function CategoryForm({ form, onSubmit, categories, isEditing = false }: CategoryFormProps) {
   const topLevelCategories = categories.filter((cat) => cat.type === "category");
 
   return (
@@ -79,7 +80,7 @@ export function CategoryForm({ form, onSubmit, categories }: CategoryFormProps) 
           />
         )}
         <div className="flex justify-end">
-          <Button type="submit">Create Category</Button>
+          <Button type="submit">{isEditing ? 'Update' : 'Create'} Category</Button>
         </div>
       </form>
     </Form>

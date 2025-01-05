@@ -4,6 +4,7 @@ import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { CategoryResponse } from "./use-categories";
 
 const categoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -22,16 +23,16 @@ const generateRandomCode = () => {
   return result;
 };
 
-export const useCategoryForm = (onSuccess: () => void) => {
+export const useCategoryForm = (onSuccess: () => void, category?: CategoryResponse) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
-      name: "",
-      type: "category",
-      parent_id: null,
+      name: category?.name || "",
+      type: category?.type || "category",
+      parent_id: category?.parent_id || null,
     },
   });
 
@@ -43,33 +44,55 @@ export const useCategoryForm = (onSuccess: () => void) => {
         throw new Error("User not authenticated");
       }
 
-      const { error } = await supabase.from("categories").insert({
-        name: data.name,
-        code: generateRandomCode(),
-        type: data.type,
-        parent_id: data.parent_id,
-        user_id: user.id,
-      });
+      if (category) {
+        // Update existing category
+        const { error } = await supabase
+          .from("categories")
+          .update({
+            name: data.name,
+            type: data.type,
+            parent_id: data.parent_id,
+          })
+          .eq('id', category.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Category created successfully",
-      });
+        toast({
+          title: "Success",
+          description: "Category updated successfully",
+        });
+      } else {
+        // Create new category
+        const { error } = await supabase.from("categories").insert({
+          name: data.name,
+          code: generateRandomCode(),
+          type: data.type,
+          parent_id: data.parent_id,
+          user_id: user.id,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Category created successfully",
+        });
+      }
 
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       onSuccess();
-      form.reset({
-        name: "",
-        type: "category",
-        parent_id: null,
-      });
+      if (!category) {
+        form.reset({
+          name: "",
+          type: "category",
+          parent_id: null,
+        });
+      }
     } catch (error) {
-      console.error("Error creating category:", error);
+      console.error("Error creating/updating category:", error);
       toast({
         title: "Error",
-        description: "Failed to create category",
+        description: "Failed to create/update category",
         variant: "destructive",
       });
     }
