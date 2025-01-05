@@ -1,19 +1,8 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/dashboard");
-      }
-    });
-  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
