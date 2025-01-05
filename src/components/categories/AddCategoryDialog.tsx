@@ -43,14 +43,20 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
 
   const onSubmit = async (data: CategoryFormValues) => {
     try {
-      const { error } = await supabase.from("categories").insert([
-        {
-          name: data.name,
-          code: data.code,
-          type: data.type,
-          parent_id: data.parent_id,
-        },
-      ]);
+      // Get the current user's ID
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      const { error } = await supabase.from("categories").insert({
+        name: data.name,
+        code: data.code,
+        type: data.type,
+        parent_id: data.parent_id,
+        user_id: user.id,
+      });
 
       if (error) throw error;
 
@@ -63,6 +69,7 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
       setOpen(false);
       form.reset();
     } catch (error) {
+      console.error("Error creating category:", error);
       toast({
         title: "Error",
         description: "Failed to create category",
