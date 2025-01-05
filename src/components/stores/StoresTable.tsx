@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
@@ -8,11 +8,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Trash, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 export const StoresTable = () => {
+  const queryClient = useQueryClient();
+
   const { data: stores, isLoading } = useQuery({
     queryKey: ["stores"],
     queryFn: async () => {
@@ -23,6 +27,25 @@ export const StoresTable = () => {
 
       if (error) throw error;
       return data;
+    },
+  });
+
+  const { mutate: updateStoreStatus } = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: 'active' | 'inactive' }) => {
+      const { error } = await supabase
+        .from("stores")
+        .update({ status })
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stores"] });
+      toast.success("Store status updated successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to update store status");
+      console.error("Error updating store status:", error);
     },
   });
 
@@ -48,15 +71,22 @@ export const StoresTable = () => {
               <TableCell className="font-medium">{store.name}</TableCell>
               <TableCell>{store.location}</TableCell>
               <TableCell>
-                <span
-                  className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                    store.status === "active"
-                      ? "bg-green-50 text-green-700"
-                      : "bg-red-50 text-red-700"
-                  }`}
-                >
-                  {store.status}
-                </span>
+                <div className="flex items-center gap-2">
+                  {store.status === "active" ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <XCircle className="h-4 w-4 text-red-500" />
+                  )}
+                  <Switch
+                    checked={store.status === "active"}
+                    onCheckedChange={(checked) =>
+                      updateStoreStatus({
+                        id: store.id,
+                        status: checked ? "active" : "inactive",
+                      })
+                    }
+                  />
+                </div>
               </TableCell>
               <TableCell>
                 {format(new Date(store.created_at), "MMM d, yyyy")}
