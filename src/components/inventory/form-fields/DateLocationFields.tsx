@@ -59,15 +59,11 @@ export function DateLocationFields({ form }: DateLocationFieldsProps) {
                 <Calendar
                   mode="single"
                   selected={field.value}
-                  onSelect={(date) => {
-                    if (date) {
-                      field.onChange(date);
-                    }
-                  }}
+                  onSelect={field.onChange}
+                  initialFocus
                   disabled={(date) =>
                     date > new Date() || date < new Date("1900-01-01")
                   }
-                  initialFocus
                 />
               </PopoverContent>
             </Popover>
