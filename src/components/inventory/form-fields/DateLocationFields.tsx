@@ -40,7 +40,7 @@ export function DateLocationFields({ form }: DateLocationFieldsProps) {
               <PopoverTrigger asChild>
                 <FormControl>
                   <Button
-                    variant={"outline"}
+                    variant="outline"
                     className={cn(
                       "w-full pl-3 text-left font-normal",
                       !field.value && "text-muted-foreground"
@@ -59,11 +59,7 @@ export function DateLocationFields({ form }: DateLocationFieldsProps) {
                 <Calendar
                   mode="single"
                   selected={field.value}
-                  onSelect={(date) => {
-                    if (date) {
-                      field.onChange(date);
-                    }
-                  }}
+                  onSelect={field.onChange}
                   disabled={(date) =>
                     date > new Date() || date < new Date("1900-01-01")
                   }
