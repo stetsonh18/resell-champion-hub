@@ -11,12 +11,25 @@ serve(async (req) => {
   const signature = req.headers.get('stripe-signature');
   
   if (!signature) {
-    return new Response('No signature', { status: 400 });
+    console.error('No stripe-signature header found');
+    return new Response(
+      JSON.stringify({ error: 'No stripe-signature header' }), 
+      { status: 400 }
+    );
   }
 
   try {
     const body = await req.text();
-    const event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
+    console.log('Received webhook. Verifying signature...');
+    
+    const event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      endpointSecret
+    );
+    
+    console.log('Webhook signature verified. Processing event:', event.type);
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -29,6 +42,13 @@ serve(async (req) => {
         const status = subscription.status;
         const customerId = subscription.customer;
         const plan = subscription.items.data[0].price.id === 'price_1QRmPiL48WAyeSne6JqKIG4T' ? 'monthly' : 'annual';
+
+        console.log('Processing subscription event:', {
+          status,
+          customerId,
+          plan,
+          subscriptionId: subscription.id
+        });
 
         // Get customer's email to find the user
         const customer = await stripe.customers.retrieve(customerId as string);
@@ -49,6 +69,7 @@ serve(async (req) => {
             console.error('Error updating user:', userError);
             throw userError;
           }
+          console.log('Successfully updated user subscription:', users);
         }
         break;
       }
@@ -56,6 +77,8 @@ serve(async (req) => {
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
+
+        console.log('Processing subscription deletion:', { customerId });
 
         const { error: updateError } = await supabaseClient
           .from('profiles')
@@ -70,12 +93,18 @@ serve(async (req) => {
           console.error('Error updating user after subscription deletion:', updateError);
           throw updateError;
         }
+        console.log('Successfully processed subscription deletion');
         break;
       }
 
       case 'customer.subscription.trial_will_end': {
         // Handle trial ending notification if needed
+        console.log('Trial will end soon for subscription:', event.data.object.id);
         break;
+      }
+
+      default: {
+        console.log('Unhandled event type:', event.type);
       }
     }
 
