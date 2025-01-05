@@ -49,18 +49,7 @@ export const EditCategoryDialog = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: category?.name || "",
-      type: category?.type || "category",
-      parentId: category?.parent_id || undefined,
-    },
-  });
-
-  // Don't render if there's no category
-  if (!category) return null;
-
+  // Move useQuery before any conditional returns
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -74,6 +63,18 @@ export const EditCategoryDialog = ({
       return data;
     },
   });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: category?.name || "",
+      type: category?.type || "category",
+      parentId: category?.parent_id || undefined,
+    },
+  });
+
+  // Don't render if there's no category
+  if (!category) return null;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
