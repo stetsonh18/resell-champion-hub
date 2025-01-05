@@ -20,24 +20,30 @@ export const columns = [
   {
     header: "Quantity",
     accessorKey: "quantity",
+    cell: ({ row }: { row: { original: Product } }) => (
+      <span>{row.original.quantity}</span>
+    ),
   },
   {
     header: "Purchase Price",
     accessorKey: "purchase_price",
     cell: ({ row }: { row: { original: Product } }) => (
-      <>${row.original.purchase_price}</>
+      <span>${row.original.purchase_price}</span>
     ),
   },
   {
     header: "Target Price",
     accessorKey: "target_price",
     cell: ({ row }: { row: { original: Product } }) => (
-      <>${row.original.target_price}</>
+      <span>${row.original.target_price}</span>
     ),
   },
   {
     header: "Condition",
     accessorKey: "condition",
+    cell: ({ row }: { row: { original: Product } }) => (
+      <span>{row.original.condition}</span>
+    ),
   },
   {
     header: "Status",
