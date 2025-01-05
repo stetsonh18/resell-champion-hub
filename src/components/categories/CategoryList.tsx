@@ -46,11 +46,9 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
     );
   }
 
-  console.log("All categories:", categories);
-
   // First, separate categories and subcategories
-  const mainCategories = categories.filter(cat => !cat.parent_id) || [];
-  const subcategories = categories.filter(cat => cat.parent_id) || [];
+  const mainCategories = categories.filter((cat) => cat.type === "category") || [];
+  const subcategories = categories.filter((cat) => cat.type === "subcategory") || [];
 
   console.log("Main categories:", mainCategories);
   console.log("Subcategories:", subcategories);
@@ -59,7 +57,7 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
   const groupedCategories = mainCategories.reduce((acc, category) => {
     acc[category.id] = {
       ...category,
-      subcategories: subcategories.filter(sub => sub.parent_id === category.id),
+      subcategories: subcategories.filter((sub) => sub.parent_id === category.id),
     };
     return acc;
   }, {} as Record<string, any>);
