@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -32,7 +32,7 @@ import { supabase } from "@/integrations/supabase/client";
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   type: z.enum(["category", "subcategory"]),
-  parentId: z.string().optional(),
+  parentId: z.string().optional().nullable(),
 });
 
 interface AddCategoryDialogProps {
@@ -61,6 +61,7 @@ export const AddCategoryDialog = ({
     defaultValues: {
       name: "",
       type: "category",
+      parentId: null,
     },
   });
 
@@ -96,7 +97,10 @@ export const AddCategoryDialog = ({
         parent_id: values.type === "subcategory" ? values.parentId : null,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -121,6 +125,9 @@ export const AddCategoryDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Category</DialogTitle>
+          <DialogDescription>
+            Create a new category or subcategory to organize your products.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
