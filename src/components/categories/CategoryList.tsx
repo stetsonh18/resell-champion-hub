@@ -26,43 +26,28 @@ export const CategoryList = () => {
     );
   }
 
-  // Group categories by parent
-  const groupedCategories = categories?.reduce((acc, category) => {
-    if (category.type === "category") {
-      if (!acc[category.id]) {
-        acc[category.id] = {
-          ...category,
-          subcategories: [],
-        };
-      } else {
-        acc[category.id] = {
-          ...category,
-          subcategories: acc[category.id].subcategories,
-        };
-      }
-    } else if (category.type === "subcategory" && category.parent_id) {
-      if (!acc[category.parent_id]) {
-        acc[category.parent_id] = {
-          subcategories: [category],
-        };
-      } else {
-        acc[category.parent_id].subcategories.push(category);
-      }
-    }
+  // First, separate categories and subcategories
+  const mainCategories = categories?.filter(cat => cat.type === "category") || [];
+  const subcategories = categories?.filter(cat => cat.type === "subcategory") || [];
+
+  // Create the grouped structure
+  const groupedCategories = mainCategories.reduce((acc, category) => {
+    acc[category.id] = {
+      ...category,
+      subcategories: subcategories.filter(sub => sub.parent_id === category.id),
+    };
     return acc;
   }, {} as Record<string, any>);
 
   return (
     <div className="space-y-2">
-      {Object.values(groupedCategories || {}).map((category: any) => (
+      {Object.values(groupedCategories).map((category: any) => (
         <div key={category.id} className="space-y-2">
-          {category.name && (
-            <CategoryCard
-              category={category}
-              onEdit={setCategoryToEdit}
-              onDelete={setCategoryToDelete}
-            />
-          )}
+          <CategoryCard
+            category={category}
+            onEdit={setCategoryToEdit}
+            onDelete={setCategoryToDelete}
+          />
           {category.subcategories?.map((subcategory: CategoryResponse) => (
             <SubcategoryCard
               key={subcategory.id}
