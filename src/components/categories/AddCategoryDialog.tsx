@@ -52,7 +52,6 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
 
   const onSubmit = async (data: CategoryFormValues) => {
     try {
-      // Get the current user's ID
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -116,19 +115,6 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter category name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Code</FormLabel>
-                  <FormControl>
-                    <Input placeholder="3-letter code" {...field} readOnly />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
