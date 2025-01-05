@@ -11,14 +11,43 @@ import {
 import { TableSkeleton } from "./TableSkeleton";
 import { columns } from "./columns";
 
-export const InventoryTable = () => {
+interface InventoryTableProps {
+  filters: {
+    searchQuery: string;
+    hideShipped: boolean;
+    selectedStatus: string;
+    selectedCategory: string;
+  };
+}
+
+export const InventoryTable = ({ filters }: InventoryTableProps) => {
   const { data: products, isLoading } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", filters],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("products")
-        .select("*")
+        .select("*, categories(name)")
         .order("created_at", { ascending: false });
+
+      if (filters.searchQuery) {
+        query = query.or(
+          `name.ilike.%${filters.searchQuery}%,sku.ilike.%${filters.searchQuery}%`
+        );
+      }
+
+      if (filters.hideShipped) {
+        query = query.neq("status", "shipped");
+      }
+
+      if (filters.selectedStatus !== "all") {
+        query = query.eq("status", filters.selectedStatus);
+      }
+
+      if (filters.selectedCategory !== "all") {
+        query = query.eq("categories.name", filters.selectedCategory);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data;
