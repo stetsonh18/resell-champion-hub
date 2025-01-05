@@ -41,6 +41,10 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
     },
   });
 
+  const handleProductUpdated = () => {
+    queryClient.invalidateQueries({ queryKey: ["products"] });
+  };
+
   if (isLoading) {
     return (
       <div className="rounded-md border">
@@ -113,7 +117,11 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
                   <ProductStatus status={product.status} />
                 </TableCell>
                 <TableCell className="text-right">
-                  <ProductActions onDelete={() => deleteProduct(product.id)} />
+                  <ProductActions
+                    product={product}
+                    onDelete={() => deleteProduct(product.id)}
+                    onEdit={handleProductUpdated}
+                  />
                 </TableCell>
               </TableRow>
             ))

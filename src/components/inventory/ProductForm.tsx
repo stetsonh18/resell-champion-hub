@@ -19,18 +19,24 @@ import { DateLocationFields } from "./form-fields/DateLocationFields";
 interface ProductFormProps {
   onSubmit: (values: ProductFormValues) => void;
   isSubmitting?: boolean;
+  initialValues?: Partial<ProductFormValues>;
 }
 
-export function ProductForm({ onSubmit, isSubmitting }: ProductFormProps) {
+export function ProductForm({ onSubmit, isSubmitting, initialValues }: ProductFormProps) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
-      name: "",
-      purchase_price: 0,
-      target_price: 0,
-      quantity: 1,
-      condition: "new",
-      notes: "",
+      name: initialValues?.name || "",
+      purchase_price: initialValues?.purchase_price || 0,
+      target_price: initialValues?.target_price || 0,
+      quantity: initialValues?.quantity || 1,
+      condition: initialValues?.condition || "new",
+      notes: initialValues?.notes || "",
+      category_id: initialValues?.category_id || undefined,
+      store_id: initialValues?.store_id || undefined,
+      purchase_date: initialValues?.purchase_date || new Date(),
+      location: initialValues?.location || "",
+      status: initialValues?.status || "in_stock",
     },
   });
 
@@ -61,7 +67,7 @@ export function ProductForm({ onSubmit, isSubmitting }: ProductFormProps) {
         />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Adding Product..." : "Add Product"}
+          {isSubmitting ? "Saving Changes..." : "Save Changes"}
         </Button>
       </form>
     </Form>
