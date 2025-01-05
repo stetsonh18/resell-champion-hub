@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { TotalItemsCard } from "./cards/TotalItemsCard";
 import { InventoryValueCard } from "./cards/InventoryValueCard";
 import { LowStockCard } from "./cards/LowStockCard";
+import { InStockCard } from "./cards/InStockCard";
 import { StatsSkeleton } from "./StatsSkeleton";
 
 export const InventoryStats = () => {
@@ -15,17 +16,19 @@ export const InventoryStats = () => {
 
       if (error) throw error;
 
-      const totalItems = products.reduce((sum, product) => sum + product.quantity, 0);
+      const totalItems = products.length;
       const totalValue = products.reduce(
         (sum, product) => sum + product.purchase_price * product.quantity,
         0
       );
-      const lowStock = products.filter(product => product.quantity < 5).length;
+      const inStock = products.filter(product => product.quantity > 0).length;
+      const listed = products.filter(product => product.target_price > 0).length;
 
       return {
         totalItems,
         totalValue,
-        lowStock,
+        inStock,
+        listed,
       };
     },
   });
@@ -33,10 +36,11 @@ export const InventoryStats = () => {
   if (isLoading) return <StatsSkeleton />;
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-4">
       <TotalItemsCard totalItems={stats?.totalItems ?? 0} />
+      <InStockCard inStock={stats?.inStock ?? 0} />
+      <LowStockCard lowStock={stats?.listed ?? 0} />
       <InventoryValueCard totalValue={stats?.totalValue ?? 0} />
-      <LowStockCard lowStock={stats?.lowStock ?? 0} />
     </div>
   );
 };
