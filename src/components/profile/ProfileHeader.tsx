@@ -32,7 +32,7 @@ export const ProfileHeader = () => {
         </p>
       </div>
       <div className="flex justify-center">
-        <AvatarUpload size={52} onUpload={handleAvatarUpload} />
+        <AvatarUpload size={128} onUpload={handleAvatarUpload} />
       </div>
     </div>
   );

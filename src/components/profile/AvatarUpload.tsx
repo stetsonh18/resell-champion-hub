@@ -11,7 +11,7 @@ interface AvatarUploadProps {
   size?: number;
 }
 
-export function AvatarUpload({ url, onUpload, size = 40 }: AvatarUploadProps) {
+export function AvatarUpload({ url, onUpload, size = 128 }: AvatarUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { toast } = useToast();
