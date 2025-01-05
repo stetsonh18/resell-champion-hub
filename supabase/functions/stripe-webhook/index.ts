@@ -23,7 +23,6 @@ serve(async (req) => {
     let event;
     
     try {
-      // Use await here since constructEvent is now async
       event = await stripe.webhooks.constructEventAsync(
         body,
         signature,
@@ -62,7 +61,7 @@ serve(async (req) => {
         // Get customer's email to find the user
         const customer = await stripe.customers.retrieve(customerId as string);
         if (!customer.deleted && customer.email) {
-          const { data: users, error: userError } = await supabaseClient
+          const { data: profiles, error: profileError } = await supabaseClient
             .from('profiles')
             .update({
               subscription_status: status,
@@ -74,11 +73,34 @@ serve(async (req) => {
             .eq('stripe_customer_id', customerId)
             .select();
 
-          if (userError) {
-            console.error('Error updating user:', userError);
-            throw userError;
+          if (profileError) {
+            console.error('Error updating profile:', profileError);
+            throw profileError;
           }
-          console.log('Successfully updated user subscription:', users);
+
+          // If no profile was updated, try to find by email
+          if (!profiles || profiles.length === 0) {
+            console.log('No profile found by customer ID, searching by email...');
+            const { data: userProfiles, error: userError } = await supabaseClient
+              .from('profiles')
+              .update({
+                subscription_status: status,
+                stripe_customer_id: customerId,
+                stripe_subscription_id: subscription.id,
+                subscription_plan: plan,
+                trial_end_date: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null
+              })
+              .eq('id', (await supabaseClient.auth.admin.listUsers()).data.users.find(u => u.email === customer.email)?.id)
+              .select();
+
+            if (userError) {
+              console.error('Error updating profile by email:', userError);
+              throw userError;
+            }
+            console.log('Profile updated by email:', userProfiles);
+          } else {
+            console.log('Profile updated by customer ID:', profiles);
+          }
         }
         break;
       }
@@ -99,16 +121,10 @@ serve(async (req) => {
           .eq('stripe_customer_id', customerId);
 
         if (updateError) {
-          console.error('Error updating user after subscription deletion:', updateError);
+          console.error('Error updating profile after subscription deletion:', updateError);
           throw updateError;
         }
         console.log('Successfully processed subscription deletion');
-        break;
-      }
-
-      case 'customer.subscription.trial_will_end': {
-        // Handle trial ending notification if needed
-        console.log('Trial will end soon for subscription:', event.data.object.id);
         break;
       }
 
