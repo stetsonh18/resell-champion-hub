@@ -20,13 +20,13 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
         if (session) {
           // Check subscription status
-          const { data: profiles } = await supabase
+          const { data: profile } = await supabase
             .from('profiles')
             .select('subscription_status')
             .eq('id', session.user.id)
             .maybeSingle();
 
-          const isSubscribed = profiles?.subscription_status === 'active';
+          const isSubscribed = profile?.subscription_status === 'active';
           setHasSubscription(isSubscribed);
 
           if (!isSubscribed) {
@@ -39,11 +39,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
-        toast({
-          title: "Error",
-          description: "Failed to verify subscription status.",
-          variant: "destructive",
-        });
+        setIsAuthenticated(false);
+        setHasSubscription(false);
       }
     };
 
@@ -52,13 +49,13 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setIsAuthenticated(!!session);
       if (session) {
-        const { data: profiles } = await supabase
+        const { data: profile } = await supabase
           .from('profiles')
           .select('subscription_status')
           .eq('id', session.user.id)
           .maybeSingle();
 
-        setHasSubscription(profiles?.subscription_status === 'active');
+        setHasSubscription(profile?.subscription_status === 'active');
       }
     });
 
