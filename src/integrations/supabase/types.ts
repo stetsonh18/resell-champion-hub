@@ -80,6 +80,42 @@ export type Database = {
         }
         Relationships: []
       }
+      platforms: {
+        Row: {
+          base_fee: number
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          percentage_fee: number
+          status: Database["public"]["Enums"]["platform_status"]
+          url: string
+          user_id: string
+        }
+        Insert: {
+          base_fee?: number
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          percentage_fee?: number
+          status?: Database["public"]["Enums"]["platform_status"]
+          url: string
+          user_id: string
+        }
+        Update: {
+          base_fee?: number
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          percentage_fee?: number
+          status?: Database["public"]["Enums"]["platform_status"]
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category_id: string | null
@@ -268,6 +304,7 @@ export type Database = {
     }
     Enums: {
       category_type: "category" | "subcategory"
+      platform_status: "active" | "inactive"
       store_status: "active" | "inactive"
       supported_currency:
         | "USD"

@@ -7,6 +7,7 @@ import Profile from "@/pages/Profile";
 import Categories from "@/pages/Categories";
 import Expenses from "@/pages/Expenses";
 import Stores from "@/pages/Stores";
+import Platforms from "@/pages/Platforms";
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -72,7 +73,7 @@ export const protectedRoutes: RouteObject[] = [
     path: "/platforms",
     element: (
       <ProtectedRoute>
-        <Index />
+        <Platforms />
       </ProtectedRoute>
     ),
   },
