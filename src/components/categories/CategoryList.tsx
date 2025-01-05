@@ -9,21 +9,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
-interface Category {
-  id: string;
-  name: string;
-  code: string;
-  type: "category" | "subcategory";
-  parent_id: string | null;
-  created_at: string;
+type CategoryResponse = Database["public"]["Tables"]["categories"]["Row"] & {
   parent: {
     name: string;
   } | null;
-}
+};
 
 export const CategoryList = () => {
-  const { data: categories, isLoading } = useQuery<Category[]>({
+  const { data: categories, isLoading } = useQuery<CategoryResponse[]>({
     queryKey: ["categories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,6 +33,7 @@ export const CategoryList = () => {
         console.error("Error fetching categories:", error);
         throw error;
       }
+
       return data;
     },
   });
