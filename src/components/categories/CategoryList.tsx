@@ -84,10 +84,10 @@ export const CategoryList = () => {
       {Object.values(groupedCategories || {}).map((category: any) => (
         <div key={category.id} className="space-y-2">
           {category.name && (
-            <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
+            <div className="flex items-center justify-between p-4 bg-card rounded-lg shadow-sm border">
               <div className="flex items-center gap-4">
-                <span className="font-medium text-gray-900">{category.name}</span>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                <span className="font-medium text-foreground">{category.name}</span>
+                <Badge variant="secondary">
                   {category.code}
                 </Badge>
               </div>
@@ -104,12 +104,12 @@ export const CategoryList = () => {
           {category.subcategories?.map((subcategory: CategoryResponse) => (
             <div
               key={subcategory.id}
-              className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm ml-8 relative"
+              className="flex items-center justify-between p-4 bg-card/50 rounded-lg shadow-sm ml-8 relative border border-border/50"
             >
               <div className="flex items-center gap-4">
-                <ChevronRight className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-600">{subcategory.name}</span>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">{subcategory.name}</span>
+                <Badge variant="secondary">
                   {subcategory.code}
                 </Badge>
               </div>
