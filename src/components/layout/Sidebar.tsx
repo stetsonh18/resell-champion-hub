@@ -2,7 +2,7 @@ import { Home, Package, ShoppingCart, TrendingUp, Truck, RotateCcw, DollarSign, 
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { icon: Home, label: "Dashboard", path: "/" },
+  { icon: Home, label: "Dashboard", path: "/dashboard" },
   { icon: Package, label: "Inventory", path: "/inventory" },
   { icon: ShoppingCart, label: "Sales", path: "/sales" },
   { icon: Truck, label: "Shipments", path: "/shipments" },
