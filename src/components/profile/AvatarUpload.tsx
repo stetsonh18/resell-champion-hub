@@ -23,9 +23,14 @@ export function AvatarUpload({ url, onUpload, size = 40 }: AvatarUploadProps) {
         throw new Error("You must select an image to upload.");
       }
 
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error("No user logged in.");
+      }
+
       const file = event.target.files[0];
       const fileExt = file.name.split(".").pop();
-      const filePath = `${supabase.auth.user()?.id}/${Math.random()}.${fileExt}`;
+      const filePath = `${session.user.id}/${Math.random()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
