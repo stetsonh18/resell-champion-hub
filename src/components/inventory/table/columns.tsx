@@ -14,7 +14,7 @@ export const columns = [
     header: "Category",
     accessorKey: "categories",
     cell: ({ row }: { row: { original: Product } }) => (
-      <>{row.original.categories?.name || "No Category"}</>
+      row.original.categories?.name || "No Category"
     ),
   },
   {
