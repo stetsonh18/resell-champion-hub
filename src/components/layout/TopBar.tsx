@@ -1,4 +1,4 @@
-import { Bell, User, Moon, Sun } from "lucide-react";
+import { User, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   DropdownMenu,
@@ -58,10 +58,6 @@ export const TopBar = () => {
             ) : (
               <Moon className="h-5 w-5" />
             )}
-          </Button>
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
