@@ -22,9 +22,18 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
+        <div className="bg-card rounded-lg p-4 space-y-3">
+          <Skeleton className="h-4 w-1/4" />
+          <Skeleton className="h-8 w-full" />
+        </div>
+        <div className="bg-card rounded-lg p-4 space-y-3">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-8 w-full" />
+        </div>
+        <div className="bg-card rounded-lg p-4 space-y-3">
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-8 w-full" />
+        </div>
       </div>
     );
   }

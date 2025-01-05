@@ -47,7 +47,7 @@ const Categories = () => {
     <DashboardLayout>
       <div className="space-y-6 p-6 pb-16">
         <CategoryHeader onAddCategory={() => setIsAddingCategory(true)} />
-        {!isLoading && <CategoryStats categories={categories} />}
+        <CategoryStats categories={categories} />
         <CategorySearch
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
