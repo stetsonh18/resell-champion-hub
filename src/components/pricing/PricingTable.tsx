@@ -2,9 +2,12 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const PricingTable = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const features = [
     "Unlimited product listings",
@@ -14,10 +17,32 @@ const PricingTable = () => {
     "Shipping label integration",
   ];
 
-  const handleGetStarted = (plan: 'monthly' | 'annual') => {
-    // Store the selected plan in localStorage
-    localStorage.setItem('selectedPlan', plan);
-    navigate("/login?screen=sign-up");
+  const handleGetStarted = async (plan: 'monthly' | 'annual') => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        localStorage.setItem('selectedPlan', plan);
+        navigate("/login?screen=sign-up");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { plan }
+      });
+
+      if (error) throw error;
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to start subscription process. Please try again.",
+      });
+    }
   };
 
   return (

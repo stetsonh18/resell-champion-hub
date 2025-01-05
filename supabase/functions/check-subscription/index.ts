@@ -53,7 +53,7 @@ serve(async (req) => {
 
     const subscription = subscriptions.data[0]
     const status = subscription?.status || 'inactive'
-    const plan = subscription?.items.data[0].price.id || null
+    const plan = subscription?.items.data[0].price.id === 'price_1QRmPiL48WAyeSne6JqKIG4T' ? 'monthly' : 'annual'
 
     // Update the user's profile with subscription info
     if (subscription) {
@@ -63,7 +63,7 @@ serve(async (req) => {
           subscription_status: status,
           stripe_customer_id: customers.data[0].id,
           stripe_subscription_id: subscription.id,
-          subscription_plan: plan === 'price_monthly' ? 'monthly' : 'annual',
+          subscription_plan: plan,
           trial_end_date: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null
         })
         .eq('id', user.id)
@@ -81,9 +81,10 @@ serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error('Error checking subscription:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
+      { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
       }

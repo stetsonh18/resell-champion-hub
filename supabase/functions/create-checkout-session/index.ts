@@ -13,7 +13,10 @@ serve(async (req) => {
   }
 
   try {
-    const { priceId } = await req.json()
+    const { plan } = await req.json()
+    const priceId = plan === 'monthly' 
+      ? 'price_1QRmPiL48WAyeSne6JqKIG4T'
+      : 'price_1QRmQJL48WAyeSnezutKOf2m'
     
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -32,7 +35,6 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     })
 
-    // Check if customer exists
     const customers = await stripe.customers.list({
       email: user.email,
       limit: 1
@@ -41,9 +43,8 @@ serve(async (req) => {
     let customerId = undefined
     if (customers.data.length > 0) {
       customerId = customers.data[0].id
-      // Check if already subscribed
       const subscriptions = await stripe.subscriptions.list({
-        customer: customerId,
+        customer: customers.data[0].id,
         status: 'active',
         price: priceId,
         limit: 1
@@ -54,6 +55,7 @@ serve(async (req) => {
       }
     }
 
+    console.log('Creating payment session...')
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -71,6 +73,7 @@ serve(async (req) => {
       },
     })
 
+    console.log('Payment session created:', session.id)
     return new Response(
       JSON.stringify({ url: session.url }),
       { 
@@ -79,6 +82,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error('Error creating payment session:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
