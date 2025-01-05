@@ -12,10 +12,25 @@ const Categories = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { data: categories = [] } = useCategories();
 
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    category.code.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCategories = categories.filter((category) => {
+    const matchesSearch = 
+      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      category.code.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // If this is a main category, check if any of its subcategories match the search
+    if (category.type === "category") {
+      const hasMatchingSubcategories = categories.some(
+        (sub) =>
+          sub.type === "subcategory" &&
+          sub.parent_id === category.id &&
+          (sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            sub.code.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+      return matchesSearch || hasMatchingSubcategories;
+    }
+
+    return matchesSearch;
+  });
 
   return (
     <DashboardLayout>
