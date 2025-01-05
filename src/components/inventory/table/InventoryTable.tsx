@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -10,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TableSkeleton } from "./TableSkeleton";
-import { Badge } from "@/components/ui/badge";
+import { columns } from "./columns";
 
 export const InventoryTable = () => {
   const { data: products, isLoading } = useQuery({
@@ -33,29 +32,23 @@ export const InventoryTable = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Purchase Price</TableHead>
-            <TableHead>Target Price</TableHead>
-            <TableHead>Condition</TableHead>
-            <TableHead>Status</TableHead>
+            {columns.map((column) => (
+              <TableHead key={column.accessorKey}>{column.header}</TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
           {products?.map((product) => (
             <TableRow key={product.id}>
-              <TableCell>{product.name}</TableCell>
-              <TableCell>{product.sku}</TableCell>
-              <TableCell>{product.quantity}</TableCell>
-              <TableCell>${product.purchase_price}</TableCell>
-              <TableCell>${product.target_price}</TableCell>
-              <TableCell>{product.condition}</TableCell>
-              <TableCell>
-                <Badge variant={product.quantity > 0 ? "default" : "destructive"}>
-                  {product.quantity > 0 ? "In Stock" : "Out of Stock"}
-                </Badge>
-              </TableCell>
+              {columns.map((column) => (
+                <TableCell key={`${product.id}-${column.accessorKey}`}>
+                  {column.cell ? (
+                    column.cell({ row: { original: product } })
+                  ) : (
+                    product[column.accessorKey as keyof typeof product]
+                  )}
+                </TableCell>
+              ))}
             </TableRow>
           ))}
         </TableBody>
