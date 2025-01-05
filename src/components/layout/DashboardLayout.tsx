@@ -9,11 +9,11 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen bg-background">
       <TopBar />
-      <div className="flex w-full">
+      <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8 animate-fade-in">
+        <main className="flex-1 p-8">
           <div className="max-w-7xl mx-auto">
             <div className="mb-4">
               <SidebarTrigger />
