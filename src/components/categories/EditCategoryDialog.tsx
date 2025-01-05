@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { CategoryResponse } from "@/hooks/use-categories";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -37,12 +38,7 @@ const formSchema = z.object({
 interface EditCategoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  category: {
-    id: string;
-    name: string;
-    type: "category" | "subcategory";
-    parent_id: string | null;
-  };
+  category: CategoryResponse | null;
 }
 
 export const EditCategoryDialog = ({
@@ -56,11 +52,14 @@ export const EditCategoryDialog = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: category.name,
-      type: category.type,
-      parentId: category.parent_id || undefined,
+      name: category?.name || "",
+      type: category?.type || "category",
+      parentId: category?.parent_id || undefined,
     },
   });
+
+  // Don't render if there's no category
+  if (!category) return null;
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],

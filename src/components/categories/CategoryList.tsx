@@ -83,7 +83,7 @@ export const CategoryList = () => {
       <EditCategoryDialog
         open={!!categoryToEdit}
         onOpenChange={(open) => !open && setCategoryToEdit(null)}
-        category={categoryToEdit!}
+        category={categoryToEdit}
       />
     </div>
   );
