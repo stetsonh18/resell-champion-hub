@@ -8,26 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
-
-const TableRowSkeleton = () => (
-  <TableRow>
-    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-  </TableRow>
-);
+import { LoadingState } from "./table/TableSkeleton";
+import { ProductActions } from "./table/ProductActions";
+import { ProductStatus } from "./table/ProductStatus";
 
 interface ProductsTableProps {
   products?: any[];
@@ -74,9 +59,7 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRowSkeleton />
-            <TableRowSkeleton />
-            <TableRowSkeleton />
+            <LoadingState />
           </TableBody>
         </Table>
       </div>
@@ -127,34 +110,10 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
                 <TableCell>{product.quantity}</TableCell>
                 <TableCell>{product.location || "—"}</TableCell>
                 <TableCell>
-                  <Badge variant={product.status === "in_stock" ? "default" : "secondary"}>
-                    {product.status}
-                  </Badge>
+                  <ProductStatus status={product.status} />
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        // TODO: Implement edit functionality
-                        toast.info("Edit functionality coming soon");
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        if (window.confirm("Are you sure you want to delete this product?")) {
-                          deleteProduct(product.id);
-                        }
-                      }}
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <ProductActions onDelete={() => deleteProduct(product.id)} />
                 </TableCell>
               </TableRow>
             ))
