@@ -229,6 +229,36 @@ export type Database = {
           },
         ]
       }
+      stores: {
+        Row: {
+          created_at: string
+          id: string
+          location: string
+          name: string
+          notes: string | null
+          status: Database["public"]["Enums"]["store_status"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location: string
+          name: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["store_status"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location?: string
+          name?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["store_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -238,6 +268,7 @@ export type Database = {
     }
     Enums: {
       category_type: "category" | "subcategory"
+      store_status: "active" | "inactive"
       supported_currency:
         | "USD"
         | "EUR"
