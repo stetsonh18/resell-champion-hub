@@ -49,6 +49,7 @@ export interface Sale {
   net_profit: number;
   sale_date: string;
   order_number: string;
+  tracking_number: string | null;
 }
 
 export interface Shipment {
