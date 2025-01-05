@@ -29,8 +29,8 @@ export const SidebarNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="mt-8 px-4">
-      <ul className="space-y-2">
+    <nav className="mt-4 px-2">
+      <ul className="space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -38,10 +38,10 @@ export const SidebarNav = () => {
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                   isActive
-                    ? "bg-gradient-to-r from-secondary/80 to-secondary text-secondary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "bg-[#84CC16] text-white"
+                    : "text-gray-400 hover:text-white hover:bg-white/10"
                 }`}
               >
                 <Icon className="w-5 h-5 mr-3" />

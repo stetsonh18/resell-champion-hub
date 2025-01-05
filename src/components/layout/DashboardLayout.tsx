@@ -9,7 +9,7 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-screen bg-[#0B1120]">
       <TopBar />
       <div className="flex">
         <Sidebar />

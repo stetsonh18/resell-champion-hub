@@ -6,7 +6,7 @@ const App = () => {
   return (
     <AppProviders>
       <SidebarProvider defaultOpen={true}>
-        <div className="min-h-screen w-full bg-background">
+        <div className="min-h-screen w-full bg-[#0B1120]">
           <AppRouter />
         </div>
       </SidebarProvider>
