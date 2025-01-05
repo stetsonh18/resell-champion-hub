@@ -47,8 +47,8 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
   }
 
   // First, separate categories and subcategories
-  const mainCategories = categories.filter(cat => cat.type === "category") || [];
-  const subcategories = categories.filter(cat => cat.type === "subcategory") || [];
+  const mainCategories = categories.filter(cat => !cat.parent_id) || [];
+  const subcategories = categories.filter(cat => cat.parent_id) || [];
 
   // Create the grouped structure
   const groupedCategories = mainCategories.reduce((acc, category) => {
