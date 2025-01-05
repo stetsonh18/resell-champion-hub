@@ -16,7 +16,10 @@ export const CategoryList = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("*")
+        .select(`
+          *,
+          parent:categories!categories_parent_id_fkey(name)
+        `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -51,7 +54,7 @@ export const CategoryList = () => {
             <TableCell>{category.name}</TableCell>
             <TableCell>{category.code}</TableCell>
             <TableCell className="capitalize">{category.type}</TableCell>
-            <TableCell>{category.parent_id || "-"}</TableCell>
+            <TableCell>{category.parent?.name || "-"}</TableCell>
             <TableCell>
               {new Date(category.created_at).toLocaleDateString()}
             </TableCell>
