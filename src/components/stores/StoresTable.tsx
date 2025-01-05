@@ -14,6 +14,17 @@ import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { EditStoreDialog } from "./EditStoreDialog";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const TableRowSkeleton = () => (
+  <TableRow>
+    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+  </TableRow>
+);
 
 export const StoresTable = () => {
   const queryClient = useQueryClient();
@@ -69,10 +80,6 @@ export const StoresTable = () => {
     },
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -86,49 +93,63 @@ export const StoresTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {stores?.map((store) => (
-            <TableRow key={store.id}>
-              <TableCell className="font-medium">{store.name}</TableCell>
-              <TableCell>{store.location}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  {store.status === "active" ? (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <XCircle className="h-4 w-4 text-red-500" />
-                  )}
-                  <Switch
-                    checked={store.status === "active"}
-                    onCheckedChange={(checked) =>
-                      updateStoreStatus({
-                        id: store.id,
-                        status: checked ? "active" : "inactive",
-                      })
-                    }
-                  />
-                </div>
-              </TableCell>
-              <TableCell>
-                {format(new Date(store.created_at), "MMM d, yyyy")}
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <EditStoreDialog store={store} />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      if (window.confirm("Are you sure you want to delete this store?")) {
-                        deleteStore(store.id);
-                      }
-                    }}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
+          {isLoading ? (
+            <>
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+            </>
+          ) : stores?.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center text-muted-foreground">
+                No stores found. Create your first store to get started.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            stores?.map((store) => (
+              <TableRow key={store.id}>
+                <TableCell className="font-medium">{store.name}</TableCell>
+                <TableCell>{store.location}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {store.status === "active" ? (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <XCircle className="h-4 w-4 text-red-500" />
+                    )}
+                    <Switch
+                      checked={store.status === "active"}
+                      onCheckedChange={(checked) =>
+                        updateStoreStatus({
+                          id: store.id,
+                          status: checked ? "active" : "inactive",
+                        })
+                      }
+                    />
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {format(new Date(store.created_at), "MMM d, yyyy")}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <EditStoreDialog store={store} />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        if (window.confirm("Are you sure you want to delete this store?")) {
+                          deleteStore(store.id);
+                        }
+                      }}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>
