@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,21 +11,32 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [hasValidSubscription, setHasValidSubscription] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        // Get the initial session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          throw sessionError;
+        }
+
         setIsAuthenticated(!!session);
 
         if (session) {
           // Check subscription status
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('subscription_status')
             .eq('id', session.user.id)
             .maybeSingle();
+
+          if (profileError) {
+            throw profileError;
+          }
 
           // Consider 'active' and 'trialing' as valid subscription states
           const isSubscribed = profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing';
@@ -42,13 +54,24 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         console.error('Error checking auth status:', error);
         setIsAuthenticated(false);
         setHasValidSubscription(false);
+        toast({
+          title: "Authentication Error",
+          description: "Please try signing in again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
 
+    // Check initial auth state
     checkAuth();
 
+    // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session);
       setIsAuthenticated(!!session);
+      
       if (session) {
         const { data: profile } = await supabase
           .from('profiles')
@@ -56,9 +79,14 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
           .eq('id', session.user.id)
           .maybeSingle();
 
-        // Consider 'active' and 'trialing' as valid subscription states
-        setHasValidSubscription(profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing');
+        setHasValidSubscription(
+          profile?.subscription_status === 'active' || 
+          profile?.subscription_status === 'trialing'
+        );
+      } else {
+        setHasValidSubscription(false);
       }
+      setIsLoading(false);
     });
 
     return () => {
@@ -66,8 +94,12 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     };
   }, [toast]);
 
-  if (isAuthenticated === null || (isAuthenticated && hasValidSubscription === null)) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
