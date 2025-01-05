@@ -4,9 +4,13 @@ import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
 import { EditCategoryDialog } from "./EditCategoryDialog";
 import { CategoryCard } from "./CategoryCard";
 import { SubcategoryCard } from "./SubcategoryCard";
-import { useCategories, CategoryResponse } from "@/hooks/use-categories";
+import { CategoryResponse } from "@/hooks/use-categories";
 
-export const CategoryList = () => {
+interface CategoryListProps {
+  categories?: CategoryResponse[];
+}
+
+export const CategoryList = ({ categories }: CategoryListProps) => {
   const [categoryToDelete, setCategoryToDelete] = useState<CategoryResponse | null>(
     null
   );
@@ -14,9 +18,7 @@ export const CategoryList = () => {
     null
   );
 
-  const { data: categories, isLoading } = useCategories();
-
-  if (isLoading) {
+  if (!categories) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-12 w-full" />
@@ -27,8 +29,8 @@ export const CategoryList = () => {
   }
 
   // First, separate categories and subcategories
-  const mainCategories = categories?.filter(cat => cat.type === "category") || [];
-  const subcategories = categories?.filter(cat => cat.type === "subcategory") || [];
+  const mainCategories = categories.filter(cat => cat.type === "category") || [];
+  const subcategories = categories.filter(cat => cat.type === "subcategory") || [];
 
   // Create the grouped structure
   const groupedCategories = mainCategories.reduce((acc, category) => {
