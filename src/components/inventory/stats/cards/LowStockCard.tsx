@@ -8,11 +8,9 @@ interface LowStockCardProps {
 export const LowStockCard = ({ lowStock }: LowStockCardProps) => {
   return (
     <StatCard
-      title="Listed"
+      title="Low Stock Items"
       value={lowStock.toString()}
       icon={AlertCircle}
-      iconColor="text-pink-500"
-      bgColor="bg-pink-100"
     />
   );
 };

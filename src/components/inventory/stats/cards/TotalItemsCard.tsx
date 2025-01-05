@@ -8,11 +8,9 @@ interface TotalItemsCardProps {
 export const TotalItemsCard = ({ totalItems }: TotalItemsCardProps) => {
   return (
     <StatCard
-      title="Total Products"
+      title="Total Items"
       value={totalItems.toString()}
       icon={Package}
-      iconColor="text-pink-500"
-      bgColor="bg-pink-100"
     />
   );
 };
