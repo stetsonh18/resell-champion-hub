@@ -17,7 +17,7 @@ interface Category {
   type: "category" | "subcategory";
   parent_id: string | null;
   created_at: string;
-  parent?: {
+  parent: {
     name: string;
   } | null;
 }
@@ -30,7 +30,7 @@ export const CategoryList = () => {
         .from("categories")
         .select(`
           *,
-          parent:categories!parent_id(name)
+          parent:categories(name)
         `)
         .order("created_at", { ascending: false });
 
