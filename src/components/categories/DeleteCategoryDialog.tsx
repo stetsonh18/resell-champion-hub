@@ -11,14 +11,12 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { CategoryResponse } from "@/hooks/use-categories";
 
 interface DeleteCategoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  category: {
-    id: string;
-    name: string;
-  };
+  category: CategoryResponse | null;
 }
 
 export const DeleteCategoryDialog = ({
@@ -30,6 +28,8 @@ export const DeleteCategoryDialog = ({
   const queryClient = useQueryClient();
 
   const handleDelete = async () => {
+    if (!category) return;
+    
     try {
       const { error } = await supabase
         .from("categories")
@@ -54,6 +54,9 @@ export const DeleteCategoryDialog = ({
       });
     }
   };
+
+  // Don't render the dialog if there's no category
+  if (!category) return null;
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>

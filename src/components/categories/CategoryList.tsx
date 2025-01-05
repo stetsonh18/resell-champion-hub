@@ -77,7 +77,7 @@ export const CategoryList = () => {
       <DeleteCategoryDialog
         open={!!categoryToDelete}
         onOpenChange={(open) => !open && setCategoryToDelete(null)}
-        category={categoryToDelete!}
+        category={categoryToDelete}
       />
 
       <EditCategoryDialog
