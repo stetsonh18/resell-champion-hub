@@ -12,7 +12,7 @@ export const Sidebar = () => {
   
   return (
     <ShadcnSidebar 
-      className={`fixed left-0 top-16 border-r border-border/40 bg-[#0F1729] h-[calc(100vh-4rem)] transition-all duration-300 ${
+      className={`fixed left-0 top-16 border-r border-border/40 bg-[#0B1120] h-[calc(100vh-4rem)] transition-all duration-300 ${
         state === "collapsed" ? "w-[60px]" : "w-[280px]"
       }`}
     >

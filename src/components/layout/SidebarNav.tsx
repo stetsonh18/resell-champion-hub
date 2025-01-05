@@ -53,8 +53,8 @@ export const SidebarNav = () => {
                   : "text-gray-400 hover:text-white hover:bg-white/10"
               } ${isCollapsed ? "justify-center" : ""}`}
             >
-              <Icon className="w-5 h-5 min-w-5" />
-              {!isCollapsed && <span className="ml-3 truncate">{item.label}</span>}
+              <Icon className={`w-5 h-5 ${!isCollapsed && "mr-3"}`} />
+              {!isCollapsed && <span className="truncate">{item.label}</span>}
             </Link>
           );
 

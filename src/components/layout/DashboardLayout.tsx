@@ -12,7 +12,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const isCollapsed = state === "collapsed";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0B1120]">
       <TopBar />
       <div className="flex">
         <Sidebar />
