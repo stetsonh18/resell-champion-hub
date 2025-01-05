@@ -2,10 +2,9 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { CategoryStats } from "@/components/categories/CategoryStats";
 import { CategorySearch } from "@/components/categories/CategorySearch";
 import { CategoryTable } from "@/components/categories/CategoryTable";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useCategories } from "@/hooks/use-categories";
+import { AddCategoryDialog } from "@/components/categories/AddCategoryDialog";
 
 const Categories = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,10 +26,7 @@ const Categories = () => {
               Manage your product categories and subcategories
             </p>
           </div>
-          <Button className="bg-secondary hover:bg-secondary/90">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Category
-          </Button>
+          <AddCategoryDialog categories={categories || []} />
         </div>
 
         <CategoryStats categories={categories || []} />
