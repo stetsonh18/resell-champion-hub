@@ -13,32 +13,56 @@ const Login = () => {
   useEffect(() => {
     const handleAuthChange = async (event: string, session: any) => {
       if (session) {
-        // If there's a selected plan in localStorage, redirect to Stripe checkout
-        const selectedPlan = localStorage.getItem('selectedPlan');
-        if (selectedPlan && event === 'SIGNED_IN') {
-          try {
-            const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-              body: { plan: selectedPlan }
-            });
-            
-            if (error) throw error;
-            if (data?.url) {
-              localStorage.removeItem('selectedPlan'); // Clear the stored plan
-              window.location.href = data.url;
-              return;
+        try {
+          // Check subscription status via Edge Function
+          const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription');
+          
+          if (subscriptionError) throw subscriptionError;
+
+          // Update profile with latest subscription status
+          await supabase
+            .from('profiles')
+            .update({
+              subscription_status: subscriptionData.status || 'inactive',
+              subscription_plan: subscriptionData.plan || null
+            })
+            .eq('id', session.user.id);
+
+          // If there's a selected plan in localStorage, redirect to Stripe checkout
+          const selectedPlan = localStorage.getItem('selectedPlan');
+          if (selectedPlan && event === 'SIGNED_IN') {
+            try {
+              const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+                body: { plan: selectedPlan }
+              });
+              
+              if (error) throw error;
+              if (data?.url) {
+                localStorage.removeItem('selectedPlan'); // Clear the stored plan
+                window.location.href = data.url;
+                return;
+              }
+            } catch (error: any) {
+              console.error('Error creating checkout session:', error);
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.message || "Failed to start subscription process. Please try again.",
+              });
+              navigate("/dashboard");
             }
-          } catch (error: any) {
-            console.error('Error creating checkout session:', error);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: error.message || "Failed to start subscription process. Please try again.",
-            });
-            navigate("/dashboard");
           }
+          // If no plan or error occurred, redirect to dashboard
+          navigate("/dashboard");
+        } catch (error: any) {
+          console.error('Error checking subscription:', error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to verify subscription status. Please try again.",
+          });
+          navigate("/dashboard");
         }
-        // If no plan or error occurred, redirect to dashboard
-        navigate("/dashboard");
       }
     };
 
