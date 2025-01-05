@@ -10,11 +10,33 @@ const Categories = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { data: categories, isLoading } = useCategories();
 
-  const filteredCategories = categories?.filter(
-    (category) =>
+  const filteredCategories = categories?.filter((category) => {
+    // First, check if the current category matches the search
+    const categoryMatches = 
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.code.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      category.code.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // If this is a subcategory and it matches, return true
+    if (category.type === "subcategory" && categoryMatches) {
+      return true;
+    }
+
+    // If this is a parent category, check if either:
+    // 1. The category itself matches
+    // 2. Any of its subcategories match
+    if (category.type === "category") {
+      const hasMatchingSubcategories = categories.some(
+        (sub) =>
+          sub.parent_id === category.id &&
+          (sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            sub.code.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+      return categoryMatches || hasMatchingSubcategories;
+    }
+
+    return false;
+  });
 
   return (
     <DashboardLayout>
