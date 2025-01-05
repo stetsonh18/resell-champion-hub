@@ -11,10 +11,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="relative min-h-screen bg-[#0B1120]">
       <TopBar />
-      <div className="flex pt-16"> {/* Added pt-16 to account for header height */}
+      <div className="flex pt-16">
         <Sidebar />
-        <main className="flex-1 pl-[280px] w-full"> {/* Changed ml to pl and added w-full */}
-          <div className="container mx-auto px-4 py-6">
+        <main className="flex-1 pl-[280px]">
+          <div className="p-8 max-w-[1600px] mx-auto">
             <SidebarTrigger />
             {children}
           </div>
