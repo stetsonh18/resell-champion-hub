@@ -1,8 +1,6 @@
 import { 
   Sidebar as ShadcnSidebar,
   SidebarContent,
-  SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { SidebarNav } from "./SidebarNav";
 
