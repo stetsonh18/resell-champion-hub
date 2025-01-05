@@ -10,8 +10,27 @@ const Login = () => {
 
   useEffect(() => {
     // Check if user is already logged in
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
+        // If there's a selected plan in localStorage, redirect to Stripe checkout
+        const selectedPlan = localStorage.getItem('selectedPlan');
+        if (selectedPlan) {
+          try {
+            const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+              body: { plan: selectedPlan }
+            });
+            
+            if (error) throw error;
+            if (data.url) {
+              localStorage.removeItem('selectedPlan'); // Clear the stored plan
+              window.location.href = data.url;
+              return;
+            }
+          } catch (error) {
+            console.error('Error creating checkout session:', error);
+          }
+        }
+        // If no plan or error occurred, redirect to dashboard
         navigate("/dashboard");
       }
     });
