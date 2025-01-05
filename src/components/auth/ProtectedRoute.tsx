@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [hasSubscription, setHasSubscription] = useState<boolean | null>(null);
+  const [hasValidSubscription, setHasValidSubscription] = useState<boolean | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -26,9 +26,9 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
             .eq('id', session.user.id)
             .maybeSingle();
 
-          // Consider both 'active' and 'free' as valid subscription states
-          const isSubscribed = profile?.subscription_status === 'active' || profile?.subscription_status === 'free';
-          setHasSubscription(isSubscribed);
+          // Consider 'active' and 'trialing' as valid subscription states
+          const isSubscribed = profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing';
+          setHasValidSubscription(isSubscribed);
 
           if (!isSubscribed) {
             toast({
@@ -41,7 +41,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       } catch (error) {
         console.error('Error checking auth status:', error);
         setIsAuthenticated(false);
-        setHasSubscription(false);
+        setHasValidSubscription(false);
       }
     };
 
@@ -56,8 +56,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
           .eq('id', session.user.id)
           .maybeSingle();
 
-        // Consider both 'active' and 'free' as valid subscription states
-        setHasSubscription(profile?.subscription_status === 'active' || profile?.subscription_status === 'free');
+        // Consider 'active' and 'trialing' as valid subscription states
+        setHasValidSubscription(profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing');
       }
     });
 
@@ -66,7 +66,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     };
   }, [toast]);
 
-  if (isAuthenticated === null || (isAuthenticated && hasSubscription === null)) {
+  if (isAuthenticated === null || (isAuthenticated && hasValidSubscription === null)) {
     return <div>Loading...</div>;
   }
 
@@ -74,8 +74,9 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/login" />;
   }
 
-  if (isAuthenticated && hasSubscription === false) {
-    return <Navigate to="/" />;
+  // Redirect to pricing page if subscription is not valid
+  if (isAuthenticated && hasValidSubscription === false) {
+    return <Navigate to="/#pricing" />;
   }
 
   return <>{children}</>;
