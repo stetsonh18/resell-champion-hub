@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Profile from "./pages/Profile";
 import Categories from "./pages/Categories";
+import Expenses from "./pages/Expenses";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -102,7 +103,7 @@ const App = () => {
                   path="/expenses"
                   element={
                     <ProtectedRoute>
-                      <Index />
+                      <Expenses />
                     </ProtectedRoute>
                   }
                 />
