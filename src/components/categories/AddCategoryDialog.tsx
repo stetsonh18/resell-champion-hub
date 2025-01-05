@@ -15,7 +15,6 @@ import { CategoryResponse } from "@/hooks/use-categories";
 
 const categoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  code: z.string().min(3, "Code must be 3 characters").max(3, "Code must be 3 characters"),
   type: z.enum(["category", "subcategory"]),
   parent_id: z.string().optional().nullable(),
 });
@@ -44,7 +43,6 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
       name: "",
-      code: generateRandomCode(),
       type: "category",
       parent_id: null,
     },
@@ -60,7 +58,7 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
 
       const { error } = await supabase.from("categories").insert({
         name: data.name,
-        code: data.code,
+        code: generateRandomCode(),
         type: data.type,
         parent_id: data.parent_id,
         user_id: user.id,
@@ -77,7 +75,6 @@ export function AddCategoryDialog({ categories }: AddCategoryDialogProps) {
       setOpen(false);
       form.reset({
         name: "",
-        code: generateRandomCode(),
         type: "category",
         parent_id: null,
       });
