@@ -26,7 +26,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
             .eq('id', session.user.id)
             .maybeSingle();
 
-          const isSubscribed = profile?.subscription_status === 'active';
+          // Consider both 'active' and 'free' as valid subscription states
+          const isSubscribed = profile?.subscription_status === 'active' || profile?.subscription_status === 'free';
           setHasSubscription(isSubscribed);
 
           if (!isSubscribed) {
@@ -55,7 +56,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
           .eq('id', session.user.id)
           .maybeSingle();
 
-        setHasSubscription(profile?.subscription_status === 'active');
+        // Consider both 'active' and 'free' as valid subscription states
+        setHasSubscription(profile?.subscription_status === 'active' || profile?.subscription_status === 'free');
       }
     });
 
