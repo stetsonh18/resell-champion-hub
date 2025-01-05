@@ -23,7 +23,7 @@ export const TopBar = () => {
     <header className="h-16 border-b border-border/40 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
       <div className="h-full px-8 flex items-center justify-between">
         <h1 className="text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          ResellPro
+          Flipped
         </h1>
         <div className="flex items-center space-x-4">
           <Button

@@ -9,7 +9,7 @@ const Landing = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4">
         <header className="flex justify-between items-center py-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">ResellPro</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Flipped</h1>
           <Button onClick={() => navigate("/login")} variant="secondary">
             Sign In
           </Button>
