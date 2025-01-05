@@ -42,8 +42,8 @@ export const TopBar = () => {
   };
 
   return (
-    <header className="h-16 border-b border-border/40 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
-      <div className="h-full px-8 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-[#0F1729]/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
+      <div className="h-16 px-8 flex items-center justify-between">
         <h1 className="text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
           Flipped
         </h1>

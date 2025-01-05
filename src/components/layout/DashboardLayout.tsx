@@ -13,9 +13,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <TopBar />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-4">
+        <main className="flex-1">
+          <div className="max-w-full mx-auto">
+            <div className="p-4">
               <SidebarTrigger />
             </div>
             {children}
