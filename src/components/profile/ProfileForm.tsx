@@ -53,9 +53,7 @@ export const ProfileForm = () => {
           full_name: data.full_name,
           business_name: data.business_name,
           tax_id: data.tax_id,
-          shipping_address: data.shipping_address
-            ? JSON.parse(data.shipping_address)
-            : null,
+          shipping_address: data.shipping_address,
           preferred_currency: data.preferred_currency,
         })
         .eq("id", session.user.id);
@@ -143,7 +141,6 @@ export const ProfileForm = () => {
               <FormControl>
                 <Textarea
                   placeholder="Enter your shipping address"
-                  className="font-mono"
                   {...field}
                 />
               </FormControl>
