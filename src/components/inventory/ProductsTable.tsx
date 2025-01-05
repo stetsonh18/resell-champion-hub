@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash, Package } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -17,9 +17,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const TableRowSkeleton = () => (
   <TableRow>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
@@ -60,12 +62,14 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Product Name</TableHead>
               <TableHead>SKU</TableHead>
+              <TableHead>Product Name</TableHead>
+              <TableHead>Store</TableHead>
               <TableHead>Category</TableHead>
+              <TableHead>Purchase Date</TableHead>
               <TableHead>Quantity</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead>Location</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -84,46 +88,48 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Product Name</TableHead>
             <TableHead>SKU</TableHead>
+            <TableHead>Product Name</TableHead>
+            <TableHead>Store</TableHead>
             <TableHead>Category</TableHead>
+            <TableHead>Purchase Date</TableHead>
             <TableHead>Quantity</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead>Location</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {!products?.length ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center text-muted-foreground">
+              <TableCell colSpan={9} className="text-center text-muted-foreground">
                 No products found. Add your first product to get started.
               </TableCell>
             </TableRow>
           ) : (
             products.map((product) => (
               <TableRow key={product.id}>
-                <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>
                   <code className="rounded bg-muted px-2 py-1">
                     {product.sku}
                   </code>
                 </TableCell>
+                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell>
+                  {product.stores?.name || "—"}
+                </TableCell>
                 <TableCell>{product.categories?.name || "Uncategorized"}</TableCell>
+                <TableCell>
+                  {product.purchase_date 
+                    ? format(new Date(product.purchase_date), "MMM d, yyyy")
+                    : "—"}
+                </TableCell>
                 <TableCell>{product.quantity}</TableCell>
+                <TableCell>{product.location || "—"}</TableCell>
                 <TableCell>
                   <Badge variant={product.status === "in_stock" ? "default" : "secondary"}>
                     {product.status}
                   </Badge>
-                </TableCell>
-                <TableCell>
-                  {product.stores?.name ? (
-                    <span className="text-sm text-muted-foreground">
-                      {product.stores.name}
-                    </span>
-                  ) : (
-                    product.location || "—"
-                  )}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
