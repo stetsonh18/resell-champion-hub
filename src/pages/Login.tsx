@@ -2,10 +2,11 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -42,6 +43,7 @@ const Login = () => {
               },
             }}
             providers={["google", "github"]}
+            view={searchParams.get('screen') === 'sign-up' ? 'sign_up' : 'sign_in'}
           />
         </div>
       </div>

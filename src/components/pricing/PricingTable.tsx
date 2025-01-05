@@ -14,6 +14,12 @@ const PricingTable = () => {
     "Shipping label integration",
   ];
 
+  const handleGetStarted = (plan: 'monthly' | 'annual') => {
+    // Store the selected plan in localStorage
+    localStorage.setItem('selectedPlan', plan);
+    navigate("/login?screen=sign-up");
+  };
+
   return (
     <div className="py-16">
       <div className="text-center mb-12">
@@ -38,7 +44,7 @@ const PricingTable = () => {
             </ul>
           </CardContent>
           <CardFooter>
-            <Button onClick={() => navigate("/login")} className="w-full">
+            <Button onClick={() => handleGetStarted('monthly')} className="w-full">
               Get Started
             </Button>
           </CardFooter>
@@ -64,7 +70,7 @@ const PricingTable = () => {
             </ul>
           </CardContent>
           <CardFooter>
-            <Button onClick={() => navigate("/login")} variant="secondary" className="w-full">
+            <Button onClick={() => handleGetStarted('annual')} variant="secondary" className="w-full">
               Get Started
             </Button>
           </CardFooter>
