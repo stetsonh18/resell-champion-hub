@@ -13,14 +13,15 @@ export const useCategories = () => {
     queryKey: ["categories"],
     queryFn: async () => {
       console.log("Fetching categories...");
-      const { data, error } = await supabase
+      const { data: allCategories, error } = await supabase
         .from("categories")
-        .select(
-          `
+        .select(`
           *,
-          parent:parent_id(name)
-        `
-        )
+          parent:parent_id (
+            id,
+            name
+          )
+        `)
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -28,8 +29,16 @@ export const useCategories = () => {
         throw error;
       }
 
-      console.log("Raw categories data:", data);
-      return data as CategoryResponse[];
+      console.log("Raw categories data:", allCategories);
+      
+      // Log categories by type for debugging
+      const mainCategories = allCategories?.filter(cat => cat.type === 'category') || [];
+      const subcategories = allCategories?.filter(cat => cat.type === 'subcategory') || [];
+      
+      console.log("Main categories:", mainCategories);
+      console.log("Subcategories:", subcategories);
+      
+      return allCategories as CategoryResponse[];
     },
   });
 };
