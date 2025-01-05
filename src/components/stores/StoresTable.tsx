@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { EditStoreDialog } from "./EditStoreDialog";
 
 export const StoresTable = () => {
   const queryClient = useQueryClient();
@@ -46,6 +47,25 @@ export const StoresTable = () => {
     onError: (error) => {
       toast.error("Failed to update store status");
       console.error("Error updating store status:", error);
+    },
+  });
+
+  const { mutate: deleteStore } = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("stores")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stores"] });
+      toast.success("Store deleted successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to delete store");
+      console.error("Error deleting store:", error);
     },
   });
 
@@ -93,10 +113,16 @@ export const StoresTable = () => {
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="icon">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon">
+                  <EditStoreDialog store={store} />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to delete this store?")) {
+                        deleteStore(store.id);
+                      }
+                    }}
+                  >
                     <Trash className="h-4 w-4" />
                   </Button>
                 </div>

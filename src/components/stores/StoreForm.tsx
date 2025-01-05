@@ -16,12 +16,13 @@ import { StoreFormValues, storeFormSchema } from "./schema";
 interface StoreFormProps {
   onSubmit: (values: StoreFormValues) => void;
   isSubmitting?: boolean;
+  defaultValues?: Partial<StoreFormValues>;
 }
 
-export function StoreForm({ onSubmit, isSubmitting }: StoreFormProps) {
+export function StoreForm({ onSubmit, isSubmitting, defaultValues }: StoreFormProps) {
   const form = useForm<StoreFormValues>({
     resolver: zodResolver(storeFormSchema),
-    defaultValues: {
+    defaultValues: defaultValues || {
       name: "",
       location: "",
       notes: "",
@@ -44,6 +45,7 @@ export function StoreForm({ onSubmit, isSubmitting }: StoreFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="location"
@@ -57,15 +59,17 @@ export function StoreForm({ onSubmit, isSubmitting }: StoreFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes (Optional)</FormLabel>
+              <FormLabel>Notes</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Add any additional notes"
+                  placeholder="Enter any additional notes"
+                  className="resize-none"
                   {...field}
                 />
               </FormControl>
@@ -73,11 +77,10 @@ export function StoreForm({ onSubmit, isSubmitting }: StoreFormProps) {
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Adding..." : "Add Store"}
-          </Button>
-        </div>
+
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : "Save Store"}
+        </Button>
       </form>
     </Form>
   );
