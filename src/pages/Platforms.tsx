@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { PlatformsTable } from "@/components/platforms/PlatformsTable";
-import { AddPlatformDialog } from "@/components/platforms/AddPlatformDialog";
-import { PlatformStats } from "@/components/platforms/PlatformStats";
-import { PlatformFilters } from "@/components/platforms/PlatformFilters";
+import { PlatformsTable } from "@/components/platforms/table/PlatformsTable";
+import { AddPlatformDialog } from "@/components/platforms/dialogs/AddPlatformDialog";
+import { PlatformStats } from "@/components/platforms/stats/PlatformStats";
+import { PlatformFilters } from "@/components/platforms/filters/PlatformFilters";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
