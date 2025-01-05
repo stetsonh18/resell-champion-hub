@@ -142,7 +142,7 @@ export const ProfileForm = () => {
               <FormLabel>Shipping Address</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Enter your shipping address as JSON"
+                  placeholder="Enter your shipping address"
                   className="font-mono"
                   {...field}
                 />
