@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,10 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { useCategories } from "@/hooks/use-categories";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
+  category_id: z.string().min(1, "Category is required"),
   sku: z.string().min(1, "SKU is required"),
   purchase_price: z.string().min(1, "Purchase price is required"),
   target_price: z.string().min(1, "Target price is required"),
@@ -30,11 +33,14 @@ export function AddProductForm({ onSuccess }: AddProductFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { data: categories } = useCategories();
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
+      category_id: "",
       sku: "",
       purchase_price: "",
       target_price: "",
@@ -44,17 +50,43 @@ export function AddProductForm({ onSuccess }: AddProductFormProps) {
     },
   });
 
+  const generateSKU = async (categoryId: string) => {
+    if (!categoryId) return "";
+    
+    const category = categories?.find(cat => cat.id === categoryId);
+    if (!category?.code) return "";
+
+    // Get the count of existing products in this category
+    const { count } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('category_id', categoryId);
+
+    const nextNumber = (count || 0) + 1;
+    const paddedNumber = nextNumber.toString().padStart(4, '0');
+    return `${category.code}-${paddedNumber}`;
+  };
+
+  const onCategoryChange = async (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    form.setValue("category_id", categoryId);
+    const sku = await generateSKU(categoryId);
+    form.setValue("sku", sku);
+  };
+
   const onSubmit = async (data: ProductFormValues) => {
     setIsLoading(true);
     try {
       const { error } = await supabase.from("products").insert({
         name: data.name,
+        category_id: data.category_id,
         sku: data.sku,
         purchase_price: parseFloat(data.purchase_price),
         target_price: parseFloat(data.target_price),
         quantity: parseInt(data.quantity),
         condition: data.condition,
         notes: data.notes || null,
+        user_id: (await supabase.auth.getUser()).data.user?.id,
       });
 
       if (error) throw error;
@@ -97,12 +129,37 @@ export function AddProductForm({ onSuccess }: AddProductFormProps) {
 
         <FormField
           control={form.control}
+          name="category_id"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <Select onValueChange={onCategoryChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories?.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="sku"
           render={({ field }) => (
             <FormItem>
               <FormLabel>SKU</FormLabel>
               <FormControl>
-                <Input placeholder="SKU" {...field} />
+                <Input placeholder="SKU" {...field} readOnly />
               </FormControl>
               <FormMessage />
             </FormItem>
