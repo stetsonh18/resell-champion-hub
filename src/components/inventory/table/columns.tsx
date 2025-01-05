@@ -11,6 +11,10 @@ export const columns = [
     accessorKey: "sku",
   },
   {
+    header: "Category",
+    accessorKey: "categories",
+  },
+  {
     header: "Quantity",
     accessorKey: "quantity",
   },
