@@ -90,7 +90,7 @@ export function AvatarUpload({ url, onUpload, size = 40 }: AvatarUploadProps) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <Avatar className={`h-${size} w-${size}`}>
+      <Avatar style={{ width: `${size}px`, height: `${size}px` }}>
         <AvatarImage src={avatarUrl || undefined} />
         <AvatarFallback>
           <User className="w-6 h-6" />
