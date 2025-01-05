@@ -56,33 +56,51 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          business_name: string | null
           created_at: string
+          display_name: string | null
           full_name: string | null
           id: string
+          preferred_currency: string | null
+          shipping_address: Json | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           subscription_plan: string | null
           subscription_status: string | null
+          tax_id: string | null
           trial_end_date: string | null
         }
         Insert: {
+          avatar_url?: string | null
+          business_name?: string | null
           created_at?: string
+          display_name?: string | null
           full_name?: string | null
           id: string
+          preferred_currency?: string | null
+          shipping_address?: Json | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_plan?: string | null
           subscription_status?: string | null
+          tax_id?: string | null
           trial_end_date?: string | null
         }
         Update: {
+          avatar_url?: string | null
+          business_name?: string | null
           created_at?: string
+          display_name?: string | null
           full_name?: string | null
           id?: string
+          preferred_currency?: string | null
+          shipping_address?: Json | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_plan?: string | null
           subscription_status?: string | null
+          tax_id?: string | null
           trial_end_date?: string | null
         }
         Relationships: []
@@ -148,7 +166,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      supported_currency:
+        | "USD"
+        | "EUR"
+        | "GBP"
+        | "CAD"
+        | "AUD"
+        | "JPY"
+        | "CNY"
+        | "INR"
+        | "NZD"
+        | "CHF"
     }
     CompositeTypes: {
       [_ in never]: never
