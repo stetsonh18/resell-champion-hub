@@ -31,16 +31,22 @@ const PricingTable = () => {
         body: { plan }
       });
 
-      if (error) throw error;
-      if (data.url) {
-        window.location.href = data.url;
+      if (error) {
+        console.error('Function error:', error);
+        throw error;
       }
-    } catch (error) {
+      
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error: any) {
       console.error('Error:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to start subscription process. Please try again.",
+        description: error.message || "Failed to start subscription process. Please try again.",
       });
     }
   };
