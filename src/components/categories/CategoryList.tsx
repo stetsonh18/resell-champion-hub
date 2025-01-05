@@ -10,6 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
+import { ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type CategoryResponse = Database["public"]["Tables"]["categories"]["Row"] & {
   parent: {
@@ -50,30 +53,78 @@ export const CategoryList = () => {
     );
   }
 
+  // Group categories by parent
+  const groupedCategories = categories?.reduce((acc, category) => {
+    if (!category.parent_id) {
+      if (!acc[category.id]) {
+        acc[category.id] = {
+          ...category,
+          subcategories: [],
+        };
+      } else {
+        acc[category.id] = {
+          ...category,
+          subcategories: acc[category.id].subcategories,
+        };
+      }
+    } else {
+      if (!acc[category.parent_id]) {
+        acc[category.parent_id] = {
+          subcategories: [category],
+        };
+      } else {
+        acc[category.parent_id].subcategories.push(category);
+      }
+    }
+    return acc;
+  }, {} as Record<string, any>);
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Code</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Parent Category</TableHead>
-          <TableHead>Created At</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {categories?.map((category) => (
-          <TableRow key={category.id}>
-            <TableCell>{category.name}</TableCell>
-            <TableCell>{category.code}</TableCell>
-            <TableCell className="capitalize">{category.type}</TableCell>
-            <TableCell>{category.parent?.name || "-"}</TableCell>
-            <TableCell>
-              {new Date(category.created_at).toLocaleDateString()}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="space-y-2">
+      {Object.values(groupedCategories || {}).map((category: any) => (
+        <div key={category.id} className="space-y-2">
+          {category.name && (
+            <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
+              <div className="flex items-center gap-4">
+                <span className="font-medium text-gray-900">{category.name}</span>
+                <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                  {category.code}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+          {category.subcategories?.map((subcategory: CategoryResponse) => (
+            <div
+              key={subcategory.id}
+              className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm ml-8 relative"
+            >
+              <div className="flex items-center gap-4">
+                <ChevronRight className="h-4 w-4 text-gray-400" />
+                <span className="text-gray-600">{subcategory.name}</span>
+                <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                  {subcategory.code}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 };
