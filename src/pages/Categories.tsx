@@ -1,43 +1,43 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { CategoryList } from "@/components/categories/CategoryList";
-import { CategoryHeader } from "@/components/categories/CategoryHeader";
-import { CategoryStats } from "@/components/categories/CategoryStats";
-import { CategorySearch } from "@/components/categories/CategorySearch";
-import { AddCategoryDialog } from "@/components/categories/AddCategoryDialog";
-import { useState } from "react";
 import { useCategories } from "@/hooks/use-categories";
+import { Button } from "@/components/ui/button";
+import { Plus, Folder, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { AddCategoryDialog } from "@/components/categories/AddCategoryDialog";
+import { EditCategoryDialog } from "@/components/categories/EditCategoryDialog";
+import { DeleteCategoryDialog } from "@/components/categories/DeleteCategoryDialog";
+import { CategoryResponse } from "@/hooks/use-categories";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Categories = () => {
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const { data: categories, isLoading } = useCategories();
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: categories = [], isLoading, error } = useCategories();
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<CategoryResponse | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<CategoryResponse | null>(null);
 
-  const filteredCategories = categories.filter((category) => {
-    const matchesSearch = 
-      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.code.toLowerCase().includes(searchQuery.toLowerCase());
+  // Filter categories based on search query
+  const filteredCategories = categories?.filter((category) =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    // If this is a main category, check if any of its subcategories match the search
-    if (category.type === "category") {
-      const hasMatchingSubcategories = categories.some(
-        (sub) =>
-          sub.type === "subcategory" &&
-          sub.parent_id === category.id &&
-          (sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            sub.code.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-      return matchesSearch || hasMatchingSubcategories;
-    }
+  // Separate categories and subcategories
+  const mainCategories = filteredCategories?.filter((cat) => cat.type === "category") || [];
+  const subcategories = filteredCategories?.filter((cat) => cat.type === "subcategory") || [];
 
-    return matchesSearch;
-  });
-
-  // If there's an error, we should show it
-  if (error) {
+  if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="p-6">
-          <div className="text-red-500">Error loading categories: {error.message}</div>
+        <div className="p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-semibold">Categories</h1>
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
         </div>
       </DashboardLayout>
     );
@@ -45,17 +45,114 @@ const Categories = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 p-6 pb-16">
-        <CategoryHeader onAddCategory={() => setIsAddingCategory(true)} />
-        <CategoryStats categories={categories} />
-        <CategorySearch
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-        <CategoryList categories={filteredCategories} isLoading={isLoading} />
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold">Categories</h1>
+          <Button onClick={() => setIsAddingCategory(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Category
+          </Button>
+        </div>
+
+        {/* Search */}
+        <div className="relative">
+          <Input
+            placeholder="Search categories..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="max-w-md"
+          />
+        </div>
+
+        {/* Categories List */}
+        <div className="space-y-4">
+          {mainCategories.map((category) => {
+            const categorySubcategories = subcategories.filter(
+              (sub) => sub.parent_id === category.id
+            );
+
+            return (
+              <div key={category.id} className="space-y-2">
+                {/* Main Category */}
+                <div className="flex items-center justify-between p-4 bg-card rounded-lg shadow-sm border">
+                  <div className="flex items-center gap-3">
+                    <Folder className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-medium">{category.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setCategoryToEdit(category)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setCategoryToDelete(category)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Subcategories */}
+                {categorySubcategories.map((subcategory) => (
+                  <div
+                    key={subcategory.id}
+                    className="flex items-center justify-between p-4 bg-muted/50 rounded-lg ml-6 relative border border-border/50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        {subcategory.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCategoryToEdit(subcategory)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCategoryToDelete(subcategory)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+
+          {mainCategories.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              No categories found
+            </div>
+          )}
+        </div>
+
+        {/* Dialogs */}
         <AddCategoryDialog
           open={isAddingCategory}
           onOpenChange={setIsAddingCategory}
+        />
+        <EditCategoryDialog
+          open={!!categoryToEdit}
+          onOpenChange={(open) => !open && setCategoryToEdit(null)}
+          category={categoryToEdit}
+        />
+        <DeleteCategoryDialog
+          open={!!categoryToDelete}
+          onOpenChange={(open) => !open && setCategoryToDelete(null)}
+          category={categoryToDelete}
         />
       </div>
     </DashboardLayout>

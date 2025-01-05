@@ -13,7 +13,7 @@ export const useCategories = () => {
     queryKey: ["categories"],
     queryFn: async () => {
       console.log("Fetching categories...");
-      const { data: allCategories, error } = await supabase
+      const { data, error } = await supabase
         .from("categories")
         .select(`
           *,
@@ -29,16 +29,8 @@ export const useCategories = () => {
         throw error;
       }
 
-      console.log("Raw categories data:", allCategories);
-      
-      // Log categories by type for debugging
-      const mainCategories = allCategories?.filter(cat => cat.type === 'category') || [];
-      const subcategories = allCategories?.filter(cat => cat.type === 'subcategory') || [];
-      
-      console.log("Main categories:", mainCategories);
-      console.log("Subcategories:", subcategories);
-      
-      return allCategories as CategoryResponse[];
+      console.log("Categories data:", data);
+      return data as CategoryResponse[];
     },
   });
 };
