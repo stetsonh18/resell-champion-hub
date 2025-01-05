@@ -5,6 +5,7 @@ import { ExpenseFormData } from "../types";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ReceiptFieldProps {
   form: UseFormReturn<ExpenseFormData>;
