@@ -13,6 +13,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { categoryFormSchema, CategoryFormValues } from "./schemas/categoryFormSchema";
 import { CategoryForm } from "./CategoryForm";
+import { CategoryResponse } from "@/hooks/use-categories";
 
 interface AddCategoryDialogProps {
   open: boolean;
@@ -49,12 +50,15 @@ export const AddCategoryDialog = ({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("*")
+        .select(`
+          *,
+          parent:parent_id(name)
+        `)
         .eq("type", "category")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as CategoryResponse[];
     },
   });
 
