@@ -1,7 +1,6 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StoresTable } from "@/components/stores/StoresTable";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { AddStoreDialog } from "@/components/stores/AddStoreDialog";
 
 const Stores = () => {
   return (
@@ -14,10 +13,7 @@ const Stores = () => {
               Manage your store locations and settings
             </p>
           </div>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Store
-          </Button>
+          <AddStoreDialog />
         </div>
         <StoresTable />
       </div>
