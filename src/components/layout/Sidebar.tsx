@@ -8,12 +8,10 @@ import { SidebarNav } from "./SidebarNav";
 
 export const Sidebar = () => {
   return (
-    <SidebarProvider defaultOpen={true}>
-      <ShadcnSidebar className="border-r border-border/40">
-        <SidebarContent>
-          <SidebarNav />
-        </SidebarContent>
-      </ShadcnSidebar>
-    </SidebarProvider>
+    <ShadcnSidebar className="border-r border-border/40">
+      <SidebarContent>
+        <SidebarNav />
+      </SidebarContent>
+    </ShadcnSidebar>
   );
 };
