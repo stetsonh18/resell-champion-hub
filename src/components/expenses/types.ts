@@ -3,4 +3,5 @@ export interface ExpenseFormData {
   description: string;
   amount: string;
   date: string;
+  receipt_url?: string;
 }

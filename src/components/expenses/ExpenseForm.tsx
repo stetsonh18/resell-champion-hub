@@ -8,6 +8,7 @@ import { CategoryField } from "./form-fields/CategoryField";
 import { DescriptionField } from "./form-fields/DescriptionField";
 import { AmountField } from "./form-fields/AmountField";
 import { DateField } from "./form-fields/DateField";
+import { ReceiptField } from "./form-fields/ReceiptField";
 import { ExpenseFormData } from "./types";
 
 interface ExpenseFormProps {
@@ -23,6 +24,7 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
       description: "",
       amount: "",
       date: new Date().toISOString().split("T")[0],
+      receipt_url: "",
     },
   });
 
@@ -37,6 +39,7 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
         description: values.description,
         amount: parseFloat(values.amount),
         date: new Date(values.date).toISOString(),
+        receipt_url: values.receipt_url || null,
         user_id: user.id,
       });
 
@@ -73,6 +76,7 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
         <DescriptionField form={form} />
         <AmountField form={form} />
         <DateField form={form} />
+        <ReceiptField form={form} />
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? "Adding..." : "Add Expense"}
         </Button>
