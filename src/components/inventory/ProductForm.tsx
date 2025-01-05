@@ -48,12 +48,23 @@ export function ProductForm({ onSubmit, isSubmitting }: ProductFormProps) {
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First, fetch all categories
+      const { data: allCategories, error } = await supabase
         .from("categories")
         .select("*")
-        .eq("type", "category");
+        .order("name");
+      
       if (error) throw error;
-      return data;
+
+      // Separate main categories and subcategories
+      const mainCategories = allCategories.filter(cat => cat.type === "category");
+      const subcategories = allCategories.filter(cat => cat.type === "subcategory");
+
+      // Create a hierarchical structure
+      return mainCategories.map(mainCat => ({
+        ...mainCat,
+        subcategories: subcategories.filter(subCat => subCat.parent_id === mainCat.id)
+      }));
     },
   });
 
@@ -190,9 +201,20 @@ export function ProductForm({ onSubmit, isSubmitting }: ProductFormProps) {
                   </FormControl>
                   <SelectContent>
                     {categories?.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
+                      <>
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                        {category.subcategories?.map((subcategory) => (
+                          <SelectItem 
+                            key={subcategory.id} 
+                            value={subcategory.id}
+                            className="pl-6 text-sm text-muted-foreground"
+                          >
+                            ↳ {subcategory.name}
+                          </SelectItem>
+                        ))}
+                      </>
                     ))}
                   </SelectContent>
                 </Select>

@@ -14,9 +14,12 @@ export function AddProductDialog() {
 
   const { mutate: addProduct, isPending } = useMutation({
     mutationFn: async (values: ProductFormValues) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       const { data, error } = await supabase
         .from("products")
-        .insert([{
+        .insert({
           name: values.name,
           category_id: values.category_id,
           purchase_price: values.purchase_price,
@@ -26,8 +29,9 @@ export function AddProductDialog() {
           notes: values.notes,
           store_id: values.store_id,
           location: values.location,
-          purchase_date: values.purchase_date,
-        }])
+          purchase_date: values.purchase_date?.toISOString(),
+          user_id: user.id
+        })
         .select()
         .single();
 
