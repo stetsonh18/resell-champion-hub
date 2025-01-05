@@ -10,19 +10,34 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+interface Category {
+  id: string;
+  name: string;
+  code: string;
+  type: "category" | "subcategory";
+  parent_id: string | null;
+  created_at: string;
+  parent?: {
+    name: string;
+  } | null;
+}
+
 export const CategoryList = () => {
-  const { data: categories, isLoading } = useQuery({
+  const { data: categories, isLoading } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
         .select(`
           *,
-          parent:categories!categories_parent_id_fkey(name)
+          parent:categories!parent_id(name)
         `)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+      }
       return data;
     },
   });
