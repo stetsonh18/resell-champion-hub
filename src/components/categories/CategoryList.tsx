@@ -8,9 +8,10 @@ import { CategoryResponse } from "@/hooks/use-categories";
 
 interface CategoryListProps {
   categories?: CategoryResponse[];
+  isLoading?: boolean;
 }
 
-export const CategoryList = ({ categories }: CategoryListProps) => {
+export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
   const [categoryToDelete, setCategoryToDelete] = useState<CategoryResponse | null>(
     null
   );
@@ -18,12 +19,20 @@ export const CategoryList = ({ categories }: CategoryListProps) => {
     null
   );
 
-  if (!categories) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-12 w-full" />
         <Skeleton className="h-12 w-full" />
         <Skeleton className="h-12 w-full" />
+      </div>
+    );
+  }
+
+  if (!categories?.length) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No categories found
       </div>
     );
   }

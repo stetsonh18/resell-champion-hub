@@ -10,7 +10,7 @@ import { useCategories } from "@/hooks/use-categories";
 const Categories = () => {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: categories = [] } = useCategories();
+  const { data: categories = [], isLoading, error } = useCategories();
 
   const filteredCategories = categories.filter((category) => {
     const matchesSearch = 
@@ -32,16 +32,27 @@ const Categories = () => {
     return matchesSearch;
   });
 
+  // If there's an error, we should show it
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="p-6">
+          <div className="text-red-500">Error loading categories: {error.message}</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6 p-6 pb-16">
         <CategoryHeader onAddCategory={() => setIsAddingCategory(true)} />
-        <CategoryStats categories={categories} />
+        {!isLoading && <CategoryStats categories={categories} />}
         <CategorySearch
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
-        <CategoryList categories={filteredCategories} />
+        <CategoryList categories={filteredCategories} isLoading={isLoading} />
         <AddCategoryDialog
           open={isAddingCategory}
           onOpenChange={setIsAddingCategory}
