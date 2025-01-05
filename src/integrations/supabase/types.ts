@@ -123,12 +123,17 @@ export type Database = {
           created_at: string
           id: string
           last_updated: string
+          location: string | null
           name: string
           notes: string | null
+          purchase_date: string | null
           purchase_price: number
           quantity: number
           sku: string
+          status: Database["public"]["Enums"]["product_status"] | null
+          store_id: string | null
           target_price: number
+          updated_at: string | null
           user_id: string
         }
         Insert: {
@@ -137,12 +142,17 @@ export type Database = {
           created_at?: string
           id?: string
           last_updated?: string
+          location?: string | null
           name: string
           notes?: string | null
+          purchase_date?: string | null
           purchase_price: number
           quantity?: number
           sku: string
+          status?: Database["public"]["Enums"]["product_status"] | null
+          store_id?: string | null
           target_price: number
+          updated_at?: string | null
           user_id: string
         }
         Update: {
@@ -151,12 +161,17 @@ export type Database = {
           created_at?: string
           id?: string
           last_updated?: string
+          location?: string | null
           name?: string
           notes?: string | null
+          purchase_date?: string | null
           purchase_price?: number
           quantity?: number
           sku?: string
+          status?: Database["public"]["Enums"]["product_status"] | null
+          store_id?: string | null
           target_price?: number
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -165,6 +180,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
             referencedColumns: ["id"]
           },
         ]
@@ -313,6 +335,7 @@ export type Database = {
     Enums: {
       category_type: "category" | "subcategory"
       platform_status: "active" | "inactive"
+      product_status: "in_stock" | "listed" | "pending_shipment" | "shipped"
       store_status: "active" | "inactive"
       supported_currency:
         | "USD"
