@@ -10,12 +10,14 @@ import { AmountField } from "./form-fields/AmountField";
 import { DateField } from "./form-fields/DateField";
 import { ReceiptField } from "./form-fields/ReceiptField";
 import { ExpenseFormData } from "./types";
+import { useEffect } from "react";
 
 interface ExpenseFormProps {
+  expense?: any;
   onSuccess?: () => void;
 }
 
-export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
+export const ExpenseForm = ({ expense, onSuccess }: ExpenseFormProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const form = useForm<ExpenseFormData>({
@@ -28,29 +30,52 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
     },
   });
 
+  useEffect(() => {
+    if (expense) {
+      form.reset({
+        category: expense.category,
+        description: expense.description,
+        amount: expense.amount.toString(),
+        date: new Date(expense.date).toISOString().split("T")[0],
+        receipt_url: expense.receipt_url || "",
+      });
+    }
+  }, [expense, form]);
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (values: ExpenseFormData) => {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) throw new Error("No user found");
 
-      const { error } = await supabase.from("expenses").insert({
+      const expenseData = {
         category: values.category,
         description: values.description,
         amount: parseFloat(values.amount),
         date: new Date(values.date).toISOString(),
         receipt_url: values.receipt_url || null,
         user_id: user.id,
-      });
+      };
 
-      if (error) throw error;
+      if (expense) {
+        const { error } = await supabase
+          .from("expenses")
+          .update(expenseData)
+          .eq("id", expense.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("expenses")
+          .insert(expenseData);
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({ queryKey: ["expense-stats"] });
       toast({
         title: "Success",
-        description: "Expense added successfully",
+        description: expense ? "Expense updated successfully" : "Expense added successfully",
       });
       form.reset();
       onSuccess?.();
@@ -58,10 +83,10 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
     onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to add expense",
+        description: expense ? "Failed to update expense" : "Failed to add expense",
         variant: "destructive",
       });
-      console.error("Error adding expense:", error);
+      console.error("Error with expense:", error);
     },
   });
 
@@ -78,7 +103,7 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
         <DateField form={form} />
         <ReceiptField form={form} />
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Adding..." : "Add Expense"}
+          {isPending ? (expense ? "Updating..." : "Adding...") : (expense ? "Update Expense" : "Add Expense")}
         </Button>
       </form>
     </Form>
