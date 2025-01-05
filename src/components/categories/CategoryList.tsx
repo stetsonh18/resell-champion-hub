@@ -46,6 +46,8 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
     );
   }
 
+  console.log("Raw categories data in CategoryList:", categories);
+
   // First, separate categories and subcategories
   const mainCategories = categories.filter((cat) => cat.type === "category") || [];
   const subcategories = categories.filter((cat) => cat.type === "subcategory") || [];
@@ -55,9 +57,14 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
 
   // Create the grouped structure
   const groupedCategories = mainCategories.reduce((acc, category) => {
+    const categorySubcategories = subcategories.filter(
+      (sub) => sub.parent_id === category.id
+    );
+    console.log(`Subcategories for category ${category.name}:`, categorySubcategories);
+    
     acc[category.id] = {
       ...category,
-      subcategories: subcategories.filter((sub) => sub.parent_id === category.id),
+      subcategories: categorySubcategories,
     };
     return acc;
   }, {} as Record<string, any>);
@@ -73,14 +80,18 @@ export const CategoryList = ({ categories, isLoading }: CategoryListProps) => {
             onEdit={setCategoryToEdit}
             onDelete={setCategoryToDelete}
           />
-          {category.subcategories?.map((subcategory: CategoryResponse) => (
-            <SubcategoryCard
-              key={subcategory.id}
-              subcategory={subcategory}
-              onEdit={setCategoryToEdit}
-              onDelete={setCategoryToDelete}
-            />
-          ))}
+          {category.subcategories?.length > 0 && (
+            <div className="space-y-2">
+              {category.subcategories.map((subcategory: CategoryResponse) => (
+                <SubcategoryCard
+                  key={subcategory.id}
+                  subcategory={subcategory}
+                  onEdit={setCategoryToEdit}
+                  onDelete={setCategoryToDelete}
+                />
+              ))}
+            </div>
+          )}
         </div>
       ))}
 
