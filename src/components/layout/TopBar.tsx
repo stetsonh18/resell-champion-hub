@@ -7,12 +7,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export const TopBar = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("avatar_url")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profile?.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -43,8 +65,13 @@ export const TopBar = () => {
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <User className="w-5 w-5" />
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={avatarUrl || undefined} />
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">

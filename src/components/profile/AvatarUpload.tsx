@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
@@ -13,7 +13,33 @@ interface AvatarUploadProps {
 
 export function AvatarUpload({ url, onUpload, size = 40 }: AvatarUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (url) setAvatarUrl(url);
+  }, [url]);
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("avatar_url")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profile?.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
+      }
+    };
+
+    if (!url) {
+      fetchAvatar();
+    }
+  }, [url]);
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -44,6 +70,7 @@ export function AvatarUpload({ url, onUpload, size = 40 }: AvatarUploadProps) {
         .from("avatars")
         .getPublicUrl(filePath);
 
+      setAvatarUrl(publicUrl);
       onUpload(publicUrl);
       
       toast({
@@ -64,7 +91,7 @@ export function AvatarUpload({ url, onUpload, size = 40 }: AvatarUploadProps) {
   return (
     <div className="flex flex-col items-center gap-4">
       <Avatar className={`h-${size} w-${size}`}>
-        <AvatarImage src={url || undefined} />
+        <AvatarImage src={avatarUrl || undefined} />
         <AvatarFallback>
           <User className="w-6 h-6" />
         </AvatarFallback>
