@@ -22,27 +22,44 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface FormValues {
-  name: string;
-  location: string;
-  notes?: string;
-}
+const formSchema = z.object({
+  name: z.string().min(1, "Store name is required"),
+  location: z.string().min(1, "Location is required"),
+  notes: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export function AddStoreDialog() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const form = useForm<FormValues>();
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      location: "",
+      notes: "",
+    },
+  });
 
   const { mutate: createStore, isPending } = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { error } = await supabase.from("stores").insert([
-        {
-          name: values.name,
-          location: values.location,
-          notes: values.notes,
-        },
-      ]);
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !user) {
+        throw new Error("Authentication required");
+      }
+
+      const { error } = await supabase.from("stores").insert({
+        name: values.name,
+        location: values.location,
+        notes: values.notes,
+        user_id: user.id,
+        status: 'active',
+      });
 
       if (error) throw error;
     },
