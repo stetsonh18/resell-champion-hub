@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
@@ -26,21 +26,12 @@ const TableRowSkeleton = () => (
   </TableRow>
 );
 
-export const StoresTable = () => {
+interface StoresTableProps {
+  stores?: any[];
+}
+
+export const StoresTable = ({ stores }: StoresTableProps) => {
   const queryClient = useQueryClient();
-
-  const { data: stores, isLoading } = useQuery({
-    queryKey: ["stores"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("stores")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
 
   const { mutate: updateStoreStatus } = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: 'active' | 'inactive' }) => {
@@ -80,6 +71,29 @@ export const StoresTable = () => {
     },
   });
 
+  if (!stores) {
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Store Name</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRowSkeleton />
+            <TableRowSkeleton />
+            <TableRowSkeleton />
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -93,20 +107,14 @@ export const StoresTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading ? (
-            <>
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-            </>
-          ) : stores?.length === 0 ? (
+          {stores.length === 0 ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center text-muted-foreground">
                 No stores found. Create your first store to get started.
               </TableCell>
             </TableRow>
           ) : (
-            stores?.map((store) => (
+            stores.map((store) => (
               <TableRow key={store.id}>
                 <TableCell className="font-medium">{store.name}</TableCell>
                 <TableCell>{store.location}</TableCell>
