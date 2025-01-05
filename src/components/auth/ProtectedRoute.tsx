@@ -20,13 +20,11 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
         if (session) {
           // Check subscription status
-          const { data: profiles, error } = await supabase
+          const { data: profiles } = await supabase
             .from('profiles')
             .select('subscription_status')
             .eq('id', session.user.id)
-            .single();
-
-          if (error) throw error;
+            .maybeSingle();
 
           const isSubscribed = profiles?.subscription_status === 'active';
           setHasSubscription(isSubscribed);
@@ -54,15 +52,13 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setIsAuthenticated(!!session);
       if (session) {
-        const { data: profiles, error } = await supabase
+        const { data: profiles } = await supabase
           .from('profiles')
           .select('subscription_status')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (!error) {
-          setHasSubscription(profiles?.subscription_status === 'active');
-        }
+        setHasSubscription(profiles?.subscription_status === 'active');
       }
     });
 

@@ -14,6 +14,25 @@ const Login = () => {
     const handleAuthChange = async (event: string, session: any) => {
       if (session) {
         try {
+          // First ensure profile exists
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (!existingProfile) {
+            // Create profile if it doesn't exist
+            await supabase
+              .from('profiles')
+              .insert([
+                { 
+                  id: session.user.id,
+                  subscription_status: 'inactive'
+                }
+              ]);
+          }
+
           // Check subscription status via Edge Function
           const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription');
           
@@ -28,7 +47,7 @@ const Login = () => {
             })
             .eq('id', session.user.id);
 
-          // If there's a selected plan in localStorage, redirect to Stripe checkout
+          // Handle selected plan if exists
           const selectedPlan = localStorage.getItem('selectedPlan');
           if (selectedPlan && event === 'SIGNED_IN') {
             try {
@@ -38,7 +57,7 @@ const Login = () => {
               
               if (error) throw error;
               if (data?.url) {
-                localStorage.removeItem('selectedPlan'); // Clear the stored plan
+                localStorage.removeItem('selectedPlan');
                 window.location.href = data.url;
                 return;
               }
@@ -49,10 +68,9 @@ const Login = () => {
                 title: "Error",
                 description: error.message || "Failed to start subscription process. Please try again.",
               });
-              navigate("/dashboard");
             }
           }
-          // If no plan or error occurred, redirect to dashboard
+          
           navigate("/dashboard");
         } catch (error: any) {
           console.error('Error checking subscription:', error);
