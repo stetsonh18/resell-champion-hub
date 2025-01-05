@@ -36,7 +36,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           notes: values.notes,
           category_id: values.category_id,
           store_id: values.store_id,
-          purchase_date: values.purchase_date,
+          purchase_date: values.purchase_date?.toISOString(),
           location: values.location,
           status: values.status,
         })
@@ -78,7 +78,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
             notes: product.notes || "",
             category_id: product.category_id,
             store_id: product.store_id,
-            purchase_date: product.purchase_date,
+            purchase_date: product.purchase_date ? new Date(product.purchase_date) : undefined,
             location: product.location || "",
             status: product.status,
           }}

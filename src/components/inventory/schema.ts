@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { z } from "zod";
 
 export const productFormSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -6,11 +6,12 @@ export const productFormSchema = z.object({
   purchase_price: z.number().min(0, "Purchase price must be positive"),
   target_price: z.number().min(0, "Target price must be positive"),
   quantity: z.number().int().min(0, "Quantity must be positive"),
-  condition: z.string().min(1, "Condition is required"),
+  condition: z.string(),
   notes: z.string().optional(),
   store_id: z.string().optional(),
   location: z.string().optional(),
   purchase_date: z.date().optional(),
+  status: z.enum(['in_stock', 'sold', 'reserved']).optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
