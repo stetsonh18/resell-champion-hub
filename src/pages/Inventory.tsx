@@ -6,13 +6,16 @@ import { InventoryTable } from "@/components/inventory/table/InventoryTable";
 import { InventoryStats } from "@/components/inventory/stats/InventoryStats";
 import { InventoryFilters } from "@/components/inventory/filters/InventoryFilters";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { AddProductForm } from "@/components/inventory/forms/AddProductForm";
 
 export default function Inventory() {
   const [searchQuery, setSearchQuery] = useState("");
   const [hideShipped, setHideShipped] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -35,9 +38,19 @@ export default function Inventory() {
             <h1 className="text-3xl font-bold tracking-tight">Inventory</h1>
             <p className="text-muted-foreground">Manage your product inventory</p>
           </div>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" /> Add Product
-          </Button>
+          <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> Add Product
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add New Product</DialogTitle>
+              </DialogHeader>
+              <AddProductForm onSuccess={() => setIsAddProductOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
 
         <InventoryStats />
