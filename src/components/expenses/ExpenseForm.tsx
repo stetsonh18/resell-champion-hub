@@ -31,14 +31,17 @@ export const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (values: ExpenseFormData) => {
-      const { error } = await supabase.from("expenses").insert([
-        {
-          category: values.category,
-          description: values.description,
-          amount: parseFloat(values.amount),
-          date: new Date(values.date).toISOString(),
-        },
-      ]);
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error("No user found");
+
+      const { error } = await supabase.from("expenses").insert({
+        category: values.category,
+        description: values.description,
+        amount: parseFloat(values.amount),
+        date: new Date(values.date).toISOString(),
+        user_id: user.id,
+      });
 
       if (error) throw error;
     },
