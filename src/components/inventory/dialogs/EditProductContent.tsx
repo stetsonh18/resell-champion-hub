@@ -17,6 +17,8 @@ interface EditProductContentProps {
       id: string;
       name: string;
       code: string;
+      type: string;
+      parent_id?: string;
     };
     purchase_date?: string;
     status?: "in_stock" | "listed" | "pending_shipment" | "shipped";

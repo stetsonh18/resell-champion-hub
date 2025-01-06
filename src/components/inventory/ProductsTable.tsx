@@ -4,6 +4,8 @@ import { ProductTableHeader } from "./table/TableHeader";
 import { ProductRow } from "./table/ProductRow";
 import { EmptyState } from "./table/EmptyState";
 import { useDeleteProduct } from "@/hooks/use-delete-product";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProductsTableProps {
   products?: any[];
@@ -13,7 +15,32 @@ interface ProductsTableProps {
 export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
   const { mutate: deleteProduct } = useDeleteProduct();
 
-  if (isLoading) {
+  const { data: productsWithCategories, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ["products-with-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          *,
+          categories (
+            id,
+            name,
+            code,
+            type,
+            parent_id
+          ),
+          stores (
+            name
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoading || isLoadingProducts) {
     return (
       <div className="rounded-md border">
         <Table>
@@ -31,10 +58,10 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
       <Table>
         <ProductTableHeader />
         <TableBody>
-          {!products?.length ? (
+          {!productsWithCategories?.length ? (
             <EmptyState />
           ) : (
-            products.map((product) => (
+            productsWithCategories.map((product) => (
               <ProductRow 
                 key={product.id} 
                 product={product} 
