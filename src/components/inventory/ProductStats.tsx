@@ -7,7 +7,6 @@ export const ProductStats = ({ products }: { products?: any[] }) => {
   const inStockProducts = products?.filter(product => product.status === 'in_stock').length || 0;
   const listedProducts = products?.filter(product => product.status === 'listed').length || 0;
   const totalActiveProducts = inStockProducts + listedProducts;
-  const lowStock = products?.filter(product => product.quantity <= 5 && (product.status === 'in_stock' || product.status === 'listed')).length || 0;
   const outOfStock = products?.filter(product => product.quantity === 0 && (product.status === 'in_stock' || product.status === 'listed')).length || 0;
 
   return (
@@ -18,8 +17,8 @@ export const ProductStats = ({ products }: { products?: any[] }) => {
         icon={Package}
       />
       <StatCard
-        title="Low Stock Items"
-        value={lowStock.toString()}
+        title="In Stock Items"
+        value={inStockProducts.toString()}
         icon={AlertTriangle}
       />
       <StatCard
