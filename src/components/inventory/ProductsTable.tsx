@@ -1,11 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody } from "@/components/ui/table";
-import { toast } from "sonner";
 import { LoadingState } from "./table/TableSkeleton";
 import { ProductTableHeader } from "./table/TableHeader";
 import { ProductRow } from "./table/ProductRow";
 import { EmptyState } from "./table/EmptyState";
+import { useDeleteProduct } from "@/hooks/use-delete-product";
 
 interface ProductsTableProps {
   products?: any[];
@@ -13,26 +11,7 @@ interface ProductsTableProps {
 }
 
 export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
-  const queryClient = useQueryClient();
-
-  const { mutate: deleteProduct } = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("products")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Product deleted successfully");
-    },
-    onError: (error) => {
-      toast.error("Failed to delete product");
-      console.error("Error deleting product:", error);
-    },
-  });
+  const { mutate: deleteProduct } = useDeleteProduct();
 
   if (isLoading) {
     return (
