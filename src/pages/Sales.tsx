@@ -3,8 +3,7 @@ import { SalesTable } from "@/components/sales/SalesTable";
 import { SalesStats } from "@/components/sales/SalesStats";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
 
 const Sales = () => {
   const { data: sales, isLoading } = useQuery({
@@ -37,10 +36,7 @@ const Sales = () => {
               Track and manage your sales
             </p>
           </div>
-          <Button>
-            <Plus className="mr-2" />
-            Add Sale
-          </Button>
+          <AddSaleDialog />
         </div>
 
         <SalesStats sales={sales} />
