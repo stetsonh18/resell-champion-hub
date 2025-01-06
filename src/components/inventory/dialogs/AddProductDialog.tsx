@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ProductForm } from "../forms/ProductForm";
-import { useProductForm } from "@/hooks/use-product-form";
+import { useCreateProduct } from "@/hooks/use-create-product";
 
 interface AddProductDialogProps {
   isOpen: boolean;
@@ -8,7 +8,7 @@ interface AddProductDialogProps {
 }
 
 export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
-  const { form, onSubmit } = useProductForm(onClose);
+  const { form, onSubmit } = useCreateProduct(onClose);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -16,7 +16,7 @@ export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
         <DialogHeader>
           <DialogTitle>Add New Product</DialogTitle>
         </DialogHeader>
-        <ProductForm form={form} onSubmit={onSubmit} />
+        <ProductForm form={form} onSubmit={onSubmit} buttonText="Create Product" />
       </DialogContent>
     </Dialog>
   );

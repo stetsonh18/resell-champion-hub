@@ -1,5 +1,5 @@
 import { ProductForm } from "../forms/ProductForm";
-import { useProductForm } from "@/hooks/use-product-form";
+import { useEditProduct } from "@/hooks/use-edit-product";
 
 interface EditProductContentProps {
   product: {
@@ -18,7 +18,7 @@ interface EditProductContentProps {
 }
 
 export function EditProductContent({ product, onClose }: EditProductContentProps) {
-  const { form, onSubmit } = useProductForm(onClose, product.id);
+  const { form, onSubmit } = useEditProduct(product.id, onClose);
 
-  return <ProductForm form={form} onSubmit={onSubmit} />;
+  return <ProductForm form={form} onSubmit={onSubmit} buttonText="Update Product" />;
 }
