@@ -78,7 +78,7 @@ export const useCreateSale = (onSuccess: () => void) => {
       };
 
       // Call the handle_product_sale function with proper typing
-      const { error: transactionError } = await supabase.rpc<HandleProductSaleParams>(
+      const { error: transactionError } = await supabase.rpc<HandleProductSaleParams, void>(
         'handle_product_sale',
         {
           p_product_id: data.product_id,
