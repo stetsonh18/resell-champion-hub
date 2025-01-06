@@ -49,16 +49,11 @@ export const useProductForm = (onSuccess: () => void, productId?: string) => {
         throw new Error("User not authenticated");
       }
 
+      // Prepare the data for database insertion/update
+      const { purchase_date, ...rest } = data;
       const productData = {
-        name: data.name,
-        purchase_price: data.purchase_price,
-        target_price: data.target_price,
-        quantity: data.quantity,
-        condition: data.condition,
-        notes: data.notes,
-        store_id: data.store_id,
-        category_id: data.category_id,
-        purchase_date: data.purchase_date.toISOString(),
+        ...rest,
+        purchase_date: purchase_date.toISOString(),
         user_id: user.id,
       };
 
@@ -74,7 +69,7 @@ export const useProductForm = (onSuccess: () => void, productId?: string) => {
       } else {
         const { error } = await supabase
           .from("products")
-          .insert(productData);
+          .insert([productData]);  // Note: Wrap in array for insert
 
         if (error) throw error;
 
