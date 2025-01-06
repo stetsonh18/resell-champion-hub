@@ -14,6 +14,7 @@ interface EditProductContentProps {
     store_id?: string;
     category_id?: string;
     purchase_date?: string;
+    status?: string;
   };
   onClose: () => void;
 }
@@ -32,10 +33,11 @@ export function EditProductContent({ product, onClose }: EditProductContentProps
       notes: product.notes || "",
       store_id: product.store_id,
       category_id: product.category_id,
+      status: product.status || "in_stock",
       // Ensure we're always working with a Date object
       purchase_date: product.purchase_date ? new Date(product.purchase_date) : new Date(),
     });
   }, [product, form]);
 
-  return <ProductForm form={form} onSubmit={onSubmit} buttonText="Update Product" />;
+  return <ProductForm form={form} onSubmit={onSubmit} buttonText="Update Product" showStatus={true} />;
 }

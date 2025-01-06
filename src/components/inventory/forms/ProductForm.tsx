@@ -8,14 +8,16 @@ import { PurchaseDateField } from "./fields/DateField";
 import { PriceQuantityFields } from "./fields/PriceQuantityFields";
 import { StoreField } from "./fields/StoreField";
 import { CategoryField } from "./fields/CategoryField";
+import { StatusField } from "./fields/StatusField";
 
 interface ProductFormProps {
   form: UseFormReturn<ProductFormValues>;
   onSubmit: () => void;
   buttonText: string;
+  showStatus?: boolean;
 }
 
-export function ProductForm({ form, onSubmit, buttonText }: ProductFormProps) {
+export function ProductForm({ form, onSubmit, buttonText, showStatus = false }: ProductFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4">
@@ -29,6 +31,7 @@ export function ProductForm({ form, onSubmit, buttonText }: ProductFormProps) {
           <ConditionField form={form} />
           <PurchaseDateField form={form} />
         </div>
+        {showStatus && <StatusField form={form} />}
         <NotesField form={form} />
         <div className="flex justify-end">
           <Button type="submit">{buttonText}</Button>

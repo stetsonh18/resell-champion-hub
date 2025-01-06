@@ -19,6 +19,7 @@ const productFormSchema = z.object({
   notes: z.string().optional(),
   store_id: z.string().optional(),
   category_id: z.string().optional(),
+  status: z.enum(["in_stock", "listed", "sold"]).optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -37,6 +38,7 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
       notes: "",
       store_id: undefined,
       category_id: undefined,
+      status: "in_stock",
       purchase_date: new Date(),
     },
   });
@@ -58,6 +60,7 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
         notes: data.notes,
         store_id: data.store_id,
         category_id: data.category_id,
+        status: data.status,
         purchase_date: data.purchase_date.toISOString(),
         updated_at: new Date().toISOString(),
       };
