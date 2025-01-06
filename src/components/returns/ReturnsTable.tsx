@@ -13,6 +13,20 @@ import { Badge } from "@/components/ui/badge";
 import { TableSkeleton } from "./TableSkeleton";
 import { ReturnActions } from "./ReturnActions";
 
+type ReturnWithDetails = {
+  id: string;
+  return_date: string;
+  reason: string;
+  refund_amount: number;
+  status: "pending" | "approved" | "rejected";
+  sales: {
+    sale_price: number;
+    products: {
+      name: string;
+    };
+  };
+};
+
 export const ReturnsTable = () => {
   const { data: returns, isLoading } = useQuery({
     queryKey: ["returns"],
@@ -21,7 +35,7 @@ export const ReturnsTable = () => {
         .from("returns")
         .select(`
           *,
-          sales!sales_id (
+          sales!sale_id (
             sale_price,
             products (
               name
@@ -31,7 +45,7 @@ export const ReturnsTable = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as ReturnWithDetails[];
     },
   });
 
