@@ -2,7 +2,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
-import { ProductFormValues } from "@/hooks/use-product-form";
+import { ProductFormValues } from "@/hooks/use-create-product";
 
 interface FormFieldProps {
   form: UseFormReturn<ProductFormValues>;

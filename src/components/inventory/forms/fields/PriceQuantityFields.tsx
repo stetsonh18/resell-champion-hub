@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { ProductFormValues } from "@/hooks/use-product-form";
+import { ProductFormValues } from "@/hooks/use-create-product";
 
 interface PriceQuantityFieldsProps {
   form: UseFormReturn<ProductFormValues>;

@@ -6,7 +6,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { UseFormReturn } from "react-hook-form";
-import { ProductFormValues } from "@/hooks/use-product-form";
+import { ProductFormValues } from "@/hooks/use-create-product";
 
 interface DateFieldProps {
   form: UseFormReturn<ProductFormValues>;

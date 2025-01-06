@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
-import { ProductFormValues } from "@/hooks/use-product-form";
+import { ProductFormValues } from "@/hooks/use-create-product";
 
 interface ConditionFieldProps {
   form: UseFormReturn<ProductFormValues>;
