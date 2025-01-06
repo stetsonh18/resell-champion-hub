@@ -20,18 +20,18 @@ interface ProductFormProps {
 export function ProductForm({ form, onSubmit, buttonText, showStatus = false }: ProductFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-6">
-        <div className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-8">
+        <div className="grid gap-6">
           <NameField form={form} />
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6">
             <StoreField form={form} />
             <CategoryField form={form} />
           </div>
 
           <PriceQuantityFields form={form} />
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6">
             <ConditionField form={form} />
             <PurchaseDateField form={form} />
           </div>
@@ -41,8 +41,8 @@ export function ProductForm({ form, onSubmit, buttonText, showStatus = false }: 
           <NotesField form={form} />
         </div>
 
-        <div className="flex justify-end pt-2">
-          <Button type="submit" className="w-full sm:w-auto">
+        <div className="flex justify-end pt-4">
+          <Button type="submit" className="w-32">
             {buttonText}
           </Button>
         </div>

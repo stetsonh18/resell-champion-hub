@@ -12,11 +12,13 @@ export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] bg-background p-6">
+      <DialogContent className="sm:max-w-[650px] bg-background p-8">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">Add Product</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Add Product</DialogTitle>
         </DialogHeader>
-        <ProductForm form={form} onSubmit={onSubmit} buttonText="Create Product" />
+        <div className="mt-6">
+          <ProductForm form={form} onSubmit={onSubmit} buttonText="Create Product" />
+        </div>
       </DialogContent>
     </Dialog>
   );

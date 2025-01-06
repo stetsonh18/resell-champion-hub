@@ -14,12 +14,12 @@ export const NameField = ({ form }: FormFieldProps) => (
     name="name"
     render={({ field }) => (
       <FormItem>
-        <FormLabel>Name</FormLabel>
+        <FormLabel className="text-sm font-medium">Name</FormLabel>
         <FormControl>
           <Input 
             placeholder="Enter product name" 
             {...field} 
-            className="bg-background"
+            className="bg-background h-10"
           />
         </FormControl>
         <FormMessage />
@@ -34,12 +34,12 @@ export const NotesField = ({ form }: FormFieldProps) => (
     name="notes"
     render={({ field }) => (
       <FormItem>
-        <FormLabel>Notes</FormLabel>
+        <FormLabel className="text-sm font-medium">Notes</FormLabel>
         <FormControl>
           <Textarea 
             placeholder="Add any additional notes" 
             {...field} 
-            className="bg-background min-h-[100px] resize-none"
+            className="bg-background min-h-[120px] resize-none"
           />
         </FormControl>
         <FormMessage />

@@ -34,11 +34,13 @@ export const EditProductDialog = ({ product }: EditProductDialogProps) => {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-background p-6">
+        <DialogContent className="sm:max-w-[650px] bg-background p-8">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">Edit Product</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">Edit Product</DialogTitle>
           </DialogHeader>
-          <EditProductContent product={product} onClose={() => setOpen(false)} />
+          <div className="mt-6">
+            <EditProductContent product={product} onClose={() => setOpen(false)} />
+          </div>
         </DialogContent>
       </Dialog>
     </>

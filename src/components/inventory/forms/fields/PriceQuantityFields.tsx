@@ -9,21 +9,21 @@ interface PriceQuantityFieldsProps {
 
 export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-6">
         <FormField
           control={form.control}
           name="purchase_price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Purchase Price</FormLabel>
+              <FormLabel className="text-sm font-medium">Purchase Price</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
                   step="0.01" 
                   placeholder="0.00" 
                   {...field} 
-                  className="bg-background"
+                  className="bg-background h-10"
                 />
               </FormControl>
               <FormMessage />
@@ -36,14 +36,14 @@ export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
           name="target_price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Target Price</FormLabel>
+              <FormLabel className="text-sm font-medium">Target Price</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
                   step="0.01" 
                   placeholder="0.00" 
                   {...field}
-                  className="bg-background"
+                  className="bg-background h-10"
                 />
               </FormControl>
               <FormMessage />
@@ -57,13 +57,13 @@ export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
         name="quantity"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Quantity</FormLabel>
+            <FormLabel className="text-sm font-medium">Quantity</FormLabel>
             <FormControl>
               <Input 
                 type="number" 
                 placeholder="0" 
                 {...field}
-                className="bg-background"
+                className="bg-background h-10"
               />
             </FormControl>
             <FormMessage />
