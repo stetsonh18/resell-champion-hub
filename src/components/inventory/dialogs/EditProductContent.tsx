@@ -24,7 +24,6 @@ export function EditProductContent({ product, onClose }: EditProductContentProps
   const { form, onSubmit } = useEditProduct(product.id, onClose);
 
   useEffect(() => {
-    // Set form default values when product data is available
     form.reset({
       name: product.name || "",
       purchase_price: product.purchase_price || 0,
@@ -32,8 +31,8 @@ export function EditProductContent({ product, onClose }: EditProductContentProps
       quantity: product.quantity || 0,
       condition: product.condition as any || "new",
       notes: product.notes || "",
-      store_id: product.store_id || null,
-      category_id: product.category_id || null,
+      store_id: product.store_id || "",
+      category_id: product.category_id || "",
       status: (product.status || "in_stock") as "in_stock" | "listed" | "pending_shipment" | "shipped",
       location: product.location || "",
       purchase_date: product.purchase_date ? new Date(product.purchase_date) : new Date(),
