@@ -11,7 +11,14 @@ import {
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { LoadingState } from "./table/TableSkeleton";
-import { ProductActions } from "./table/ProductActions";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ProductStatus } from "./table/ProductStatus";
 
 interface ProductsTableProps {
@@ -40,10 +47,6 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
       console.error("Error deleting product:", error);
     },
   });
-
-  const handleProductUpdated = () => {
-    queryClient.invalidateQueries({ queryKey: ["products"] });
-  };
 
   if (isLoading) {
     return (
@@ -117,11 +120,22 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
                   <ProductStatus status={product.status} />
                 </TableCell>
                 <TableCell className="text-right">
-                  <ProductActions
-                    product={product}
-                    onDelete={() => deleteProduct(product.id)}
-                    onEdit={handleProductUpdated}
-                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => deleteProduct(product.id)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

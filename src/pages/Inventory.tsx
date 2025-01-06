@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ProductsTable } from "@/components/inventory/ProductsTable";
-import { AddProductDialog } from "@/components/inventory/AddProductDialog";
 import { ProductStats } from "@/components/inventory/ProductStats";
 import { ProductFilters } from "@/components/inventory/ProductFilters";
 import { useQuery } from "@tanstack/react-query";
@@ -54,7 +53,6 @@ const Inventory = () => {
               Manage your product inventory
             </p>
           </div>
-          <AddProductDialog />
         </div>
 
         <ProductStats products={products} />
