@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { PlatformActions } from "./PlatformActions";
 import { PlatformStatus } from "./PlatformStatus";
@@ -58,6 +58,11 @@ export const PlatformsTable = ({ platforms }: PlatformsTableProps) => {
       console.error("Error deleting platform:", error);
     },
   });
+
+  const formatDate = (dateString: string) => {
+    const date = parseISO(dateString);
+    return isValid(date) ? format(date, "MMM d, yyyy") : "Invalid date";
+  };
 
   if (!platforms) {
     return <TableSkeleton />;
@@ -112,7 +117,7 @@ export const PlatformsTable = ({ platforms }: PlatformsTableProps) => {
                   />
                 </TableCell>
                 <TableCell>
-                  {format(new Date(platform.created_at), "MMM d, yyyy")}
+                  {formatDate(platform.created_at)}
                 </TableCell>
                 <TableCell>
                   <PlatformActions
