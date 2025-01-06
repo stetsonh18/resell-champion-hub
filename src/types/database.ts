@@ -45,14 +45,17 @@ export interface Sale {
   user_id: string;
   product_id: string;
   platform_id: string;
-  store_id: string;
   sale_price: number;
-  fees: number;
-  shipping_cost: number;
-  net_profit: number;
+  quantity: number;
+  estimated_profit: number | null;
   sale_date: string;
-  order_number: string;
-  tracking_number: string | null;
+  created_at: string;
+  product?: {
+    name: string;
+  };
+  platform?: {
+    name: string;
+  };
 }
 
 export interface Shipment {
