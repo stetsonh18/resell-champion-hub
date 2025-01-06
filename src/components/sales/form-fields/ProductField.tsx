@@ -18,8 +18,7 @@ export const ProductField = ({ form, products }: ProductFieldProps) => {
           <FormLabel>Product</FormLabel>
           <Select 
             onValueChange={field.onChange} 
-            defaultValue={field.value}
-            value={field.value}
+            value={field.value || ""}
           >
             <FormControl>
               <SelectTrigger>
