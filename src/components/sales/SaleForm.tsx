@@ -12,13 +12,19 @@ import { PlatformField } from "./form-fields/PlatformField";
 import { PriceFields } from "./form-fields/PriceFields";
 import { saleFormSchema, type SaleFormValues } from "./types";
 
-export function SaleForm() {
+interface SaleFormProps {
+  defaultValues?: SaleFormValues;
+  saleId?: string;
+  onSuccess?: () => void;
+}
+
+export function SaleForm({ defaultValues, saleId, onSuccess }: SaleFormProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const form = useForm<SaleFormValues>({
     resolver: zodResolver(saleFormSchema),
-    defaultValues: {
+    defaultValues: defaultValues || {
       sale_date: new Date().toISOString().split('T')[0],
       sale_price: 0,
       quantity: 1,
@@ -78,30 +84,49 @@ export function SaleForm() {
         sale_price: values.sale_price,
       };
 
-      const { error: saleError } = await supabase
-        .from("sales")
-        .insert(saleData);
+      if (saleId) {
+        // Update existing sale
+        const { error: saleError } = await supabase
+          .from("sales")
+          .update(saleData)
+          .eq("id", saleId);
 
-      if (saleError) throw saleError;
+        if (saleError) throw saleError;
 
-      const { error: productError } = await supabase
-        .from("products")
-        .update({ status: "pending_shipment" })
-        .eq("id", values.product_id);
+        toast({
+          title: "Sale updated successfully",
+          description: "The sale has been updated.",
+        });
+      } else {
+        // Create new sale
+        const { error: saleError } = await supabase
+          .from("sales")
+          .insert(saleData);
 
-      if (productError) throw productError;
+        if (saleError) throw saleError;
 
-      toast({
-        title: "Sale added successfully",
-        description: "The sale has been recorded and product status updated.",
-      });
+        const { error: productError } = await supabase
+          .from("products")
+          .update({ status: "pending_shipment" })
+          .eq("id", values.product_id);
 
-      navigate("/sales");
+        if (productError) throw productError;
+
+        toast({
+          title: "Sale added successfully",
+          description: "The sale has been recorded and product status updated.",
+        });
+      }
+
+      onSuccess?.();
+      if (!saleId) {
+        navigate("/sales");
+      }
     } catch (error) {
-      console.error("Error adding sale:", error);
+      console.error("Error adding/updating sale:", error);
       toast({
-        title: "Error adding sale",
-        description: "There was a problem adding the sale. Please try again.",
+        title: "Error with sale",
+        description: "There was a problem with the sale. Please try again.",
         variant: "destructive",
       });
     }
@@ -130,7 +155,7 @@ export function SaleForm() {
           }
         />
         <Button type="submit" className="w-full">
-          Add Sale
+          {saleId ? "Update Sale" : "Add Sale"}
         </Button>
       </form>
     </Form>
