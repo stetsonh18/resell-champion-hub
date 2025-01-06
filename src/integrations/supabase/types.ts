@@ -242,6 +242,57 @@ export type Database = {
         }
         Relationships: []
       }
+      sales: {
+        Row: {
+          created_at: string
+          estimated_profit: number | null
+          id: string
+          platform_id: string
+          product_id: string
+          quantity: number
+          sale_date: string
+          sale_price: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          estimated_profit?: number | null
+          id?: string
+          platform_id: string
+          product_id: string
+          quantity?: number
+          sale_date?: string
+          sale_price: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          estimated_profit?: number | null
+          id?: string
+          platform_id?: string
+          product_id?: string
+          quantity?: number
+          sale_date?: string
+          sale_price?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_platform_id_fkey"
+            columns: ["platform_id"]
+            isOneToOne: false
+            referencedRelation: "platforms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stores: {
         Row: {
           created_at: string

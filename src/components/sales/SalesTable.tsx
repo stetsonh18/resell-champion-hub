@@ -1,6 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SalesTableProps {
@@ -16,8 +15,6 @@ const TableRowSkeleton = () => (
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
   </TableRow>
 );
 
@@ -28,14 +25,12 @@ export const SalesTable = ({ sales, isLoading }: SalesTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Order #</TableHead>
+              <TableHead>Sale Date</TableHead>
               <TableHead>Product</TableHead>
               <TableHead>Platform</TableHead>
-              <TableHead>Store</TableHead>
               <TableHead>Sale Price</TableHead>
-              <TableHead>Net Profit</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Estimated Profit</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -53,42 +48,30 @@ export const SalesTable = ({ sales, isLoading }: SalesTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Order #</TableHead>
+            <TableHead>Sale Date</TableHead>
             <TableHead>Product</TableHead>
             <TableHead>Platform</TableHead>
-            <TableHead>Store</TableHead>
             <TableHead>Sale Price</TableHead>
-            <TableHead>Net Profit</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Quantity</TableHead>
+            <TableHead>Estimated Profit</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {!sales?.length ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center text-muted-foreground">
+              <TableCell colSpan={6} className="text-center text-muted-foreground">
                 No sales found. Add your first sale to get started.
               </TableCell>
             </TableRow>
           ) : (
             sales.map((sale) => (
               <TableRow key={sale.id}>
-                <TableCell>
-                  <code className="rounded bg-muted px-2 py-1">
-                    {sale.order_number}
-                  </code>
-                </TableCell>
+                <TableCell>{format(new Date(sale.sale_date), "MMM d, yyyy")}</TableCell>
                 <TableCell className="font-medium">{sale.product?.name || "—"}</TableCell>
                 <TableCell>{sale.platform?.name || "—"}</TableCell>
-                <TableCell>{sale.store?.name || "—"}</TableCell>
                 <TableCell>${sale.sale_price.toFixed(2)}</TableCell>
-                <TableCell>${sale.net_profit.toFixed(2)}</TableCell>
-                <TableCell>{format(new Date(sale.sale_date), "MMM d, yyyy")}</TableCell>
-                <TableCell>
-                  <Badge variant={sale.status === "completed" ? "default" : "secondary"}>
-                    {sale.status}
-                  </Badge>
-                </TableCell>
+                <TableCell>{sale.quantity}</TableCell>
+                <TableCell>${sale.estimated_profit?.toFixed(2) || "0.00"}</TableCell>
               </TableRow>
             ))
           )}
