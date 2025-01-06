@@ -59,7 +59,8 @@ export const PlatformsTable = ({ platforms }: PlatformsTableProps) => {
     },
   });
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "N/A";
     const date = parseISO(dateString);
     return isValid(date) ? format(date, "MMM d, yyyy") : "Invalid date";
   };
