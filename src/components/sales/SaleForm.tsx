@@ -26,6 +26,8 @@ export function SaleForm() {
       shipping_amount_collected: 0,
       shipping_cost: 0,
       platform_fees: 0,
+      product_id: "",
+      platform_id: "",
     },
   });
 
@@ -66,6 +68,16 @@ export function SaleForm() {
     try {
       const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error("No user found");
+
+      // Ensure required fields are present
+      if (!values.product_id || !values.platform_id || !values.sale_price) {
+        toast({
+          title: "Missing required fields",
+          description: "Please fill in all required fields.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       // Start a transaction by using multiple operations
       const { error: saleError } = await supabase

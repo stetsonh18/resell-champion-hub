@@ -33,9 +33,9 @@ const Index = () => {
 
   // Calculate metrics
   const totalRevenue = sales?.reduce((sum, sale) => sum + sale.sale_price, 0) || 0;
-  const activeListings = products?.length || 0;
-  const pendingOrders = sales?.filter(sale => !sale.tracking_number)?.length || 0;
-  const netProfit = sales?.reduce((sum, sale) => sum + sale.net_profit, 0) || 0;
+  const activeListings = products?.filter(p => p.status === 'listed').length || 0;
+  const pendingOrders = products?.filter(p => p.status === 'pending_shipment').length || 0;
+  const netProfit = sales?.reduce((sum, sale) => sum + (sale.estimated_profit || 0), 0) || 0;
 
   // Calculate trends (comparing to previous month)
   const currentMonth = new Date().getMonth();

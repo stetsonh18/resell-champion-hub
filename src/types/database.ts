@@ -50,6 +50,9 @@ export interface Sale {
   estimated_profit: number | null;
   sale_date: string;
   created_at: string;
+  shipping_amount_collected: number | null;
+  shipping_cost: number | null;
+  platform_fees: number | null;
   product?: {
     name: string;
   };
