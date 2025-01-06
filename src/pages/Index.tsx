@@ -3,7 +3,6 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Sale, Product } from "@/types/database";
 
 const Index = () => {
   const { data: sales } = useQuery({
@@ -15,7 +14,7 @@ const Index = () => {
         .order("sale_date", { ascending: false });
       
       if (error) throw error;
-      return data as Sale[];
+      return data;
     },
   });
 
@@ -27,7 +26,7 @@ const Index = () => {
         .select("*");
       
       if (error) throw error;
-      return data as Product[];
+      return data;
     },
   });
 

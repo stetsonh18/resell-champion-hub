@@ -79,13 +79,15 @@ export function SaleForm() {
         return;
       }
 
+      const saleData = {
+        ...values,
+        user_id: user.id,
+      };
+
       // Start a transaction by using multiple operations
       const { error: saleError } = await supabase
         .from("sales")
-        .insert({
-          ...values,
-          user_id: user.id,
-        });
+        .insert(saleData);
 
       if (saleError) throw saleError;
 
