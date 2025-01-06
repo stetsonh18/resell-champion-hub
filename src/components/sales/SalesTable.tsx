@@ -22,6 +22,14 @@ const TableRowSkeleton = () => (
 );
 
 export const SalesTable = ({ sales, isLoading }: SalesTableProps) => {
+  const calculateEstimatedProfit = (sale: any) => {
+    const revenue = sale.sale_price + (sale.shipping_amount_collected || 0);
+    const costs = (sale.product?.purchase_price || 0) + 
+                 (sale.shipping_cost || 0) + 
+                 (sale.platform_fees || 0);
+    return revenue - costs;
+  };
+
   if (isLoading) {
     return (
       <div className="rounded-md border">
@@ -73,19 +81,24 @@ export const SalesTable = ({ sales, isLoading }: SalesTableProps) => {
               </TableCell>
             </TableRow>
           ) : (
-            sales.map((sale) => (
-              <TableRow key={sale.id}>
-                <TableCell>{format(new Date(sale.sale_date), "MMM d, yyyy")}</TableCell>
-                <TableCell className="font-medium">{sale.product?.name || "—"}</TableCell>
-                <TableCell>{sale.platform?.name || "—"}</TableCell>
-                <TableCell>${sale.sale_price.toFixed(2)}</TableCell>
-                <TableCell>{sale.quantity}</TableCell>
-                <TableCell>${sale.shipping_amount_collected?.toFixed(2) || "0.00"}</TableCell>
-                <TableCell>${sale.shipping_cost?.toFixed(2) || "0.00"}</TableCell>
-                <TableCell>${sale.platform_fees?.toFixed(2) || "0.00"}</TableCell>
-                <TableCell>${sale.estimated_profit?.toFixed(2) || "0.00"}</TableCell>
-              </TableRow>
-            ))
+            sales.map((sale) => {
+              const estimatedProfit = calculateEstimatedProfit(sale);
+              return (
+                <TableRow key={sale.id}>
+                  <TableCell>{format(new Date(sale.sale_date), "MMM d, yyyy")}</TableCell>
+                  <TableCell className="font-medium">{sale.product?.name || "—"}</TableCell>
+                  <TableCell>{sale.platform?.name || "—"}</TableCell>
+                  <TableCell>${sale.sale_price.toFixed(2)}</TableCell>
+                  <TableCell>{sale.quantity}</TableCell>
+                  <TableCell>${sale.shipping_amount_collected?.toFixed(2) || "0.00"}</TableCell>
+                  <TableCell>${sale.shipping_cost?.toFixed(2) || "0.00"}</TableCell>
+                  <TableCell>${sale.platform_fees?.toFixed(2) || "0.00"}</TableCell>
+                  <TableCell className={estimatedProfit >= 0 ? "text-green-600" : "text-red-600"}>
+                    ${estimatedProfit.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              );
+            })
           )}
         </TableBody>
       </Table>

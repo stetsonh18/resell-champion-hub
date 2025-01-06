@@ -13,7 +13,7 @@ const Sales = () => {
         .from("sales")
         .select(`
           *,
-          product:products(name),
+          product:products(name, purchase_price),
           platform:platforms(name)
         `)
         .order('sale_date', { ascending: false });
