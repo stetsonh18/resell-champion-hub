@@ -62,38 +62,31 @@ export const useProductForm = (onSuccess: () => void, productId?: string) => {
         user_id: user.id,
       };
 
-      let error;
-
       if (productId) {
-        // Update existing product
-        ({ error } = await supabase
+        const { error } = await supabase
           .from("products")
           .update(productData)
-          .eq("id", productId));
+          .eq("id", productId);
+
+        if (error) throw error;
+
+        toast.success("Product updated successfully");
       } else {
-        // Create new product
-        ({ error } = await supabase
+        const { error } = await supabase
           .from("products")
-          .insert(productData));
+          .insert(productData);
+
+        if (error) throw error;
+
+        toast.success("Product created successfully");
       }
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: productId ? "Product updated successfully" : "Product created successfully",
-      });
 
       queryClient.invalidateQueries({ queryKey: ["products"] });
       onSuccess();
       form.reset();
     } catch (error) {
       console.error("Error saving product:", error);
-      toast({
-        title: "Error",
-        description: productId ? "Failed to update product" : "Failed to create product",
-        variant: "destructive",
-      });
+      toast.error(productId ? "Failed to update product" : "Failed to create product");
     }
   };
 
