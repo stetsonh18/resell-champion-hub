@@ -10,6 +10,7 @@ import Stores from "@/pages/Stores";
 import Platforms from "@/pages/Platforms";
 import Inventory from "@/pages/Inventory";
 import Sales from "@/pages/Sales";
+import Shipments from "@/pages/Shipments";
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -59,7 +60,7 @@ export const protectedRoutes: RouteObject[] = [
     path: "/shipments",
     element: (
       <ProtectedRoute>
-        <Index />
+        <Shipments />
       </ProtectedRoute>
     ),
   },
