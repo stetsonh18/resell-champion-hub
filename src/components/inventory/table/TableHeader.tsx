@@ -10,6 +10,7 @@ export const ProductTableHeader = () => {
       <TableRow>
         <TableHead>SKU</TableHead>
         <TableHead>Product Name</TableHead>
+        <TableHead>Purchase Price</TableHead>
         <TableHead>Store</TableHead>
         <TableHead>Category</TableHead>
         <TableHead>Purchase Date</TableHead>

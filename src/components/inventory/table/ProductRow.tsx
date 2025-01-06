@@ -17,6 +17,7 @@ export const ProductRow = ({ product, onDelete }: ProductRowProps) => {
         </code>
       </TableCell>
       <TableCell className="font-medium">{product.name}</TableCell>
+      <TableCell>${product.purchase_price?.toFixed(2) || "0.00"}</TableCell>
       <TableCell>
         {product.stores?.name || "—"}
       </TableCell>
