@@ -69,29 +69,21 @@ export function SaleForm() {
       const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error("No user found");
 
-      // Ensure required fields are present
-      if (!values.product_id || !values.platform_id || !values.sale_price) {
-        toast({
-          title: "Missing required fields",
-          description: "Please fill in all required fields.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const saleData = {
         ...values,
         user_id: user.id,
+        sale_date: values.sale_date,
+        product_id: values.product_id,
+        platform_id: values.platform_id,
+        sale_price: values.sale_price,
       };
 
-      // Start a transaction by using multiple operations
       const { error: saleError } = await supabase
         .from("sales")
         .insert(saleData);
 
       if (saleError) throw saleError;
 
-      // Update product status to pending_shipment
       const { error: productError } = await supabase
         .from("products")
         .update({ status: "pending_shipment" })

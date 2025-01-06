@@ -4,7 +4,7 @@ export const saleFormSchema = z.object({
   sale_date: z.string(),
   product_id: z.string().min(1, "Product is required"),
   platform_id: z.string().min(1, "Platform is required"),
-  sale_price: z.number().min(0),
+  sale_price: z.number().min(0.01, "Sale price must be greater than 0"),
   quantity: z.number().min(1),
   estimated_profit: z.number(),
   shipping_amount_collected: z.number().default(0),
