@@ -26,17 +26,16 @@ export function EditProductContent({ product, onClose }: EditProductContentProps
   useEffect(() => {
     // Set form default values when product data is available
     form.reset({
-      name: product.name,
-      purchase_price: product.purchase_price,
-      target_price: product.target_price,
-      quantity: product.quantity,
-      condition: product.condition as any,
+      name: product.name || "",
+      purchase_price: product.purchase_price || 0,
+      target_price: product.target_price || 0,
+      quantity: product.quantity || 0,
+      condition: product.condition as any || "new",
       notes: product.notes || "",
-      store_id: product.store_id,
-      category_id: product.category_id,
+      store_id: product.store_id || undefined,
+      category_id: product.category_id || undefined,
       status: (product.status || "in_stock") as "in_stock" | "listed" | "pending_shipment" | "shipped",
       location: product.location || "",
-      // Ensure we're always working with a Date object
       purchase_date: product.purchase_date ? new Date(product.purchase_date) : new Date(),
     });
   }, [product, form]);
