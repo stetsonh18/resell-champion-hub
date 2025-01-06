@@ -19,10 +19,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
     const checkAuth = async () => {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (sessionError) throw sessionError;
-
         if (!session) {
           if (mounted) {
             setIsAuthenticated(false);
@@ -35,19 +33,27 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
           setIsAuthenticated(true);
         }
 
+        // Check subscription status
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('subscription_status')
           .eq('id', session.user.id)
           .maybeSingle();
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          if (mounted) {
+            setHasValidSubscription(false);
+          }
+          return;
+        }
 
         const isSubscribed = profile?.subscription_status === 'active' || 
                            profile?.subscription_status === 'trialing';
 
         if (mounted) {
           setHasValidSubscription(isSubscribed);
+          setIsLoading(false);
         }
 
         if (!isSubscribed) {
@@ -62,26 +68,20 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         if (mounted) {
           setIsAuthenticated(false);
           setHasValidSubscription(false);
-        }
-        toast({
-          title: "Authentication Error",
-          description: "Please try signing in again.",
-          variant: "destructive",
-        });
-      } finally {
-        if (mounted) {
           setIsLoading(false);
         }
       }
     };
 
+    // Initial auth check
     checkAuth();
 
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
-
       console.log('Auth state changed:', event, session);
       
+      if (!mounted) return;
+
       if (!session) {
         setIsAuthenticated(false);
         setHasValidSubscription(false);
@@ -90,7 +90,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       }
 
       setIsAuthenticated(true);
-      
+
+      // Re-check subscription status on auth state change
       const { data: profile } = await supabase
         .from('profiles')
         .select('subscription_status')
@@ -112,6 +113,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     };
   }, [toast]);
 
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -120,12 +122,14 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
+  // Redirect to pricing if no valid subscription
   if (isAuthenticated && hasValidSubscription === false) {
-    return <Navigate to="/#pricing" />;
+    return <Navigate to="/#pricing" replace />;
   }
 
   return <>{children}</>;
