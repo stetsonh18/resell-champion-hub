@@ -50,7 +50,7 @@ export const protectedRoutes: RouteObject[] = [
     path: "/sales",
     element: (
       <ProtectedRoute>
-        <Index />
+        <Sales />
       </ProtectedRoute>
     ),
   },
