@@ -247,33 +247,42 @@ export type Database = {
           created_at: string
           estimated_profit: number | null
           id: string
+          platform_fees: number | null
           platform_id: string
           product_id: string
           quantity: number
           sale_date: string
           sale_price: number
+          shipping_amount_collected: number | null
+          shipping_cost: number | null
           user_id: string
         }
         Insert: {
           created_at?: string
           estimated_profit?: number | null
           id?: string
+          platform_fees?: number | null
           platform_id: string
           product_id: string
           quantity?: number
           sale_date?: string
           sale_price: number
+          shipping_amount_collected?: number | null
+          shipping_cost?: number | null
           user_id: string
         }
         Update: {
           created_at?: string
           estimated_profit?: number | null
           id?: string
+          platform_fees?: number | null
           platform_id?: string
           product_id?: string
           quantity?: number
           sale_date?: string
           sale_price?: number
+          shipping_amount_collected?: number | null
+          shipping_cost?: number | null
           user_id?: string
         }
         Relationships: [

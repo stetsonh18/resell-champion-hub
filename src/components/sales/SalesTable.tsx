@@ -15,6 +15,9 @@ const TableRowSkeleton = () => (
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
   </TableRow>
 );
 
@@ -30,6 +33,9 @@ export const SalesTable = ({ sales, isLoading }: SalesTableProps) => {
               <TableHead>Platform</TableHead>
               <TableHead>Sale Price</TableHead>
               <TableHead>Quantity</TableHead>
+              <TableHead>Shipping Collected</TableHead>
+              <TableHead>Shipping Cost</TableHead>
+              <TableHead>Platform Fees</TableHead>
               <TableHead>Estimated Profit</TableHead>
             </TableRow>
           </TableHeader>
@@ -53,13 +59,16 @@ export const SalesTable = ({ sales, isLoading }: SalesTableProps) => {
             <TableHead>Platform</TableHead>
             <TableHead>Sale Price</TableHead>
             <TableHead>Quantity</TableHead>
+            <TableHead>Shipping Collected</TableHead>
+            <TableHead>Shipping Cost</TableHead>
+            <TableHead>Platform Fees</TableHead>
             <TableHead>Estimated Profit</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {!sales?.length ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center text-muted-foreground">
+              <TableCell colSpan={9} className="text-center text-muted-foreground">
                 No sales found. Add your first sale to get started.
               </TableCell>
             </TableRow>
@@ -71,6 +80,9 @@ export const SalesTable = ({ sales, isLoading }: SalesTableProps) => {
                 <TableCell>{sale.platform?.name || "—"}</TableCell>
                 <TableCell>${sale.sale_price.toFixed(2)}</TableCell>
                 <TableCell>{sale.quantity}</TableCell>
+                <TableCell>${sale.shipping_amount_collected?.toFixed(2) || "0.00"}</TableCell>
+                <TableCell>${sale.shipping_cost?.toFixed(2) || "0.00"}</TableCell>
+                <TableCell>${sale.platform_fees?.toFixed(2) || "0.00"}</TableCell>
                 <TableCell>${sale.estimated_profit?.toFixed(2) || "0.00"}</TableCell>
               </TableRow>
             ))
