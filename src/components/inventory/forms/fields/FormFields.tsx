@@ -91,6 +91,7 @@ export const PurchaseDateField = ({ form }: FormFieldProps) => (
               selected={field.value}
               onSelect={field.onChange}
               initialFocus
+              disabled={false}
             />
           </PopoverContent>
         </Popover>
