@@ -28,16 +28,20 @@ export const StoreField = ({ form }: StoreFieldProps) => {
       name="store_id"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Store</FormLabel>
+          <FormLabel className="text-white">Store</FormLabel>
           <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
-              <SelectTrigger>
+              <SelectTrigger className="bg-[#1A1A1A] border-zinc-800 text-white">
                 <SelectValue placeholder="Select store" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent>
+            <SelectContent className="bg-[#1A1A1A] border-zinc-800">
               {stores?.map((store) => (
-                <SelectItem key={store.id} value={store.id}>
+                <SelectItem 
+                  key={store.id} 
+                  value={store.id}
+                  className="text-white hover:bg-zinc-800"
+                >
                   {store.name}
                 </SelectItem>
               ))}

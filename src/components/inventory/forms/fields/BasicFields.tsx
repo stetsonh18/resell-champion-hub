@@ -14,9 +14,13 @@ export const NameField = ({ form }: FormFieldProps) => (
     name="name"
     render={({ field }) => (
       <FormItem>
-        <FormLabel>Name</FormLabel>
+        <FormLabel className="text-white">Name</FormLabel>
         <FormControl>
-          <Input placeholder="Enter product name" {...field} />
+          <Input 
+            placeholder="Enter product name" 
+            {...field} 
+            className="bg-[#1A1A1A] border-zinc-800 text-white"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -30,9 +34,13 @@ export const NotesField = ({ form }: FormFieldProps) => (
     name="notes"
     render={({ field }) => (
       <FormItem>
-        <FormLabel>Notes</FormLabel>
+        <FormLabel className="text-white">Notes</FormLabel>
         <FormControl>
-          <Textarea placeholder="Add any additional notes" {...field} />
+          <Textarea 
+            placeholder="Add any additional notes" 
+            {...field} 
+            className="bg-[#1A1A1A] border-zinc-800 text-white resize-none min-h-[100px]"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
