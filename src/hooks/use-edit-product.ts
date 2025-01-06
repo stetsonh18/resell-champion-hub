@@ -17,8 +17,8 @@ const productFormSchema = z.object({
     required_error: "Please select a purchase date",
   }),
   notes: z.string().optional(),
-  store_id: z.string().optional(),
-  category_id: z.string().optional(),
+  store_id: z.string().optional().nullable(),
+  category_id: z.string().optional().nullable(),
   status: z.enum(["in_stock", "listed", "pending_shipment", "shipped"]).optional(),
   location: z.string().optional(),
 });
@@ -37,8 +37,8 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
       quantity: 0,
       condition: undefined,
       notes: "",
-      store_id: undefined,
-      category_id: undefined,
+      store_id: null,
+      category_id: null,
       status: "in_stock",
       purchase_date: new Date(),
       location: "",
@@ -53,6 +53,10 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
         throw new Error("User not authenticated");
       }
 
+      if (!productId) {
+        throw new Error("Product ID is required");
+      }
+
       const productData = {
         name: data.name,
         purchase_price: data.purchase_price,
@@ -60,8 +64,8 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
         quantity: data.quantity,
         condition: data.condition,
         notes: data.notes,
-        store_id: data.store_id,
-        category_id: data.category_id,
+        store_id: data.store_id || null,
+        category_id: data.category_id || null,
         status: data.status,
         purchase_date: data.purchase_date.toISOString(),
         updated_at: new Date().toISOString(),
@@ -71,8 +75,7 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
       const { error } = await supabase
         .from("products")
         .update(productData)
-        .eq("id", productId)
-        .eq("user_id", user.id);
+        .eq("id", productId);
 
       if (error) throw error;
 
