@@ -10,6 +10,17 @@ import { EditProductDialog } from "../dialogs/EditProductDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 interface ProductActionsProps {
   product: any;
@@ -18,6 +29,7 @@ interface ProductActionsProps {
 
 export const ProductActions = ({ product, onDelete }: ProductActionsProps) => {
   const queryClient = useQueryClient();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleStatusChange = async () => {
     try {
@@ -36,35 +48,52 @@ export const ProductActions = ({ product, onDelete }: ProductActionsProps) => {
     }
   };
 
+  const handleDelete = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    onDelete(product.id);
+    setDeleteDialogOpen(false);
+  };
+
   return (
-    <div className="flex justify-end gap-2">
-      {product.status === "in_stock" && (
-        <Button 
-          variant="outline" 
-          size="icon" 
-          onClick={handleStatusChange}
-          title="Mark as Listed"
-        >
-          <Tag className="h-4 w-4" />
-        </Button>
-      )}
-      <EditProductDialog product={product} />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className="text-destructive"
-            onClick={() => onDelete(product.id)}
+    <>
+      <div className="flex justify-end gap-2">
+        {product.status === "in_stock" && (
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={handleStatusChange}
+            title="Mark as Listed"
           >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            <Tag className="h-4 w-4" />
+          </Button>
+        )}
+        <EditProductDialog product={product} />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleDelete}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the product.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
