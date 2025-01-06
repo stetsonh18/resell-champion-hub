@@ -12,24 +12,19 @@ export const DateField = ({ form }: DateFieldProps) => {
     <FormField
       control={form.control}
       name="sale_date"
-      render={({ field }) => {
-        // Format the date string to YYYY-MM-DD
-        const value = field.value ? new Date(field.value).toISOString().split('T')[0] : '';
-        
-        return (
-          <FormItem>
-            <FormLabel>Sale Date</FormLabel>
-            <FormControl>
-              <Input 
-                type="date" 
-                value={value}
-                onChange={(e) => field.onChange(e.target.value)}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Sale Date</FormLabel>
+          <FormControl>
+            <Input 
+              type="date" 
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 };

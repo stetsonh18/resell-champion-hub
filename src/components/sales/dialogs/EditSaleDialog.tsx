@@ -28,8 +28,11 @@ interface EditSaleDialogProps {
 export const EditSaleDialog = ({ sale }: EditSaleDialogProps) => {
   const [open, setOpen] = useState(false);
 
+  // Format the date to YYYY-MM-DD
+  const formattedDate = new Date(sale.sale_date).toISOString().split('T')[0];
+
   const defaultValues = {
-    sale_date: sale.sale_date,
+    sale_date: formattedDate,
     product_id: sale.product_id,
     platform_id: sale.platform_id,
     sale_price: sale.sale_price,
