@@ -32,8 +32,12 @@ export function ProductForm({ form, onSubmit, buttonText, showStatus = false }: 
           <PriceQuantityFields form={form} />
           
           <div className="grid grid-cols-2 gap-6">
-            <ConditionField form={form} />
-            <PurchaseDateField form={form} />
+            <div className="flex-1">
+              <ConditionField form={form} />
+            </div>
+            <div className="flex-1">
+              <PurchaseDateField form={form} />
+            </div>
           </div>
 
           {showStatus && <StatusField form={form} />}

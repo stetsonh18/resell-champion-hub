@@ -18,12 +18,13 @@ export const PurchaseDateField = ({ form }: DateFieldProps) => (
         : new Date(field.value).toISOString().split('T')[0];
 
       return (
-        <FormItem className="flex flex-col">
+        <FormItem className="w-full">
           <FormLabel>Purchase Date</FormLabel>
           <FormControl>
             <Input
               type="date"
               value={value}
+              className="w-full"
               onChange={(e) => {
                 // Convert the string date back to a Date object
                 field.onChange(new Date(e.target.value));

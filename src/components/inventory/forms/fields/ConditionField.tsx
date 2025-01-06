@@ -12,11 +12,11 @@ export const ConditionField = ({ form }: ConditionFieldProps) => (
     control={form.control}
     name="condition"
     render={({ field }) => (
-      <FormItem>
+      <FormItem className="w-full">
         <FormLabel>Condition</FormLabel>
         <Select onValueChange={field.onChange} value={field.value}>
           <FormControl>
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select condition" />
             </SelectTrigger>
           </FormControl>
