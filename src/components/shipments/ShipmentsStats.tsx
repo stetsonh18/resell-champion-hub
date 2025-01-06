@@ -15,13 +15,14 @@ export function ShipmentsStats() {
             sale_price
           )
         `)
-        .eq('status', 'pending_shipment')
-        .single();
+        .eq('status', 'pending_shipment');
 
       if (error) throw error;
 
-      const totalShipments = products?.length || 0;
-      const totalValue = products?.sales?.reduce((sum, sale) => sum + (sale.sale_price || 0), 0) || 0;
+      const totalShipments = products?.filter(p => p.sales?.length > 0).length || 0;
+      const totalValue = products?.reduce((sum, product) => 
+        sum + (product.sales?.[0]?.sale_price || 0), 0
+      ) || 0;
       const averageValue = totalShipments > 0 ? totalValue / totalShipments : 0;
 
       return {
@@ -35,7 +36,7 @@ export function ShipmentsStats() {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       <Card className="p-4 flex items-center space-x-4">
-        <div className="p-2 bg-pink-100 rounded-lg">
+        <div className="p-2 bg-pink-100 dark:bg-pink-900/20 rounded-lg">
           <Package2 className="h-6 w-6 text-pink-500" />
         </div>
         <div>
@@ -45,7 +46,7 @@ export function ShipmentsStats() {
       </Card>
 
       <Card className="p-4 flex items-center space-x-4">
-        <div className="p-2 bg-green-100 rounded-lg">
+        <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
           <TrendingUp className="h-6 w-6 text-green-500" />
         </div>
         <div>
@@ -55,7 +56,7 @@ export function ShipmentsStats() {
       </Card>
 
       <Card className="p-4 flex items-center space-x-4">
-        <div className="p-2 bg-pink-100 rounded-lg">
+        <div className="p-2 bg-pink-100 dark:bg-pink-900/20 rounded-lg">
           <DollarSign className="h-6 w-6 text-pink-500" />
         </div>
         <div>
