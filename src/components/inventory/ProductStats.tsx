@@ -7,7 +7,6 @@ export const ProductStats = ({ products }: { products?: any[] }) => {
   const inStockProducts = products?.filter(product => product.status === 'in_stock').length || 0;
   const listedProducts = products?.filter(product => product.status === 'listed').length || 0;
   const totalActiveProducts = inStockProducts + listedProducts;
-  const outOfStock = products?.filter(product => product.quantity === 0 && (product.status === 'in_stock' || product.status === 'listed')).length || 0;
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -22,8 +21,8 @@ export const ProductStats = ({ products }: { products?: any[] }) => {
         icon={AlertTriangle}
       />
       <StatCard
-        title="Out of Stock"
-        value={outOfStock.toString()}
+        title="Listed Items"
+        value={listedProducts.toString()}
         icon={TrendingUp}
       />
     </div>
