@@ -13,18 +13,18 @@ export const StatusField = ({ form }: StatusFieldProps) => (
     name="status"
     render={({ field }) => (
       <FormItem>
-        <FormLabel className="text-white">Status</FormLabel>
+        <FormLabel>Status</FormLabel>
         <Select onValueChange={field.onChange} value={field.value || "in_stock"}>
           <FormControl>
-            <SelectTrigger className="bg-[#1A1A1A] border-zinc-800 text-white">
+            <SelectTrigger>
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
           </FormControl>
-          <SelectContent className="bg-[#1A1A1A] border-zinc-800">
-            <SelectItem value="in_stock" className="text-white hover:bg-zinc-800">In Stock</SelectItem>
-            <SelectItem value="listed" className="text-white hover:bg-zinc-800">Listed</SelectItem>
-            <SelectItem value="pending_shipment" className="text-white hover:bg-zinc-800">Pending Shipment</SelectItem>
-            <SelectItem value="shipped" className="text-white hover:bg-zinc-800">Shipped</SelectItem>
+          <SelectContent>
+            <SelectItem value="in_stock">In Stock</SelectItem>
+            <SelectItem value="listed">Listed</SelectItem>
+            <SelectItem value="pending_shipment">Pending Shipment</SelectItem>
+            <SelectItem value="shipped">Shipped</SelectItem>
           </SelectContent>
         </Select>
         <FormMessage />

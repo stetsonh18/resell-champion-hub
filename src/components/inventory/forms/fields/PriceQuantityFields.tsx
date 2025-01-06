@@ -15,15 +15,9 @@ export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
         name="purchase_price"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">Purchase Price</FormLabel>
+            <FormLabel>Purchase Price</FormLabel>
             <FormControl>
-              <Input 
-                type="number" 
-                step="0.01" 
-                placeholder="0.00" 
-                {...field} 
-                className="bg-[#1A1A1A] border-zinc-800 text-white"
-              />
+              <Input type="number" step="0.01" placeholder="0.00" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -35,15 +29,9 @@ export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
         name="target_price"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">Target Price</FormLabel>
+            <FormLabel>Target Price</FormLabel>
             <FormControl>
-              <Input 
-                type="number" 
-                step="0.01" 
-                placeholder="0.00" 
-                {...field} 
-                className="bg-[#1A1A1A] border-zinc-800 text-white"
-              />
+              <Input type="number" step="0.01" placeholder="0.00" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -55,14 +43,9 @@ export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
         name="quantity"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">Quantity</FormLabel>
+            <FormLabel>Quantity</FormLabel>
             <FormControl>
-              <Input 
-                type="number" 
-                placeholder="0" 
-                {...field} 
-                className="bg-[#1A1A1A] border-zinc-800 text-white"
-              />
+              <Input type="number" placeholder="0" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

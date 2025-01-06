@@ -12,21 +12,22 @@ export const PurchaseDateField = ({ form }: DateFieldProps) => (
     control={form.control}
     name="purchase_date"
     render={({ field }) => {
+      // Convert the date to YYYY-MM-DD format for the input
       const value = field.value instanceof Date 
         ? field.value.toISOString().split('T')[0]
         : new Date(field.value).toISOString().split('T')[0];
 
       return (
         <FormItem className="flex flex-col">
-          <FormLabel className="text-white">Purchase Date</FormLabel>
+          <FormLabel>Purchase Date</FormLabel>
           <FormControl>
             <Input
               type="date"
               value={value}
               onChange={(e) => {
+                // Convert the string date back to a Date object
                 field.onChange(new Date(e.target.value));
               }}
-              className="bg-[#1A1A1A] border-zinc-800 text-white"
             />
           </FormControl>
           <FormMessage />

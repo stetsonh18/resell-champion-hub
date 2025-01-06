@@ -34,9 +34,9 @@ export const EditProductDialog = ({ product }: EditProductDialogProps) => {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-[#0A0A0A] border-zinc-800">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-white">Edit Product</DialogTitle>
+            <DialogTitle>Edit Product</DialogTitle>
           </DialogHeader>
           <EditProductContent product={product} onClose={() => setOpen(false)} />
         </DialogContent>
