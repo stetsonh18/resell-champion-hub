@@ -9,6 +9,7 @@ import Expenses from "@/pages/Expenses";
 import Stores from "@/pages/Stores";
 import Platforms from "@/pages/Platforms";
 import Inventory from "@/pages/Inventory";
+import Sales from "@/pages/Sales";
 
 export const publicRoutes: RouteObject[] = [
   {
