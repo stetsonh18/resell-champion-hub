@@ -11,8 +11,18 @@ const Login = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const handleAuthChange = async (event: string, session: any) => {
+    // Check for existing session on mount
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
+        navigate("/dashboard");
+      }
+    };
+    
+    checkSession();
+
+    const handleAuthChange = async (event: string, session: any) => {
+      if (event === 'SIGNED_IN' && session) {
         try {
           // First ensure profile exists
           const { data: existingProfile } = await supabase

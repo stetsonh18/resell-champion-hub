@@ -24,31 +24,35 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
           throw sessionError;
         }
 
-        setIsAuthenticated(!!session);
+        if (!session) {
+          setIsAuthenticated(false);
+          setIsLoading(false);
+          return;
+        }
 
-        if (session) {
-          // Check subscription status
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('subscription_status')
-            .eq('id', session.user.id)
-            .maybeSingle();
+        setIsAuthenticated(true);
 
-          if (profileError) {
-            throw profileError;
-          }
+        // Check subscription status
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('subscription_status')
+          .eq('id', session.user.id)
+          .maybeSingle();
 
-          // Consider 'active' and 'trialing' as valid subscription states
-          const isSubscribed = profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing';
-          setHasValidSubscription(isSubscribed);
+        if (profileError) {
+          throw profileError;
+        }
 
-          if (!isSubscribed) {
-            toast({
-              title: "Subscription Required",
-              description: "Please subscribe to access the dashboard.",
-              variant: "destructive",
-            });
-          }
+        // Consider 'active' and 'trialing' as valid subscription states
+        const isSubscribed = profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing';
+        setHasValidSubscription(isSubscribed);
+
+        if (!isSubscribed) {
+          toast({
+            title: "Subscription Required",
+            description: "Please subscribe to access the dashboard.",
+            variant: "destructive",
+          });
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
@@ -68,29 +72,34 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     checkAuth();
 
     // Set up auth state change listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
-      setIsAuthenticated(!!session);
       
-      if (session) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('subscription_status')
-          .eq('id', session.user.id)
-          .maybeSingle();
-
-        setHasValidSubscription(
-          profile?.subscription_status === 'active' || 
-          profile?.subscription_status === 'trialing'
-        );
-      } else {
+      if (!session) {
+        setIsAuthenticated(false);
         setHasValidSubscription(false);
+        setIsLoading(false);
+        return;
       }
+
+      setIsAuthenticated(true);
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('subscription_status')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      setHasValidSubscription(
+        profile?.subscription_status === 'active' || 
+        profile?.subscription_status === 'trialing'
+      );
+      
       setIsLoading(false);
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, [toast]);
 
