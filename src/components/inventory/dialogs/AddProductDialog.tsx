@@ -12,9 +12,9 @@ export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
+          <DialogTitle>Add Product</DialogTitle>
         </DialogHeader>
         <ProductForm form={form} onSubmit={onSubmit} buttonText="Create Product" />
       </DialogContent>
