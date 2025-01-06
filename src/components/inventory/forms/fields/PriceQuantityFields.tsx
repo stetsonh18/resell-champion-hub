@@ -9,48 +9,46 @@ interface PriceQuantityFieldsProps {
 
 export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <FormField
-          control={form.control}
-          name="purchase_price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Purchase Price</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  placeholder="0.00" 
-                  {...field} 
-                  className="bg-[#1A1A1A] border-zinc-800 text-white"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="target_price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Target Price</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  placeholder="0.00" 
-                  {...field} 
-                  className="bg-[#1A1A1A] border-zinc-800 text-white"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+    <div className="grid grid-cols-2 gap-4">
+      <FormField
+        control={form.control}
+        name="purchase_price"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-white">Purchase Price</FormLabel>
+            <FormControl>
+              <Input 
+                type="number" 
+                step="0.01" 
+                placeholder="0.00" 
+                {...field} 
+                className="bg-[#1A1A1A] border-zinc-800 text-white"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <FormField
+        control={form.control}
+        name="target_price"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-white">Target Price</FormLabel>
+            <FormControl>
+              <Input 
+                type="number" 
+                step="0.01" 
+                placeholder="0.00" 
+                {...field} 
+                className="bg-[#1A1A1A] border-zinc-800 text-white"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
       <FormField
         control={form.control}

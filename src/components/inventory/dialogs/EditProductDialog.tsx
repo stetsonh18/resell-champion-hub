@@ -21,7 +21,6 @@ interface EditProductDialogProps {
     store_id?: string;
     category_id?: string;
     purchase_date?: string;
-    status?: "in_stock" | "listed" | "pending_shipment" | "shipped";
   };
 }
 
@@ -35,9 +34,9 @@ export const EditProductDialog = ({ product }: EditProductDialogProps) => {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-[#0A0A0A] border-zinc-800 text-white">
+        <DialogContent className="sm:max-w-[425px] bg-[#0A0A0A] border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-white">Edit Product</DialogTitle>
+            <DialogTitle className="text-white">Edit Product</DialogTitle>
           </DialogHeader>
           <EditProductContent product={product} onClose={() => setOpen(false)} />
         </DialogContent>

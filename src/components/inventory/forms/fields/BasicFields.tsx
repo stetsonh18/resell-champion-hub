@@ -39,7 +39,7 @@ export const NotesField = ({ form }: FormFieldProps) => (
           <Textarea 
             placeholder="Add any additional notes" 
             {...field} 
-            className="bg-[#1A1A1A] border-zinc-800 text-white min-h-[100px] resize-none"
+            className="bg-[#1A1A1A] border-zinc-800 text-white resize-none min-h-[100px]"
           />
         </FormControl>
         <FormMessage />
