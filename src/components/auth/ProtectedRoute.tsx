@@ -15,37 +15,40 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    let mounted = true;
+
     const checkAuth = async () => {
       try {
-        // Get the initial session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (sessionError) {
-          throw sessionError;
-        }
+        if (sessionError) throw sessionError;
 
         if (!session) {
-          setIsAuthenticated(false);
-          setIsLoading(false);
+          if (mounted) {
+            setIsAuthenticated(false);
+            setIsLoading(false);
+          }
           return;
         }
 
-        setIsAuthenticated(true);
+        if (mounted) {
+          setIsAuthenticated(true);
+        }
 
-        // Check subscription status
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('subscription_status')
           .eq('id', session.user.id)
           .maybeSingle();
 
-        if (profileError) {
-          throw profileError;
-        }
+        if (profileError) throw profileError;
 
-        // Consider 'active' and 'trialing' as valid subscription states
-        const isSubscribed = profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing';
-        setHasValidSubscription(isSubscribed);
+        const isSubscribed = profile?.subscription_status === 'active' || 
+                           profile?.subscription_status === 'trialing';
+
+        if (mounted) {
+          setHasValidSubscription(isSubscribed);
+        }
 
         if (!isSubscribed) {
           toast({
@@ -56,23 +59,27 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
-        setIsAuthenticated(false);
-        setHasValidSubscription(false);
+        if (mounted) {
+          setIsAuthenticated(false);
+          setHasValidSubscription(false);
+        }
         toast({
           title: "Authentication Error",
           description: "Please try signing in again.",
           variant: "destructive",
         });
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    // Check initial auth state
     checkAuth();
 
-    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
       console.log('Auth state changed:', event, session);
       
       if (!session) {
@@ -90,15 +97,17 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         .eq('id', session.user.id)
         .maybeSingle();
 
-      setHasValidSubscription(
-        profile?.subscription_status === 'active' || 
-        profile?.subscription_status === 'trialing'
-      );
-      
-      setIsLoading(false);
+      if (mounted) {
+        setHasValidSubscription(
+          profile?.subscription_status === 'active' || 
+          profile?.subscription_status === 'trialing'
+        );
+        setIsLoading(false);
+      }
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, [toast]);
@@ -115,7 +124,6 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/login" />;
   }
 
-  // Redirect to pricing page if subscription is not valid
   if (isAuthenticated && hasValidSubscription === false) {
     return <Navigate to="/#pricing" />;
   }

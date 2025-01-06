@@ -11,20 +11,26 @@ const Login = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for existing session on mount
+    let mounted = true;
+
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate("/dashboard");
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && mounted) {
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
       }
     };
     
     checkSession();
 
-    const handleAuthChange = async (event: string, session: any) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
       if (event === 'SIGNED_IN' && session) {
         try {
-          // First ensure profile exists
           const { data: existingProfile } = await supabase
             .from('profiles')
             .select('subscription_status')
@@ -32,7 +38,6 @@ const Login = () => {
             .maybeSingle();
 
           if (!existingProfile) {
-            // Create profile if it doesn't exist
             await supabase
               .from('profiles')
               .insert([
@@ -43,7 +48,6 @@ const Login = () => {
               ]);
           }
 
-          // Redirect to dashboard
           navigate("/dashboard");
           
         } catch (error: any) {
@@ -55,11 +59,10 @@ const Login = () => {
           });
         }
       }
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthChange);
+    });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, [navigate, toast]);
