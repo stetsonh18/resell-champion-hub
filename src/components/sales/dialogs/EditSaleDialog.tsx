@@ -28,8 +28,6 @@ interface EditSaleDialogProps {
 export const EditSaleDialog = ({ sale }: EditSaleDialogProps) => {
   const [open, setOpen] = useState(false);
 
-  console.log('Sale date from database:', sale.sale_date); // Debug log
-
   const defaultValues = {
     sale_date: sale.sale_date,
     product_id: sale.product_id,
