@@ -9,6 +9,7 @@ import { Edit } from "lucide-react";
 import { ProductForm } from "../forms/ProductForm";
 import { useProductForm } from "@/hooks/use-product-form";
 import { useState } from "react";
+import { EditProductContent } from "./EditProductContent";
 
 interface EditProductDialogProps {
   product: {
@@ -29,7 +30,6 @@ export const EditProductDialog = ({ product }: EditProductDialogProps) => {
   const [open, setOpen] = useState(false);
   const { form, onSubmit } = useProductForm(() => setOpen(false));
 
-  // Pre-fill the form with existing product data
   const handleOpen = () => {
     form.reset({
       name: product.name,
