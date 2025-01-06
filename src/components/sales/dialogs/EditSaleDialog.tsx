@@ -10,6 +10,7 @@ import {
 import { Pencil } from "lucide-react";
 import { SaleForm } from "../SaleForm";
 import { useState } from "react";
+import { format } from "date-fns";
 
 interface EditSaleDialogProps {
   sale: {
@@ -28,8 +29,11 @@ interface EditSaleDialogProps {
 export const EditSaleDialog = ({ sale }: EditSaleDialogProps) => {
   const [open, setOpen] = useState(false);
 
+  // Format the date to YYYY-MM-DD, handling timezone correctly
+  const formattedDate = format(new Date(sale.sale_date), "yyyy-MM-dd");
+
   const defaultValues = {
-    sale_date: sale.sale_date,
+    sale_date: formattedDate,
     product_id: sale.product_id,
     platform_id: sale.platform_id,
     sale_price: sale.sale_price,
