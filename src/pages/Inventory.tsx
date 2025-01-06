@@ -11,7 +11,7 @@ import { AddProductDialog } from "@/components/inventory/dialogs/AddProductDialo
 
 const Inventory = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [hideOutOfStock, setHideOutOfStock] = useState(false);
+  const [hideShipped, setHideShipped] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStore, setSelectedStore] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -43,14 +43,14 @@ const Inventory = () => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStock = hideOutOfStock ? product.status !== "shipped" : true;
+    const matchesShipped = hideShipped ? product.status !== "shipped" : true;
     const matchesCategory =
       selectedCategory === "all" || product.category_id === selectedCategory;
     const matchesStore =
       selectedStore === "all" || product.store_id === selectedStore;
     const matchesStatus =
       selectedStatus === "all" || product.status === selectedStatus;
-    return matchesSearch && matchesStock && matchesCategory && matchesStore && matchesStatus;
+    return matchesSearch && matchesShipped && matchesCategory && matchesStore && matchesStatus;
   });
 
   return (
@@ -74,8 +74,8 @@ const Inventory = () => {
         <ProductFilters
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          hideOutOfStock={hideOutOfStock}
-          setHideOutOfStock={setHideOutOfStock}
+          hideShipped={hideShipped}
+          setHideShipped={setHideShipped}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           selectedStore={selectedStore}

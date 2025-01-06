@@ -7,8 +7,8 @@ import { StatusFilter } from "./filters/StatusFilter";
 interface ProductFiltersProps {
   searchQuery: string;
   setSearchQuery: (value: string) => void;
-  hideOutOfStock: boolean;
-  setHideOutOfStock: (value: boolean) => void;
+  hideShipped: boolean;
+  setHideShipped: (value: boolean) => void;
   selectedCategory: string;
   setSelectedCategory: (value: string) => void;
   selectedStore: string;
@@ -20,8 +20,8 @@ interface ProductFiltersProps {
 export const ProductFilters = ({
   searchQuery,
   setSearchQuery,
-  hideOutOfStock,
-  setHideOutOfStock,
+  hideShipped,
+  setHideShipped,
   selectedCategory,
   setSelectedCategory,
   selectedStore,
@@ -34,8 +34,8 @@ export const ProductFilters = ({
       <SearchInput searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <StockFilter
-          hideOutOfStock={hideOutOfStock}
-          setHideOutOfStock={setHideOutOfStock}
+          hideShipped={hideShipped}
+          setHideShipped={setHideShipped}
         />
         <CategoryFilter
           selectedCategory={selectedCategory}
