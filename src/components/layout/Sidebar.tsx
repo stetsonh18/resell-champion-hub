@@ -25,7 +25,7 @@ import { useState, useEffect } from "react";
 const menuItems = [
   { icon: Home, label: "Dashboard", path: "/dashboard" },
   { icon: Package, label: "Inventory", path: "/inventory" },
-  { icon: ShoppingCart, label: "Sales", path: "/sales" },
+  { icon: ShoppingCart, label: "Sales", path: "/sales" },  // Updated path to /sales
   { icon: Truck, label: "Pending Shipments", path: "/shipments" },
   { icon: RotateCcw, label: "Returns", path: "/returns" },
   { icon: Server, label: "Platforms", path: "/platforms" },

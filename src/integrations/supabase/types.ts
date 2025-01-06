@@ -244,43 +244,52 @@ export type Database = {
       }
       sales: {
         Row: {
+          estimated_profit: number | null
           fees: number
           id: string
           net_profit: number
           order_number: string
           platform_id: string | null
           product_id: string
+          quantity: number
           sale_date: string
           sale_price: number
           shipping_cost: number
+          status: Database["public"]["Enums"]["sale_status"] | null
           store_id: string | null
           tracking_number: string | null
           user_id: string
         }
         Insert: {
+          estimated_profit?: number | null
           fees?: number
           id?: string
           net_profit: number
           order_number: string
           platform_id?: string | null
           product_id: string
+          quantity?: number
           sale_date?: string
           sale_price: number
           shipping_cost?: number
+          status?: Database["public"]["Enums"]["sale_status"] | null
           store_id?: string | null
           tracking_number?: string | null
           user_id: string
         }
         Update: {
+          estimated_profit?: number | null
           fees?: number
           id?: string
           net_profit?: number
           order_number?: string
           platform_id?: string | null
           product_id?: string
+          quantity?: number
           sale_date?: string
           sale_price?: number
           shipping_cost?: number
+          status?: Database["public"]["Enums"]["sale_status"] | null
           store_id?: string | null
           tracking_number?: string | null
           user_id?: string
@@ -336,6 +345,7 @@ export type Database = {
       category_type: "category" | "subcategory"
       platform_status: "active" | "inactive"
       product_status: "in_stock" | "listed" | "pending_shipment" | "shipped"
+      sale_status: "pending" | "completed" | "cancelled"
       store_status: "active" | "inactive"
       supported_currency:
         | "USD"
