@@ -38,6 +38,8 @@ export const ProductsTable = ({ products, isLoading }: ProductsTableProps) => {
       if (error) throw error;
       return data;
     },
+    // Add refetchInterval to ensure we catch inventory splits
+    refetchInterval: 5000,
   });
 
   if (isLoading || isLoadingProducts) {
