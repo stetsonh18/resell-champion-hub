@@ -59,13 +59,14 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
         store_id: data.store_id,
         category_id: data.category_id,
         purchase_date: data.purchase_date.toISOString(),
-        user_id: user.id,
+        updated_at: new Date().toISOString(),
       };
 
       const { error } = await supabase
         .from("products")
         .update(productData)
-        .eq("id", productId);
+        .eq("id", productId)
+        .eq("user_id", user.id);
 
       if (error) throw error;
 
