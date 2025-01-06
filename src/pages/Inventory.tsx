@@ -5,6 +5,8 @@ import { ProductStats } from "@/components/inventory/ProductStats";
 import { ProductFilters } from "@/components/inventory/ProductFilters";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const Inventory = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,6 +55,10 @@ const Inventory = () => {
               Manage your product inventory
             </p>
           </div>
+          <Button onClick={() => console.log("Add product clicked")}>
+            <Plus className="mr-2" />
+            Add Product
+          </Button>
         </div>
 
         <ProductStats products={products} />
