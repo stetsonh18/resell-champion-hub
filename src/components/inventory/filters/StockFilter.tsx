@@ -14,7 +14,7 @@ export const StockFilter = ({ hideOutOfStock, setHideOutOfStock }: StockFilterPr
         checked={hideOutOfStock}
         onCheckedChange={setHideOutOfStock}
       />
-      <Label htmlFor="hide-out-of-stock">Hide out of stock</Label>
+      <Label htmlFor="hide-out-of-stock">Hide Shipped</Label>
     </div>
   );
 };
