@@ -77,8 +77,8 @@ export const useCreateSale = (onSuccess: () => void) => {
         sale_date: data.sale_date.toISOString(),
       };
 
-      // Call the handle_product_sale function with proper typing
-      const { error: transactionError } = await supabase.rpc<HandleProductSaleParams, void>(
+      // Call the handle_product_sale function
+      const { error: transactionError } = await supabase.rpc<HandleProductSaleParams, null>(
         'handle_product_sale',
         {
           p_product_id: data.product_id,
