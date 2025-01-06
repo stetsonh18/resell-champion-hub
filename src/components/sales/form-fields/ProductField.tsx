@@ -9,6 +9,9 @@ interface ProductFieldProps {
 }
 
 export const ProductField = ({ form, products }: ProductFieldProps) => {
+  // Find the selected product name for display
+  const selectedProduct = products?.find(product => product.id === form.getValues('product_id'));
+
   return (
     <FormField
       control={form.control}
@@ -19,10 +22,13 @@ export const ProductField = ({ form, products }: ProductFieldProps) => {
           <Select 
             onValueChange={field.onChange} 
             value={field.value}
+            defaultValue={field.value}
           >
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder="Select a product" />
+                <SelectValue placeholder="Select a product">
+                  {selectedProduct?.name}
+                </SelectValue>
               </SelectTrigger>
             </FormControl>
             <SelectContent>

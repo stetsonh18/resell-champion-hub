@@ -30,12 +30,13 @@ export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onS
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, name")
-        .eq("status", "listed");
+        .select("id, name, purchase_price")
+        .or('status.eq.listed,status.eq.pending_shipment,id.eq.' + defaultValues?.product_id);
       
       if (error) throw error;
       return data;
     },
+    enabled: true, // Always fetch products
   });
 
   const { data: platforms, isLoading: isLoadingPlatforms } = useQuery({
