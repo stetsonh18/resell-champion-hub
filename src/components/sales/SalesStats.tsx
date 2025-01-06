@@ -24,17 +24,17 @@ export const SalesStats = ({ sales = [] }: SalesStatsProps) => {
     : 0;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
       <StatCard
         title="Total Revenue"
         value={`$${totalRevenue.toLocaleString()}`}
         icon={DollarSign}
+        trend={{ value: Math.abs(salesGrowth), isPositive: salesGrowth >= 0 }}
       />
       <StatCard
         title="Total Sales"
         value={totalSales.toString()}
         icon={Package}
-        trend={{ value: Math.abs(salesGrowth), isPositive: salesGrowth >= 0 }}
       />
       <StatCard
         title="Net Profit"
