@@ -7,11 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { AddProductDialog } from "@/components/inventory/dialogs/AddProductDialog";
 
 const Inventory = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [hideOutOfStock, setHideOutOfStock] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
@@ -55,7 +57,7 @@ const Inventory = () => {
               Manage your product inventory
             </p>
           </div>
-          <Button onClick={() => console.log("Add product clicked")}>
+          <Button onClick={() => setIsAddDialogOpen(true)}>
             <Plus className="mr-2" />
             Add Product
           </Button>
@@ -73,6 +75,11 @@ const Inventory = () => {
         />
 
         <ProductsTable products={filteredProducts} isLoading={isLoading} />
+
+        <AddProductDialog 
+          isOpen={isAddDialogOpen} 
+          onClose={() => setIsAddDialogOpen(false)} 
+        />
       </div>
     </DashboardLayout>
   );
