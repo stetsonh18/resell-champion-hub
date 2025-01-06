@@ -18,8 +18,10 @@ export const DateField = ({ form }: DateFieldProps) => {
           <FormControl>
             <Input 
               type="date" 
-              {...field} 
-              value={field.value}
+              {...field}
+              // Ensure we're using the value from the form
+              defaultValue={field.value}
+              value={field.value} 
             />
           </FormControl>
           <FormMessage />
