@@ -337,7 +337,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      handle_product_sale: {
+        Args: {
+          p_product_id: string
+          p_sale_quantity: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       category_type: "category" | "subcategory"
