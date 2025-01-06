@@ -16,7 +16,11 @@ export const NameField = ({ form }: FormFieldProps) => (
       <FormItem>
         <FormLabel>Name</FormLabel>
         <FormControl>
-          <Input placeholder="Enter product name" {...field} />
+          <Input 
+            placeholder="Enter product name" 
+            {...field} 
+            className="bg-background"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -32,7 +36,11 @@ export const NotesField = ({ form }: FormFieldProps) => (
       <FormItem>
         <FormLabel>Notes</FormLabel>
         <FormControl>
-          <Textarea placeholder="Add any additional notes" {...field} />
+          <Textarea 
+            placeholder="Add any additional notes" 
+            {...field} 
+            className="bg-background min-h-[100px] resize-none"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>

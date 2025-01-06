@@ -9,34 +9,48 @@ interface PriceQuantityFieldsProps {
 
 export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <FormField
-        control={form.control}
-        name="purchase_price"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Purchase Price</FormLabel>
-            <FormControl>
-              <Input type="number" step="0.01" placeholder="0.00" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      
-      <FormField
-        control={form.control}
-        name="target_price"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Target Price</FormLabel>
-            <FormControl>
-              <Input type="number" step="0.01" placeholder="0.00" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="purchase_price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Purchase Price</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  step="0.01" 
+                  placeholder="0.00" 
+                  {...field} 
+                  className="bg-background"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="target_price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Target Price</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  step="0.01" 
+                  placeholder="0.00" 
+                  {...field}
+                  className="bg-background"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
 
       <FormField
         control={form.control}
@@ -45,7 +59,12 @@ export function PriceQuantityFields({ form }: PriceQuantityFieldsProps) {
           <FormItem>
             <FormLabel>Quantity</FormLabel>
             <FormControl>
-              <Input type="number" placeholder="0" {...field} />
+              <Input 
+                type="number" 
+                placeholder="0" 
+                {...field}
+                className="bg-background"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
