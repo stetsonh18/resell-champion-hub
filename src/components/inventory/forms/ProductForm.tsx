@@ -38,11 +38,25 @@ export function ProductForm({ form, onSubmit }: ProductFormProps) {
       const { data, error } = await supabase
         .from("categories")
         .select("*")
-        .eq("type", "category");
+        .order("type", { ascending: false }) // Categories first, then subcategories
+        .order("name");
       if (error) throw error;
       return data;
     },
   });
+
+  // Organize categories and subcategories
+  const organizedCategories = categories?.reduce((acc, curr) => {
+    if (curr.type === "category") {
+      acc.push({
+        ...curr,
+        subcategories: categories.filter(
+          (sub) => sub.type === "subcategory" && sub.parent_id === curr.id
+        ),
+      });
+    }
+    return acc;
+  }, [] as any[]);
 
   return (
     <Form {...form}>
@@ -100,10 +114,17 @@ export function ProductForm({ form, onSubmit }: ProductFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categories?.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
+                    {organizedCategories?.map((category) => (
+                      <div key={category.id}>
+                        <SelectItem value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                        {category.subcategories?.map((sub: any) => (
+                          <SelectItem key={sub.id} value={sub.id} className="pl-4">
+                            ↳ {sub.name}
+                          </SelectItem>
+                        ))}
+                      </div>
                     ))}
                   </SelectContent>
                 </Select>
