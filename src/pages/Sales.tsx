@@ -20,7 +20,10 @@ const Sales = () => {
         `)
         .order('sale_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching sales:", error);
+        throw error;
+      }
       return data;
     },
   });
