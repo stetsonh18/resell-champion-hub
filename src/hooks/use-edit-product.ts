@@ -19,7 +19,7 @@ const productFormSchema = z.object({
   notes: z.string().optional(),
   store_id: z.string().optional(),
   category_id: z.string().optional(),
-  status: z.enum(["in_stock", "listed", "sold"]).optional(),
+  status: z.enum(["in_stock", "listed", "pending_shipment", "shipped"]).optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;

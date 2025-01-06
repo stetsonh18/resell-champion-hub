@@ -19,68 +19,7 @@ const productFormSchema = z.object({
   notes: z.string().optional(),
   store_id: z.string().optional(),
   category_id: z.string().optional(),
+  status: z.enum(["in_stock", "listed", "pending_shipment", "shipped"]).optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
-
-export const useCreateProduct = (onSuccess: () => void) => {
-  const queryClient = useQueryClient();
-
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema),
-    defaultValues: {
-      name: "",
-      purchase_price: 0,
-      target_price: 0,
-      quantity: 0,
-      condition: undefined,
-      notes: "",
-      store_id: undefined,
-      category_id: undefined,
-      purchase_date: new Date(),
-    },
-  });
-
-  const onSubmit = async (data: ProductFormValues) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
-
-      const productData = {
-        name: data.name,
-        purchase_price: data.purchase_price,
-        target_price: data.target_price,
-        quantity: data.quantity,
-        condition: data.condition,
-        notes: data.notes,
-        store_id: data.store_id,
-        category_id: data.category_id,
-        purchase_date: data.purchase_date.toISOString(),
-        user_id: user.id,
-        sku: 'TEMP', // Temporary value that will be overwritten by the trigger
-      };
-
-      const { error } = await supabase
-        .from("products")
-        .insert(productData);
-
-      if (error) throw error;
-
-      toast.success("Product created successfully");
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      onSuccess();
-      form.reset();
-    } catch (error) {
-      console.error("Error creating product:", error);
-      toast.error("Failed to create product");
-    }
-  };
-
-  return {
-    form,
-    onSubmit: form.handleSubmit(onSubmit),
-  };
-};

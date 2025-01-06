@@ -14,7 +14,7 @@ export const StatusField = ({ form }: StatusFieldProps) => (
     render={({ field }) => (
       <FormItem>
         <FormLabel>Status</FormLabel>
-        <Select onValueChange={field.onChange} value={field.value}>
+        <Select onValueChange={field.onChange} value={field.value || "in_stock"}>
           <FormControl>
             <SelectTrigger>
               <SelectValue placeholder="Select status" />
@@ -23,7 +23,8 @@ export const StatusField = ({ form }: StatusFieldProps) => (
           <SelectContent>
             <SelectItem value="in_stock">In Stock</SelectItem>
             <SelectItem value="listed">Listed</SelectItem>
-            <SelectItem value="sold">Sold</SelectItem>
+            <SelectItem value="pending_shipment">Pending Shipment</SelectItem>
+            <SelectItem value="shipped">Shipped</SelectItem>
           </SelectContent>
         </Select>
         <FormMessage />
