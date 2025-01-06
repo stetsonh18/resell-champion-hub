@@ -15,6 +15,7 @@ interface EditProductContentProps {
     category_id?: string;
     purchase_date?: string;
     status?: "in_stock" | "listed" | "pending_shipment" | "shipped";
+    location?: string;
   };
   onClose: () => void;
 }
@@ -34,6 +35,7 @@ export function EditProductContent({ product, onClose }: EditProductContentProps
       store_id: product.store_id,
       category_id: product.category_id,
       status: (product.status || "in_stock") as "in_stock" | "listed" | "pending_shipment" | "shipped",
+      location: product.location || "",
       // Ensure we're always working with a Date object
       purchase_date: product.purchase_date ? new Date(product.purchase_date) : new Date(),
     });

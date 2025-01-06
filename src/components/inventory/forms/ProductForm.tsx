@@ -9,6 +9,7 @@ import { PriceQuantityFields } from "./fields/PriceQuantityFields";
 import { StoreField } from "./fields/StoreField";
 import { CategoryField } from "./fields/CategoryField";
 import { StatusField } from "./fields/StatusField";
+import { LocationField } from "./fields/LocationField";
 
 interface ProductFormProps {
   form: UseFormReturn<ProductFormValues>;
@@ -41,6 +42,8 @@ export function ProductForm({ form, onSubmit, buttonText, showStatus = false }: 
           </div>
 
           {showStatus && <StatusField form={form} />}
+          
+          <LocationField form={form} />
           
           <NotesField form={form} />
         </div>

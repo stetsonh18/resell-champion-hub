@@ -20,6 +20,7 @@ const productFormSchema = z.object({
   store_id: z.string().optional(),
   category_id: z.string().optional(),
   status: z.enum(["in_stock", "listed", "pending_shipment", "shipped"]).optional(),
+  location: z.string().optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -40,6 +41,7 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
       category_id: undefined,
       status: "in_stock",
       purchase_date: new Date(),
+      location: "",
     },
   });
 
@@ -63,6 +65,7 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
         status: data.status,
         purchase_date: data.purchase_date.toISOString(),
         updated_at: new Date().toISOString(),
+        location: data.location,
       };
 
       const { error } = await supabase

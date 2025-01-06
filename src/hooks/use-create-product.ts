@@ -20,6 +20,7 @@ const productFormSchema = z.object({
   store_id: z.string().optional(),
   category_id: z.string().optional(),
   status: z.enum(["in_stock", "listed", "pending_shipment", "shipped"]).optional(),
+  location: z.string().optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -40,6 +41,7 @@ export const useCreateProduct = (onSuccess: () => void) => {
       category_id: undefined,
       purchase_date: new Date(),
       status: "in_stock",
+      location: "",
     },
   });
 
@@ -64,6 +66,7 @@ export const useCreateProduct = (onSuccess: () => void) => {
         user_id: user.id,
         sku: 'TEMP', // Temporary value that will be overwritten by the trigger
         status: data.status || "in_stock",
+        location: data.location,
       };
 
       const { error } = await supabase
