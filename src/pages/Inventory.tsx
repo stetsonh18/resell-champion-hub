@@ -13,6 +13,8 @@ const Inventory = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [hideOutOfStock, setHideOutOfStock] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedStore, setSelectedStore] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const { data: products, isLoading } = useQuery({
@@ -41,10 +43,14 @@ const Inventory = () => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStock = hideOutOfStock ? product.quantity > 0 : true;
+    const matchesStock = hideOutOfStock ? product.status !== "shipped" : true;
     const matchesCategory =
       selectedCategory === "all" || product.category_id === selectedCategory;
-    return matchesSearch && matchesStock && matchesCategory;
+    const matchesStore =
+      selectedStore === "all" || product.store_id === selectedStore;
+    const matchesStatus =
+      selectedStatus === "all" || product.status === selectedStatus;
+    return matchesSearch && matchesStock && matchesCategory && matchesStore && matchesStatus;
   });
 
   return (
@@ -72,6 +78,10 @@ const Inventory = () => {
           setHideOutOfStock={setHideOutOfStock}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
+          selectedStore={selectedStore}
+          setSelectedStore={setSelectedStore}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
         />
 
         <ProductsTable products={filteredProducts} isLoading={isLoading} />
