@@ -1,12 +1,15 @@
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { StatCard } from "@/components/dashboard/StatCard";
+import { Card } from "@/components/ui/card";
 import { DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type Product = Database["public"]["Tables"]["products"]["Row"];
+type Sale = Database["public"]["Tables"]["sales"]["Row"];
 
 const Index = () => {
   const { data: sales } = useQuery({
-    queryKey: ["sales"],
+    queryKey: ["recent-sales"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales")
@@ -14,7 +17,7 @@ const Index = () => {
         .order("sale_date", { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as Sale[];
     },
   });
 
@@ -26,64 +29,46 @@ const Index = () => {
         .select("*");
       
       if (error) throw error;
-      return data;
+      return data as Product[];
     },
   });
 
-  // Calculate metrics
-  const totalRevenue = sales?.reduce((sum, sale) => sum + sale.sale_price, 0) || 0;
-  const activeListings = products?.filter(p => p.status === 'listed').length || 0;
-  const pendingOrders = products?.filter(p => p.status === 'pending_shipment').length || 0;
-  const netProfit = sales?.reduce((sum, sale) => sum + (sale.estimated_profit || 0), 0) || 0;
-
-  // Calculate trends (comparing to previous month)
-  const currentMonth = new Date().getMonth();
-  const currentMonthSales = sales?.filter(sale => 
-    new Date(sale.sale_date).getMonth() === currentMonth
-  );
-  const previousMonthSales = sales?.filter(sale => 
-    new Date(sale.sale_date).getMonth() === currentMonth - 1
-  );
-
-  const revenueTrend = previousMonthSales?.length 
-    ? ((currentMonthSales?.length || 0) - previousMonthSales.length) / previousMonthSales.length * 100
-    : 0;
+  const totalSales = sales?.reduce((acc, sale) => acc + Number(sale.sale_price), 0) || 0;
+  const totalProducts = products?.length || 0;
+  const listedProducts = products?.filter(product => product.status === "listed").length || 0;
+  const pendingShipment = products?.filter(product => product.status === "pending_shipment").length || 0;
 
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">
-            Welcome back! Here's an overview of your business.
-          </p>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card className="p-4">
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-medium">Total Sales</h3>
         </div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            title="Total Revenue"
-            value={`$${totalRevenue.toLocaleString()}`}
-            icon={DollarSign}
-            trend={{ value: Math.abs(revenueTrend), isPositive: revenueTrend >= 0 }}
-          />
-          <StatCard
-            title="Active Listings"
-            value={activeListings.toString()}
-            icon={Package}
-          />
-          <StatCard
-            title="Pending Orders"
-            value={pendingOrders.toString()}
-            icon={ShoppingCart}
-          />
-          <StatCard
-            title="Net Profit"
-            value={`$${netProfit.toLocaleString()}`}
-            icon={TrendingUp}
-          />
+        <p className="text-2xl font-bold">${totalSales.toFixed(2)}</p>
+      </Card>
+      <Card className="p-4">
+        <div className="flex items-center gap-2">
+          <Package className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-medium">Total Products</h3>
         </div>
-      </div>
-    </DashboardLayout>
+        <p className="text-2xl font-bold">{totalProducts}</p>
+      </Card>
+      <Card className="p-4">
+        <div className="flex items-center gap-2">
+          <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-medium">Listed Products</h3>
+        </div>
+        <p className="text-2xl font-bold">{listedProducts}</p>
+      </Card>
+      <Card className="p-4">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-medium">Pending Shipment</h3>
+        </div>
+        <p className="text-2xl font-bold">{pendingShipment}</p>
+      </Card>
+    </div>
   );
 };
 
