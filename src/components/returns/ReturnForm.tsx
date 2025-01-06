@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 const returnFormSchema = z.object({
   sale_id: z.string().min(1, "Sale is required"),
@@ -26,6 +27,8 @@ type ReturnFormValues = z.infer<typeof returnFormSchema>;
 
 export const ReturnForm = () => {
   const queryClient = useQueryClient();
+  const [saleDetails, setSaleDetails] = useState<any>(null);
+  
   const form = useForm<ReturnFormValues>({
     resolver: zodResolver(returnFormSchema),
     defaultValues: {
@@ -34,9 +37,51 @@ export const ReturnForm = () => {
     },
   });
 
+  const saleId = form.watch("sale_id");
+
+  useEffect(() => {
+    const fetchSaleDetails = async () => {
+      if (!saleId) return;
+      
+      const { data, error } = await supabase
+        .from("sales")
+        .select(`
+          *,
+          products (*)
+        `)
+        .eq("id", saleId)
+        .single();
+
+      if (error) {
+        toast.error("Error fetching sale details");
+        return;
+      }
+
+      if (data) {
+        setSaleDetails(data);
+        // Pre-fill refund amount with sale price
+        form.setValue("refund_amount", data.sale_price);
+      }
+    };
+
+    fetchSaleDetails();
+  }, [saleId, form]);
+
   const { mutate: createReturn } = useMutation({
     mutationFn: async (values: ReturnFormValues) => {
-      const { error } = await supabase.from("returns").insert([values]);
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error("User not authenticated");
+      if (!saleDetails) throw new Error("Sale details not found");
+
+      const returnData = {
+        user_id: user.id,
+        sale_id: values.sale_id,
+        product_id: saleDetails.product_id,
+        reason: values.reason,
+        refund_amount: values.refund_amount,
+      };
+
+      const { error } = await supabase.from("returns").insert([returnData]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -44,7 +89,8 @@ export const ReturnForm = () => {
       toast.success("Return created successfully");
       form.reset();
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error creating return:", error);
       toast.error("Failed to create return");
     },
   });

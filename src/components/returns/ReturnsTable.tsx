@@ -21,9 +21,9 @@ export const ReturnsTable = () => {
         .from("returns")
         .select(`
           *,
-          sales (
+          sales!sales_id (
             sale_price,
-            product:products (
+            products (
               name
             )
           )
@@ -56,7 +56,7 @@ export const ReturnsTable = () => {
               <TableCell>
                 {format(new Date(returnItem.return_date), "MMM d, yyyy")}
               </TableCell>
-              <TableCell>{returnItem.sales.product.name}</TableCell>
+              <TableCell>{returnItem.sales.products.name}</TableCell>
               <TableCell>{returnItem.reason}</TableCell>
               <TableCell>${returnItem.refund_amount.toFixed(2)}</TableCell>
               <TableCell>
