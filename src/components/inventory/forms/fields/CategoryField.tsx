@@ -41,28 +41,21 @@ export const CategoryField = ({ form }: CategoryFieldProps) => {
       name="category_id"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-white">Category</FormLabel>
+          <FormLabel>Category</FormLabel>
           <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
-              <SelectTrigger className="bg-[#1A1A1A] border-zinc-800 text-white">
+              <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent className="bg-[#1A1A1A] border-zinc-800">
+            <SelectContent>
               {organizedCategories?.map((category) => (
                 <div key={category.id}>
-                  <SelectItem 
-                    value={category.id}
-                    className="text-white hover:bg-zinc-800"
-                  >
+                  <SelectItem value={category.id}>
                     {category.name}
                   </SelectItem>
                   {category.subcategories?.map((sub: any) => (
-                    <SelectItem 
-                      key={sub.id} 
-                      value={sub.id} 
-                      className="pl-4 text-white hover:bg-zinc-800"
-                    >
+                    <SelectItem key={sub.id} value={sub.id} className="pl-4">
                       ↳ {sub.name}
                     </SelectItem>
                   ))}

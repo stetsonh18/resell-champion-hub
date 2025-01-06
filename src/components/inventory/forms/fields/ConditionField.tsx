@@ -13,20 +13,20 @@ export const ConditionField = ({ form }: ConditionFieldProps) => (
     name="condition"
     render={({ field }) => (
       <FormItem>
-        <FormLabel className="text-white">Condition</FormLabel>
+        <FormLabel>Condition</FormLabel>
         <Select onValueChange={field.onChange} value={field.value}>
           <FormControl>
-            <SelectTrigger className="bg-[#1A1A1A] border-zinc-800 text-white">
+            <SelectTrigger>
               <SelectValue placeholder="Select condition" />
             </SelectTrigger>
           </FormControl>
-          <SelectContent className="bg-[#1A1A1A] border-zinc-800">
-            <SelectItem value="new" className="text-white hover:bg-zinc-800">New</SelectItem>
-            <SelectItem value="like_new" className="text-white hover:bg-zinc-800">Like New</SelectItem>
-            <SelectItem value="very_good" className="text-white hover:bg-zinc-800">Very Good</SelectItem>
-            <SelectItem value="good" className="text-white hover:bg-zinc-800">Good</SelectItem>
-            <SelectItem value="acceptable" className="text-white hover:bg-zinc-800">Acceptable</SelectItem>
-            <SelectItem value="for_parts" className="text-white hover:bg-zinc-800">For Parts</SelectItem>
+          <SelectContent>
+            <SelectItem value="new">New</SelectItem>
+            <SelectItem value="like_new">Like New</SelectItem>
+            <SelectItem value="very_good">Very Good</SelectItem>
+            <SelectItem value="good">Good</SelectItem>
+            <SelectItem value="acceptable">Acceptable</SelectItem>
+            <SelectItem value="for_parts">For Parts</SelectItem>
           </SelectContent>
         </Select>
         <FormMessage />
