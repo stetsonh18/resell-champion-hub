@@ -30,7 +30,18 @@ export function ProductForm({ form, onSubmit, buttonText, showStatus = false }: 
             <CategoryField form={form} />
           </div>
 
-          <PriceQuantityFields form={form} />
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex-1">
+              <LocationField form={form} />
+            </div>
+            <div className="flex-1">
+              <PriceQuantityFields form={form} showQuantityOnly={true} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6">
+            <PriceQuantityFields form={form} hideQuantity={true} />
+          </div>
           
           <div className="grid grid-cols-2 gap-6">
             <div className="flex-1">
@@ -42,8 +53,6 @@ export function ProductForm({ form, onSubmit, buttonText, showStatus = false }: 
           </div>
 
           {showStatus && <StatusField form={form} />}
-          
-          <LocationField form={form} />
           
           <NotesField form={form} />
         </div>
