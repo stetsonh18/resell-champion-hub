@@ -29,11 +29,7 @@ export const StoreField = ({ form }: StoreFieldProps) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel>Store</FormLabel>
-          <Select 
-            onValueChange={field.onChange} 
-            value={field.value || ""}
-            defaultValue={field.value || ""}
-          >
+          <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder="Select store" />
