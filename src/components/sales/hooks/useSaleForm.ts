@@ -26,17 +26,23 @@ export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onS
   });
 
   const { data: products, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ["products-for-sale"],
+    queryKey: ["products-for-sale", defaultValues?.product_id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("products")
         .select("id, name, purchase_price")
-        .or('status.eq.listed,status.eq.pending_shipment,id.eq.' + defaultValues?.product_id);
+        .or('status.eq.listed,status.eq.pending_shipment');
+
+      // Only add the product ID condition if we have a default value
+      if (defaultValues?.product_id) {
+        query = query.or(`id.eq.${defaultValues.product_id}`);
+      }
+      
+      const { data, error } = await query;
       
       if (error) throw error;
       return data;
     },
-    enabled: true, // Always fetch products
   });
 
   const { data: platforms, isLoading: isLoadingPlatforms } = useQuery({
