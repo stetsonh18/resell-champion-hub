@@ -24,13 +24,21 @@ export function ShipmentsTable() {
           sku,
           name,
           location,
-          sale_price,
-          shipping_cost
+          sales (
+            sale_price,
+            shipping_cost
+          )
         `)
         .eq('status', 'pending_shipment');
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to flatten the sales information
+      return data.map(product => ({
+        ...product,
+        sale_price: product.sales?.[0]?.sale_price || 0,
+        shipping_cost: product.sales?.[0]?.shipping_cost || 0
+      }));
     },
   });
 

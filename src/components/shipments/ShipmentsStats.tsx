@@ -9,13 +9,19 @@ export function ShipmentsStats() {
     queryFn: async () => {
       const { data: products, error } = await supabase
         .from('products')
-        .select('sale_price')
-        .eq('status', 'pending_shipment');
+        .select(`
+          id,
+          sales (
+            sale_price
+          )
+        `)
+        .eq('status', 'pending_shipment')
+        .single();
 
       if (error) throw error;
 
       const totalShipments = products?.length || 0;
-      const totalValue = products?.reduce((sum, product) => sum + (product.sale_price || 0), 0) || 0;
+      const totalValue = products?.sales?.reduce((sum, sale) => sum + (sale.sale_price || 0), 0) || 0;
       const averageValue = totalShipments > 0 ? totalValue / totalShipments : 0;
 
       return {
