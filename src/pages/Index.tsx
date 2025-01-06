@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { formatCurrency } from "@/lib/utils";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type Sale = Database["public"]["Tables"]["sales"]["Row"];
@@ -42,36 +43,38 @@ const Index = () => {
   const monthlyChange = calculateMonthlyChange(sales);
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-      
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Total Sales"
-          value={formatCurrency(totalSales)}
-          icon={DollarSign}
-          trend={monthlyChange ? {
-            value: Math.abs(monthlyChange),
-            isPositive: monthlyChange > 0
-          } : undefined}
-        />
-        <StatCard
-          title="Total Products"
-          value={totalProducts.toString()}
-          icon={Package}
-        />
-        <StatCard
-          title="Listed Products"
-          value={listedProducts.toString()}
-          icon={ShoppingCart}
-        />
-        <StatCard
-          title="Pending Shipment"
-          value={pendingShipment.toString()}
-          icon={TrendingUp}
-        />
+    <DashboardLayout>
+      <div className="space-y-8">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Total Sales"
+            value={formatCurrency(totalSales)}
+            icon={DollarSign}
+            trend={monthlyChange ? {
+              value: Math.abs(monthlyChange),
+              isPositive: monthlyChange > 0
+            } : undefined}
+          />
+          <StatCard
+            title="Total Products"
+            value={totalProducts.toString()}
+            icon={Package}
+          />
+          <StatCard
+            title="Listed Products"
+            value={listedProducts.toString()}
+            icon={ShoppingCart}
+          />
+          <StatCard
+            title="Pending Shipment"
+            value={pendingShipment.toString()}
+            icon={TrendingUp}
+          />
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
