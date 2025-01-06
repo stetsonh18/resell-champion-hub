@@ -1,10 +1,5 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { ProductFormValues } from "@/hooks/use-create-product";
 
@@ -17,40 +12,24 @@ export const PurchaseDateField = ({ form }: DateFieldProps) => (
     control={form.control}
     name="purchase_date"
     render={({ field }) => {
-      // Ensure we're working with a Date object
-      const date = field.value instanceof Date ? field.value : new Date(field.value);
-      
+      // Convert the date to YYYY-MM-DD format for the input
+      const value = field.value instanceof Date 
+        ? field.value.toISOString().split('T')[0]
+        : new Date(field.value).toISOString().split('T')[0];
+
       return (
         <FormItem className="flex flex-col">
           <FormLabel>Purchase Date</FormLabel>
-          <Popover>
-            <PopoverTrigger asChild>
-              <FormControl>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full pl-3 text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </FormControl>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate) => {
-                  if (newDate) {
-                    field.onChange(newDate);
-                  }
-                }}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <FormControl>
+            <Input
+              type="date"
+              value={value}
+              onChange={(e) => {
+                // Convert the string date back to a Date object
+                field.onChange(new Date(e.target.value));
+              }}
+            />
+          </FormControl>
           <FormMessage />
         </FormItem>
       );
