@@ -64,18 +64,30 @@ export function SaleForm() {
 
   async function onSubmit(values: SaleFormValues) {
     try {
-      const { error } = await supabase
-        .from("sales")
-        .insert([{
-          ...values,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
-        }]);
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error("No user found");
 
-      if (error) throw error;
+      // Start a transaction by using multiple operations
+      const { error: saleError } = await supabase
+        .from("sales")
+        .insert({
+          ...values,
+          user_id: user.id,
+        });
+
+      if (saleError) throw saleError;
+
+      // Update product status to pending_shipment
+      const { error: productError } = await supabase
+        .from("products")
+        .update({ status: "pending_shipment" })
+        .eq("id", values.product_id);
+
+      if (productError) throw productError;
 
       toast({
         title: "Sale added successfully",
-        description: "The sale has been recorded in the system.",
+        description: "The sale has been recorded and product status updated.",
       });
 
       navigate("/sales");
