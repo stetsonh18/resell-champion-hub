@@ -26,16 +26,24 @@ export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onS
   });
 
   const { data: products, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ["products-for-sale", defaultValues?.product_id],
+    queryKey: ["products-for-sale", defaultValues?.product_id, saleId],
     queryFn: async () => {
       let query = supabase
         .from("products")
-        .select("id, name, purchase_price")
-        .or('status.eq.listed,status.eq.pending_shipment');
+        .select("id, name, purchase_price");
 
-      // Only add the product ID condition if we have a default value
-      if (defaultValues?.product_id) {
-        query = query.or(`id.eq.${defaultValues.product_id}`);
+      // If editing an existing sale (saleId exists) or we have a default product,
+      // show both listed and pending_shipment products
+      if (saleId || defaultValues?.product_id) {
+        query = query.or('status.eq.listed,status.eq.pending_shipment');
+        
+        // Add the specific product if we have a default value
+        if (defaultValues?.product_id) {
+          query = query.or(`id.eq.${defaultValues.product_id}`);
+        }
+      } else {
+        // For new sales, only show products with 'listed' status
+        query = query.eq('status', 'listed');
       }
       
       const { data, error } = await query;
