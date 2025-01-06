@@ -12,6 +12,8 @@ const productFormSchema = z.object({
   quantity: z.coerce.number().min(0, "Quantity must be 0 or greater"),
   condition: z.string().min(1, "Condition is required"),
   notes: z.string().optional(),
+  store_id: z.string().optional(),
+  category_id: z.string().optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -29,6 +31,8 @@ export const useProductForm = (onSuccess: () => void) => {
       quantity: 0,
       condition: "",
       notes: "",
+      store_id: undefined,
+      category_id: undefined,
     },
   });
 
@@ -47,6 +51,8 @@ export const useProductForm = (onSuccess: () => void) => {
         quantity: data.quantity,
         condition: data.condition,
         notes: data.notes,
+        store_id: data.store_id,
+        category_id: data.category_id,
         user_id: user.id,
       });
 
