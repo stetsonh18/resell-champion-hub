@@ -20,6 +20,12 @@ const saleFormSchema = z.object({
 
 export type SaleFormValues = z.infer<typeof saleFormSchema>;
 
+interface HandleProductSaleParams {
+  p_product_id: string;
+  p_sale_quantity: number;
+  p_user_id: string;
+}
+
 export const useCreateSale = (onSuccess: () => void) => {
   const queryClient = useQueryClient();
 
@@ -71,12 +77,15 @@ export const useCreateSale = (onSuccess: () => void) => {
         sale_date: data.sale_date.toISOString(),
       };
 
-      // Start a transaction
-      const { error: transactionError } = await supabase.rpc('handle_product_sale', {
-        p_product_id: data.product_id,
-        p_sale_quantity: data.quantity,
-        p_user_id: user.id
-      });
+      // Call the handle_product_sale function with proper typing
+      const { error: transactionError } = await supabase.rpc<HandleProductSaleParams>(
+        'handle_product_sale',
+        {
+          p_product_id: data.product_id,
+          p_sale_quantity: data.quantity,
+          p_user_id: user.id,
+        }
+      );
 
       if (transactionError) throw transactionError;
 
