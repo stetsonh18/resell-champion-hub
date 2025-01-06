@@ -32,6 +32,7 @@ export function EditProductContent({ product, onClose }: EditProductContentProps
       notes: product.notes || "",
       store_id: product.store_id,
       category_id: product.category_id,
+      // Ensure we're always working with a Date object
       purchase_date: product.purchase_date ? new Date(product.purchase_date) : new Date(),
     });
   }, [product, form]);

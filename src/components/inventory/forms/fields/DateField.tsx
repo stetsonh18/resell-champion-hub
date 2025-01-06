@@ -16,43 +16,44 @@ export const PurchaseDateField = ({ form }: DateFieldProps) => (
   <FormField
     control={form.control}
     name="purchase_date"
-    render={({ field }) => (
-      <FormItem className="flex flex-col">
-        <FormLabel>Purchase Date</FormLabel>
-        <Popover>
-          <PopoverTrigger asChild>
-            <FormControl>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full pl-3 text-left font-normal",
-                  !field.value && "text-muted-foreground"
-                )}
-              >
-                {field.value ? (
-                  format(new Date(field.value), "PPP")
-                ) : (
-                  <span>Pick a date</span>
-                )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-            </FormControl>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={field.value ? new Date(field.value) : undefined}
-              onSelect={(date) => {
-                if (date) {
-                  field.onChange(date);
-                }
-              }}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        <FormMessage />
-      </FormItem>
-    )}
+    render={({ field }) => {
+      // Ensure we're working with a Date object
+      const date = field.value instanceof Date ? field.value : new Date(field.value);
+      
+      return (
+        <FormItem className="flex flex-col">
+          <FormLabel>Purchase Date</FormLabel>
+          <Popover>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full pl-3 text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(newDate) => {
+                  if (newDate) {
+                    field.onChange(newDate);
+                  }
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          <FormMessage />
+        </FormItem>
+      );
+    }}
   />
 );
