@@ -10,11 +10,11 @@ export const StockFilter = ({ hideOutOfStock, setHideOutOfStock }: StockFilterPr
   return (
     <div className="flex items-center gap-2">
       <Switch
-        id="hide-out-of-stock"
+        id="hide-shipped"
         checked={hideOutOfStock}
         onCheckedChange={setHideOutOfStock}
       />
-      <Label htmlFor="hide-out-of-stock">Hide Shipped</Label>
+      <Label htmlFor="hide-shipped">Hide Shipped</Label>
     </div>
   );
 };
