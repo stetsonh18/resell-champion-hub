@@ -6,8 +6,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Edit } from "lucide-react";
-import { ProductForm } from "../forms/ProductForm";
-import { useProductForm } from "@/hooks/use-product-form";
 import { useState } from "react";
 import { EditProductContent } from "./EditProductContent";
 
@@ -28,26 +26,10 @@ interface EditProductDialogProps {
 
 export const EditProductDialog = ({ product }: EditProductDialogProps) => {
   const [open, setOpen] = useState(false);
-  const { form, onSubmit } = useProductForm(() => setOpen(false));
-
-  const handleOpen = () => {
-    form.reset({
-      name: product.name,
-      purchase_price: product.purchase_price,
-      target_price: product.target_price,
-      quantity: product.quantity,
-      condition: product.condition as any,
-      notes: product.notes || "",
-      store_id: product.store_id,
-      category_id: product.category_id,
-      purchase_date: product.purchase_date ? new Date(product.purchase_date) : new Date(),
-    });
-    setOpen(true);
-  };
 
   return (
     <>
-      <Button variant="ghost" size="icon" onClick={handleOpen}>
+      <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
         <Edit className="h-4 w-4" />
       </Button>
 
@@ -56,7 +38,7 @@ export const EditProductDialog = ({ product }: EditProductDialogProps) => {
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
           </DialogHeader>
-          <ProductForm form={form} onSubmit={onSubmit} />
+          <EditProductContent product={product} onClose={() => setOpen(false)} />
         </DialogContent>
       </Dialog>
     </>
