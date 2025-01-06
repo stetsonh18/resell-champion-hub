@@ -242,6 +242,77 @@ export type Database = {
         }
         Relationships: []
       }
+      returns: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          reason: string
+          refund_amount: number
+          restocking_fee: number | null
+          return_date: string
+          sale_id: string
+          shipping_fee: number | null
+          status: Database["public"]["Enums"]["return_status"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          reason: string
+          refund_amount: number
+          restocking_fee?: number | null
+          return_date?: string
+          sale_id: string
+          shipping_fee?: number | null
+          status?: Database["public"]["Enums"]["return_status"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          reason?: string
+          refund_amount?: number
+          restocking_fee?: number | null
+          return_date?: string
+          sale_id?: string
+          shipping_fee?: number | null
+          status?: Database["public"]["Enums"]["return_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_sale"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "returns_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "returns_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales: {
         Row: {
           created_at: string
@@ -350,6 +421,7 @@ export type Database = {
       category_type: "category" | "subcategory"
       platform_status: "active" | "inactive"
       product_status: "in_stock" | "listed" | "pending_shipment" | "shipped"
+      return_status: "pending" | "approved" | "rejected"
       sale_status: "pending" | "completed" | "cancelled"
       store_status: "active" | "inactive"
       supported_currency:
