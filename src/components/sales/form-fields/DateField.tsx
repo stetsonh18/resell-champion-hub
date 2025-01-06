@@ -16,7 +16,11 @@ export const DateField = ({ form }: DateFieldProps) => {
         <FormItem>
           <FormLabel>Sale Date</FormLabel>
           <FormControl>
-            <Input type="date" {...field} />
+            <Input 
+              type="date" 
+              {...field} 
+              value={field.value}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

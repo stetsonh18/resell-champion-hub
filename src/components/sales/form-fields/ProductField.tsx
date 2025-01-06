@@ -16,7 +16,11 @@ export const ProductField = ({ form, products }: ProductFieldProps) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel>Product</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select 
+            onValueChange={field.onChange} 
+            value={field.value}
+            defaultValue={field.value}
+          >
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder="Select a product" />
