@@ -13,10 +13,8 @@ export const DateField = ({ form }: DateFieldProps) => {
       control={form.control}
       name="sale_date"
       render={({ field }) => {
-        // Convert the date to YYYY-MM-DD format for the input
-        const value = field.value instanceof Date 
-          ? field.value.toISOString().split('T')[0]
-          : new Date(field.value).toISOString().split('T')[0];
+        // Format the date string to YYYY-MM-DD
+        const value = field.value ? new Date(field.value).toISOString().split('T')[0] : '';
         
         return (
           <FormItem>
@@ -25,10 +23,7 @@ export const DateField = ({ form }: DateFieldProps) => {
               <Input 
                 type="date" 
                 value={value}
-                onChange={(e) => {
-                  // Convert the string date back to a Date object
-                  field.onChange(new Date(e.target.value));
-                }}
+                onChange={(e) => field.onChange(e.target.value)}
               />
             </FormControl>
             <FormMessage />

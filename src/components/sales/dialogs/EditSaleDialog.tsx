@@ -29,7 +29,7 @@ export const EditSaleDialog = ({ sale }: EditSaleDialogProps) => {
   const [open, setOpen] = useState(false);
 
   const defaultValues = {
-    sale_date: new Date(sale.sale_date),
+    sale_date: sale.sale_date,
     product_id: sale.product_id,
     platform_id: sale.platform_id,
     sale_price: sale.sale_price,
