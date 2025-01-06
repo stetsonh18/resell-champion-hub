@@ -4,7 +4,23 @@ import { ProductStatus } from "./ProductStatus";
 import { ProductActions } from "./ProductActions";
 
 interface ProductRowProps {
-  product: any;
+  product: {
+    id: string;
+    sku: string;
+    name: string;
+    purchase_price: number;
+    stores?: {
+      name: string;
+    };
+    categories?: {
+      name: string;
+    };
+    purchase_date?: string;
+    quantity: number;
+    location?: string;
+    status?: string;
+    category_id?: string;
+  };
   onDelete: (id: string) => void;
 }
 

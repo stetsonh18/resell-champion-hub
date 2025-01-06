@@ -13,6 +13,11 @@ interface EditProductContentProps {
     notes?: string;
     store_id?: string;
     category_id?: string;
+    categories?: {
+      id: string;
+      name: string;
+      code: string;
+    };
     purchase_date?: string;
     status?: "in_stock" | "listed" | "pending_shipment" | "shipped";
     location?: string;
