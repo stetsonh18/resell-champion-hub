@@ -32,12 +32,14 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium">Revenue Over Time</h3>
         </div>
-        <div className="h-[350px] mt-4"> {/* Increased height to accommodate labels */}
+        {/* Increased height to accommodate labels */}
+        <div className="h-[350px] mt-4">
           <ChartContainer config={config}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={formattedData}
-                margin={{ top: 20, right: 30, left: 40, bottom: 40 }} {/* Increased bottom margin */}
+                // Increased margins for better spacing
+                margin={{ top: 20, right: 30, left: 40, bottom: 40 }}
               >
                 <XAxis
                   dataKey="date"
@@ -46,7 +48,8 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
                   tickLine={false}
                   axisLine={false}
                   padding={{ left: 10, right: 10 }}
-                  dy={16} {/* Add some vertical offset to the labels */}
+                  // Add vertical offset to labels
+                  dy={16}
                 />
                 <YAxis
                   stroke="#888888"
