@@ -16,7 +16,7 @@ export const AddReturnDialog = () => {
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          New Return
+          Process Return
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
