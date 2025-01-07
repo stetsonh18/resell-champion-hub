@@ -109,12 +109,12 @@ const Index = () => {
         </div>
 
         <AddProductDialog 
-          open={isAddProductOpen} 
-          onOpenChange={setIsAddProductOpen} 
+          isOpen={isAddProductOpen} 
+          onClose={() => setIsAddProductOpen(false)} 
         />
         <AddExpenseDialog 
-          open={isAddExpenseOpen} 
-          onOpenChange={setIsAddExpenseOpen} 
+          isOpen={isAddExpenseOpen} 
+          onClose={() => setIsAddExpenseOpen(false)} 
         />
       </div>
     </DashboardLayout>
