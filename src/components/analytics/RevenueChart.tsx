@@ -41,9 +41,9 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
               margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
             >
               <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="#e5e7eb" 
-                opacity={0.4}
+                strokeDasharray="1 1" 
+                stroke="#e2e8f0" 
+                opacity={0.6}
               />
               <XAxis 
                 dataKey="formattedDate"
