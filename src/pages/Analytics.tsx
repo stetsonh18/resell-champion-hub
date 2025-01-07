@@ -29,25 +29,6 @@ const Analytics = () => {
   const { sales, categories, products } = useAnalyticsData(dateRanges);
   const { calculateMetricsForPeriod, calculateGrowth } = useAnalyticsMetrics(sales);
 
-  // Prepare data for the revenue chart
-  const revenueData = sales?.reduce((acc: { date: Date; revenue: number }[], sale) => {
-    const saleDate = new Date(sale.sale_date);
-    const dateStr = saleDate.toISOString().split('T')[0];
-    
-    const existingEntry = acc.find(entry => entry.date.toISOString().split('T')[0] === dateStr);
-    
-    if (existingEntry) {
-      existingEntry.revenue += sale.sale_price;
-    } else {
-      acc.push({
-        date: saleDate,
-        revenue: sale.sale_price
-      });
-    }
-    
-    return acc;
-  }, []).sort((a, b) => a.date.getTime() - b.date.getTime()) || [];
-
   // Prepare data for the category pie chart
   const categoryData = sales?.reduce((acc: { [key: string]: number }, sale) => {
     const categoryId = sale.product?.category_id;
@@ -192,7 +173,6 @@ const Analytics = () => {
         <AnalyticsMetrics metrics={metrics} growth={growth} />
         
         <ChartGrid 
-          revenueData={revenueData}
           categoryData={pieChartData}
           inventoryData={inventoryChartData}
           platformPerformanceData={platformTableData}
