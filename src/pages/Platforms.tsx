@@ -38,11 +38,11 @@ const Platforms = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Platforms</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight">Platforms</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Manage your selling platforms and settings
             </p>
           </div>
