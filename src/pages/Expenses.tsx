@@ -14,7 +14,7 @@ export default function Expenses() {
       <div className="flex flex-col gap-6 p-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Expenses</h1>
-          <Button onClick={() => setOpen(true)}>
+          <Button className="bg-secondary hover:bg-secondary/90" onClick={() => setOpen(true)}>
             <Plus className="mr-2" />
             Add Expense
           </Button>

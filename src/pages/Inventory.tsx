@@ -63,7 +63,7 @@ const Inventory = () => {
               Manage your product inventory
             </p>
           </div>
-          <Button onClick={() => setIsAddDialogOpen(true)}>
+          <Button className="bg-secondary hover:bg-secondary/90" onClick={() => setIsAddDialogOpen(true)}>
             <Plus className="mr-2" />
             Add Product
           </Button>

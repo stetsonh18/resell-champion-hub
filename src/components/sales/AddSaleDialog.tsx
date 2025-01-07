@@ -13,7 +13,7 @@ export function AddSaleDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-secondary hover:bg-secondary/90">
           <Plus className="mr-2" />
           Add Sale
         </Button>

@@ -14,7 +14,7 @@ export const AddReturnDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-secondary hover:bg-secondary/90">
           <Plus className="mr-2 h-4 w-4" />
           Process Return
         </Button>
@@ -30,4 +30,4 @@ export const AddReturnDialog = () => {
       </DialogContent>
     </Dialog>
   );
-};
+}
