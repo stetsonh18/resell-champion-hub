@@ -8,6 +8,7 @@ import { AddProductDialog } from "@/components/inventory/dialogs/AddProductDialo
 import { AddExpenseDialog } from "@/components/expenses/AddExpenseDialog";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { TaskManagement } from "@/components/dashboard/TaskManagement";
 
 const Index = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -97,6 +98,8 @@ const Index = () => {
             icon={DollarSign}
           />
         </div>
+
+        <TaskManagement />
 
         <div className="grid gap-4 md:grid-cols-2">
           <QuickActions 
