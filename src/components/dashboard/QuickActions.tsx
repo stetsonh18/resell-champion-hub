@@ -1,20 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dispatch, SetStateAction } from "react";
+import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
+import { useState } from "react";
 
 interface QuickActionsProps {
-  setIsAddProductOpen: Dispatch<SetStateAction<boolean>>;
-  setIsAddSaleOpen: Dispatch<SetStateAction<boolean>>;
-  setIsAddReturnOpen: Dispatch<SetStateAction<boolean>>;
-  setIsAddExpenseOpen: Dispatch<SetStateAction<boolean>>;
+  setIsAddProductOpen: (open: boolean) => void;
+  setIsAddReturnOpen: (open: boolean) => void;
+  setIsAddExpenseOpen: (open: boolean) => void;
 }
 
 export const QuickActions = ({
   setIsAddProductOpen,
-  setIsAddSaleOpen,
   setIsAddReturnOpen,
   setIsAddExpenseOpen,
 }: QuickActionsProps) => {
+  const [isAddSaleOpen, setIsAddSaleOpen] = useState(false);
+
   return (
     <Card>
       <CardHeader>
@@ -47,6 +48,10 @@ export const QuickActions = ({
             Add Expense
           </Button>
         </div>
+        <AddSaleDialog 
+          isOpen={isAddSaleOpen}
+          onClose={() => setIsAddSaleOpen(false)}
+        />
       </CardContent>
     </Card>
   );
