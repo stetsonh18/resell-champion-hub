@@ -44,6 +44,7 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
                 strokeDasharray="1 1" 
                 stroke="#e2e8f0" 
                 opacity={0.6}
+                strokeWidth={0.5}
               />
               <XAxis 
                 dataKey="formattedDate"
