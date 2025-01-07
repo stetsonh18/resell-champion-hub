@@ -1,5 +1,5 @@
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { ChartContainer } from "@/components/ui/chart";
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { format } from "date-fns";
 
 interface RevenueChartProps {
@@ -49,9 +49,21 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
                 axisLine={false}
                 tickFormatter={(value) => `$${value}`}
               />
-              <ChartTooltip>
-                <ChartTooltipContent />
-              </ChartTooltip>
+              <Tooltip
+                contentStyle={{ 
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '0.5rem'
+                }}
+                labelStyle={{ color: 'hsl(var(--foreground))' }}
+                formatter={(value: number) => [
+                  new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  }).format(value),
+                  "Revenue"
+                ]}
+              />
               <Line
                 type="monotone"
                 dataKey="revenue"

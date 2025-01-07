@@ -101,20 +101,18 @@ const Index = () => {
         <div className="grid gap-4 md:grid-cols-2">
           <QuickActions 
             setIsAddProductOpen={setIsAddProductOpen}
-            setIsAddSaleOpen={setIsAddSaleOpen}
-            setIsAddReturnOpen={setIsAddReturnOpen}
             setIsAddExpenseOpen={setIsAddExpenseOpen}
           />
           <RecentActivity />
         </div>
 
         <AddProductDialog 
-          isOpen={isAddProductOpen} 
-          onClose={() => setIsAddProductOpen(false)} 
+          open={isAddProductOpen} 
+          onOpenChange={setIsAddProductOpen}
         />
         <AddExpenseDialog 
-          isOpen={isAddExpenseOpen} 
-          onClose={() => setIsAddExpenseOpen(false)} 
+          open={isAddExpenseOpen} 
+          onOpenChange={setIsAddExpenseOpen}
         />
       </div>
     </DashboardLayout>
