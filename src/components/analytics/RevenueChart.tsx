@@ -34,44 +34,53 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
         </div>
         <div className="h-[300px] mt-4">
           <ChartContainer config={config}>
-            <LineChart data={formattedData}>
-              <XAxis
-                dataKey="date"
-                stroke="#888888"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis
-                stroke="#888888"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => `$${value}`}
-              />
-              <Tooltip
-                contentStyle={{ 
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '0.5rem'
-                }}
-                labelStyle={{ color: 'hsl(var(--foreground))' }}
-                formatter={(value: number) => [
-                  new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                  }).format(value),
-                  "Revenue"
-                ]}
-              />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                dot={false}
-              />
-            </LineChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={formattedData}
+                margin={{ top: 10, right: 30, left: 40, bottom: 20 }}
+              >
+                <XAxis
+                  dataKey="date"
+                  stroke="#888888"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  padding={{ left: 10, right: 10 }}
+                />
+                <YAxis
+                  stroke="#888888"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => `$${value}`}
+                  width={60}
+                  padding={{ top: 10, bottom: 10 }}
+                />
+                <Tooltip
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '0.5rem',
+                    padding: '8px'
+                  }}
+                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                  formatter={(value: number) => [
+                    new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD'
+                    }).format(value),
+                    "Revenue"
+                  ]}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </div>
       </div>
