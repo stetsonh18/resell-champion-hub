@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -21,6 +22,9 @@ export const AddReturnDialog = () => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Return</DialogTitle>
+          <DialogDescription>
+            Fill in the details to process a product return.
+          </DialogDescription>
         </DialogHeader>
         <ReturnForm />
       </DialogContent>

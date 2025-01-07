@@ -12,73 +12,81 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const returnFormSchema = z.object({
   sale_id: z.string().min(1, "Sale is required"),
+  return_date: z.string().min(1, "Return date is required"),
   reason: z.string().min(1, "Reason is required"),
   refund_amount: z.number().min(0, "Refund amount must be positive"),
+  shipping_fee: z.number().min(0, "Shipping fee must be positive"),
+  restocking_fee: z.number().min(0, "Restocking fee must be positive"),
 });
 
 type ReturnFormValues = z.infer<typeof returnFormSchema>;
 
 export const ReturnForm = () => {
   const queryClient = useQueryClient();
-  const [saleDetails, setSaleDetails] = useState<any>(null);
+  const [selectedSale, setSelectedSale] = useState<any>(null);
   
   const form = useForm<ReturnFormValues>({
     resolver: zodResolver(returnFormSchema),
     defaultValues: {
-      reason: "",
+      return_date: new Date().toISOString().split('T')[0],
       refund_amount: 0,
+      shipping_fee: 0,
+      restocking_fee: 0,
     },
   });
 
-  const saleId = form.watch("sale_id");
-
-  useEffect(() => {
-    const fetchSaleDetails = async () => {
-      if (!saleId) return;
-      
-      const { data, error } = await supabase
+  // Fetch sold products
+  const { data: sales, isLoading: isLoadingSales } = useQuery({
+    queryKey: ["sold-products"],
+    queryFn: async () => {
+      const { data: sales, error } = await supabase
         .from("sales")
         .select(`
-          *,
-          products (*)
+          id,
+          sale_price,
+          sale_date,
+          product_id,
+          products (
+            name
+          )
         `)
-        .eq("id", saleId)
-        .single();
+        .order('sale_date', { ascending: false });
+      
+      if (error) throw error;
+      return sales;
+    },
+  });
 
-      if (error) {
-        toast.error("Error fetching sale details");
-        return;
-      }
-
-      if (data) {
-        setSaleDetails(data);
-        // Pre-fill refund amount with sale price
-        form.setValue("refund_amount", data.sale_price);
-      }
-    };
-
-    fetchSaleDetails();
-  }, [saleId, form]);
+  // Update refund amount when sale is selected
+  useEffect(() => {
+    if (selectedSale) {
+      form.setValue('refund_amount', selectedSale.sale_price);
+    }
+  }, [selectedSale, form]);
 
   const { mutate: createReturn } = useMutation({
     mutationFn: async (values: ReturnFormValues) => {
       const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error("User not authenticated");
-      if (!saleDetails) throw new Error("Sale details not found");
+      if (!selectedSale) throw new Error("Sale not selected");
 
       const returnData = {
         user_id: user.id,
         sale_id: values.sale_id,
-        product_id: saleDetails.product_id,
+        product_id: selectedSale.product_id,
+        return_date: new Date(values.return_date).toISOString(),
         reason: values.reason,
         refund_amount: values.refund_amount,
+        shipping_fee: values.shipping_fee,
+        restocking_fee: values.restocking_fee,
       };
 
       const { error } = await supabase.from("returns").insert([returnData]);
@@ -103,15 +111,47 @@ export const ReturnForm = () => {
           name="sale_id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Sale Reference</FormLabel>
+              <FormLabel>Select Product</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  const sale = sales?.find(s => s.id === value);
+                  setSelectedSale(sale);
+                }}
+                value={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a sold product" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {sales?.map((sale) => (
+                    <SelectItem key={sale.id} value={sale.id}>
+                      {sale.products.name} - Sold on {new Date(sale.sale_date).toLocaleDateString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="return_date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Return Date</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input type="date" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="reason"
@@ -132,6 +172,44 @@ export const ReturnForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Refund Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  step="0.01"
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                  value={field.value}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="shipping_fee"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Return Shipping Fee</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  step="0.01"
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                  value={field.value}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="restocking_fee"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Restocking Fee</FormLabel>
               <FormControl>
                 <Input
                   type="number"

@@ -291,13 +291,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fk_sale"
-            columns: ["sale_id"]
-            isOneToOne: false
-            referencedRelation: "sales"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "returns_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
