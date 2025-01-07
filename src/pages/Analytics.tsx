@@ -1,9 +1,10 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DateRangeSelector, DateRange } from "@/components/analytics/DateRangeSelector";
+import { DateRangeSelector } from "@/components/analytics/DateRangeSelector";
 import { AnalyticsMetrics } from "@/components/analytics/AnalyticsMetrics";
 import { useState } from "react";
+import { DateRange } from "@/components/analytics/types";
 
 const Analytics = () => {
   const [dateRanges, setDateRanges] = useState<{
