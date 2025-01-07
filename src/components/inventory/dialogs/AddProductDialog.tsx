@@ -3,15 +3,15 @@ import { ProductForm } from "../forms/ProductForm";
 import { useCreateProduct } from "@/hooks/use-create-product";
 
 interface AddProductDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
-  const { form, onSubmit } = useCreateProduct(onClose);
+export function AddProductDialog({ open, onOpenChange }: AddProductDialogProps) {
+  const { form, onSubmit } = useCreateProduct(() => onOpenChange(false));
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[650px] bg-background p-8">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Add Product</DialogTitle>
