@@ -13,9 +13,9 @@ export default function Expenses() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Expenses</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Expenses</h1>
           <Button className="bg-secondary hover:bg-secondary/90" onClick={() => setOpen(true)}>
-            <Plus className="mr-2" />
+            <Plus className="h-4 w-4 mr-2" />
             Add Expense
           </Button>
         </div>
