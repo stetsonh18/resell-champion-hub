@@ -60,6 +60,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        calendar: {
+          DEFAULT: "#1a1b1e",
+          foreground: "#FFFFFF",
+          muted: "#64748B",
+          selected: "#3b82f6",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
