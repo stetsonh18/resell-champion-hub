@@ -1,12 +1,12 @@
 import { Package, ShoppingCart, Box, TrendingUp, DollarSign, RefreshCw, ListTodo } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { type DashboardStats } from "@/hooks/use-dashboard-stats";
+import { type DashboardStats as DashboardStatsType } from "@/hooks/use-dashboard-stats";
 
-export interface DashboardStatsComponentProps {
-  stats: DashboardStats;
+interface DashboardStatsProps {
+  stats: DashboardStatsType;
 }
 
-export const DashboardStats = ({ stats }: DashboardStatsComponentProps) => {
+export const DashboardStats = ({ stats }: DashboardStatsProps) => {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <StatCard
