@@ -86,12 +86,14 @@ const Index = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-10">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            Dashboard
+          </h1>
         </div>
         
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <StatCard
             title="Total Products"
             value={totalProducts.toString()}
@@ -139,7 +141,7 @@ const Index = () => {
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           <QuickActions 
             setIsAddProductOpen={setIsAddProductOpen}
             setIsAddSaleOpen={setIsAddSaleOpen}
