@@ -2,21 +2,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Form } from "@/components/ui/form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
+import { DialogClose } from "@/components/ui/dialog";
+import { SaleField } from "./form-fields/SaleField";
+import { ReturnFields } from "./form-fields/ReturnFields";
+import { FeeFields } from "./form-fields/FeeFields";
 
 const returnFormSchema = z.object({
   sale_id: z.string().min(1, "Sale is required"),
@@ -32,6 +26,7 @@ type ReturnFormValues = z.infer<typeof returnFormSchema>;
 export const ReturnForm = () => {
   const queryClient = useQueryClient();
   const [selectedSale, setSelectedSale] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<ReturnFormValues>({
     resolver: zodResolver(returnFormSchema),
@@ -43,36 +38,7 @@ export const ReturnForm = () => {
     },
   });
 
-  // Fetch sold products
-  const { data: sales, isLoading: isLoadingSales } = useQuery({
-    queryKey: ["sold-products"],
-    queryFn: async () => {
-      const { data: sales, error } = await supabase
-        .from("sales")
-        .select(`
-          id,
-          sale_price,
-          sale_date,
-          product_id,
-          products (
-            name
-          )
-        `)
-        .order('sale_date', { ascending: false });
-      
-      if (error) throw error;
-      return sales;
-    },
-  });
-
-  // Update refund amount when sale is selected
-  useEffect(() => {
-    if (selectedSale) {
-      form.setValue('refund_amount', selectedSale.sale_price);
-    }
-  }, [selectedSale, form]);
-
-  const { mutate: createReturn } = useMutation({
+  const { mutateAsync: createReturn } = useMutation({
     mutationFn: async (values: ReturnFormValues) => {
       const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error("User not authenticated");
@@ -103,129 +69,34 @@ export const ReturnForm = () => {
     },
   });
 
+  const onSubmit = async (data: ReturnFormValues) => {
+    setIsSubmitting(true);
+    try {
+      await createReturn(data);
+      return true; // Return success to trigger dialog close
+    } catch (error) {
+      return false; // Return failure to prevent dialog close
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => createReturn(data))} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="sale_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Select Product</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  const sale = sales?.find(s => s.id === value);
-                  setSelectedSale(sale);
-                }}
-                value={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a sold product" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {sales?.map((sale) => (
-                    <SelectItem key={sale.id} value={sale.id}>
-                      {sale.products.name} - Sold on {new Date(sale.sale_date).toLocaleDateString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="return_date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Return Date</FormLabel>
-              <FormControl>
-                <Input type="date" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="reason"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Reason</FormLabel>
-              <FormControl>
-                <Textarea {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="refund_amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Refund Amount</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  step="0.01"
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  value={field.value}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="shipping_fee"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Return Shipping Fee</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  step="0.01"
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  value={field.value}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="restocking_fee"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Restocking Fee</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  step="0.01"
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  value={field.value}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" className="w-full">
-          Create Return
-        </Button>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <SaleField form={form} onSaleSelect={setSelectedSale} />
+        <ReturnFields form={form} />
+        <FeeFields form={form} />
+        
+        <DialogClose asChild>
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            Create Return
+          </Button>
+        </DialogClose>
       </form>
     </Form>
   );
