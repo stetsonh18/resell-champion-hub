@@ -1,70 +1,33 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { DateRangeSelector } from "@/components/analytics/DateRangeSelector";
 import { AnalyticsMetrics } from "@/components/analytics/AnalyticsMetrics";
-import { RevenueChart } from "@/components/analytics/RevenueChart";
-import { CategoryPieChart } from "@/components/analytics/CategoryPieChart";
-import { InventoryValueChart } from "@/components/analytics/InventoryValueChart";
+import { ChartGrid } from "@/components/analytics/ChartGrid";
 import { useState } from "react";
 import { DateRange } from "@/components/analytics/types";
+import { useAnalyticsData } from "@/hooks/use-analytics-data";
+import { useAnalyticsMetrics } from "@/hooks/use-analytics-metrics";
+import { endOfDay, startOfDay, subDays } from "date-fns";
 
 const Analytics = () => {
+  const now = new Date();
+  const defaultDateRanges = {
+    current: {
+      from: startOfDay(subDays(now, 30)),
+      to: endOfDay(now)
+    },
+    previous: {
+      from: startOfDay(subDays(now, 60)),
+      to: endOfDay(subDays(now, 30))
+    }
+  };
+
   const [dateRanges, setDateRanges] = useState<{
     current: DateRange;
     previous: DateRange;
-  } | null>(null);
+  }>(defaultDateRanges);
 
-  // Fetch sales data
-  const { data: sales, isLoading: salesLoading } = useQuery({
-    queryKey: ["sales-analytics", dateRanges?.current, dateRanges?.previous],
-    queryFn: async () => {
-      if (!dateRanges) return [];
-
-      const { data, error } = await supabase
-        .from("sales")
-        .select(`
-          *,
-          product:products(purchase_price, category_id, name),
-          platform:platforms(name)
-        `)
-        .gte('sale_date', dateRanges.previous.from.toISOString())
-        .lte('sale_date', dateRanges.current.to.toISOString());
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!dateRanges,
-  });
-
-  // Fetch categories
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("categories")
-        .select("*");
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  // Fetch products for inventory value
-  const { data: products } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select(`
-          *,
-          category:categories(name)
-        `);
-
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { sales, categories, products } = useAnalyticsData(dateRanges);
+  const { calculateMetricsForPeriod, calculateGrowth } = useAnalyticsMetrics(sales);
 
   // Prepare data for the revenue chart
   const revenueData = sales?.reduce((acc: { date: Date; revenue: number }[], sale) => {
@@ -114,45 +77,8 @@ const Analytics = () => {
     value
   }));
 
-  // Calculate metrics for the current period
-  const calculateMetricsForPeriod = (startDate: Date, endDate: Date) => {
-    const periodSales = sales?.filter(sale => {
-      const saleDate = new Date(sale.sale_date);
-      return saleDate >= startDate && saleDate <= endDate;
-    }) || [];
-
-    const totalSales = periodSales.length;
-    const totalRevenue = periodSales.reduce((sum, sale) => sum + sale.sale_price, 0);
-    const totalProfit = periodSales.reduce((sum, sale) => {
-      const revenue = sale.sale_price + (sale.shipping_amount_collected || 0);
-      const costs = (sale.product?.purchase_price || 0) + 
-                   (sale.shipping_cost || 0) + 
-                   (sale.platform_fees || 0);
-      return sum + (revenue - costs);
-    }, 0);
-
-    const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
-
-    return {
-      totalSales,
-      totalRevenue,
-      totalProfit,
-      profitMargin
-    };
-  };
-
-  const currentMetrics = dateRanges
-    ? calculateMetricsForPeriod(dateRanges.current.from, dateRanges.current.to)
-    : { totalSales: 0, totalRevenue: 0, totalProfit: 0, profitMargin: 0 };
-  
-  const previousMetrics = dateRanges
-    ? calculateMetricsForPeriod(dateRanges.previous.from, dateRanges.previous.to)
-    : { totalSales: 0, totalRevenue: 0, totalProfit: 0, profitMargin: 0 };
-
-  const calculateGrowth = (current: number, previous: number) => {
-    if (previous === 0) return current > 0 ? 100 : 0;
-    return ((current - previous) / previous) * 100;
-  };
+  const currentMetrics = calculateMetricsForPeriod(dateRanges.current.from, dateRanges.current.to);
+  const previousMetrics = calculateMetricsForPeriod(dateRanges.previous.from, dateRanges.previous.to);
 
   const growth = {
     revenue: calculateGrowth(currentMetrics.totalRevenue, previousMetrics.totalRevenue),
@@ -197,15 +123,11 @@ const Analytics = () => {
 
         <AnalyticsMetrics metrics={metrics} growth={growth} />
         
-        {dateRanges && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="md:col-span-2">
-              <RevenueChart data={revenueData} />
-            </div>
-            <CategoryPieChart data={pieChartData} />
-            <InventoryValueChart data={inventoryChartData} />
-          </div>
-        )}
+        <ChartGrid 
+          revenueData={revenueData}
+          categoryData={pieChartData}
+          inventoryData={inventoryChartData}
+        />
       </div>
     </DashboardLayout>
   );
