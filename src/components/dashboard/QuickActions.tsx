@@ -1,64 +1,28 @@
+import { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
-import { AddReturnDialog } from "@/components/returns/AddReturnDialog";
-import { useState } from "react";
 
-interface QuickActionsProps {
-  setIsAddProductOpen: (open: boolean) => void;
-  setIsAddReturnOpen: (open: boolean) => void;
-  setIsAddExpenseOpen: (open: boolean) => void;
-}
+export type QuickActionsProps = {
+  setIsAddProductOpen: Dispatch<SetStateAction<boolean>>;
+  setIsAddSaleOpen: Dispatch<SetStateAction<boolean>>;
+  setIsAddReturnOpen: Dispatch<SetStateAction<boolean>>;
+  setIsAddExpenseOpen: Dispatch<SetStateAction<boolean>>;
+};
 
 export const QuickActions = ({
   setIsAddProductOpen,
+  setIsAddSaleOpen,
   setIsAddReturnOpen,
-  setIsAddExpenseOpen,
+  setIsAddExpenseOpen
 }: QuickActionsProps) => {
-  const [isAddSaleOpen, setIsAddSaleOpen] = useState(false);
-  const [isAddReturnDialogOpen, setIsAddReturnDialogOpen] = useState(false);
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-4">
-          <Button 
-            className="bg-secondary hover:bg-secondary/90"
-            onClick={() => setIsAddProductOpen(true)}
-          >
-            Add Product
-          </Button>
-          <Button 
-            className="bg-secondary hover:bg-secondary/90"
-            onClick={() => setIsAddSaleOpen(true)}
-          >
-            Add Sale
-          </Button>
-          <Button 
-            className="bg-secondary hover:bg-secondary/90"
-            onClick={() => setIsAddReturnDialogOpen(true)}
-          >
-            Process Return
-          </Button>
-          <Button 
-            className="bg-secondary hover:bg-secondary/90"
-            onClick={() => setIsAddExpenseOpen(true)}
-          >
-            Add Expense
-          </Button>
-        </div>
-        <AddSaleDialog 
-          isOpen={isAddSaleOpen}
-          onClose={() => setIsAddSaleOpen(false)}
-        />
-        <AddReturnDialog 
-          isOpen={isAddReturnDialogOpen}
-          onClose={() => setIsAddReturnDialogOpen(false)}
-        />
-      </CardContent>
-    </Card>
+    <div className="flex flex-col gap-4">
+      <h2 className="text-lg font-semibold">Quick Actions</h2>
+      <div className="flex gap-2">
+        <Button onClick={() => setIsAddProductOpen(true)}>Add Product</Button>
+        <Button onClick={() => setIsAddSaleOpen(true)}>Add Sale</Button>
+        <Button onClick={() => setIsAddReturnOpen(true)}>Add Return</Button>
+        <Button onClick={() => setIsAddExpenseOpen(true)}>Add Expense</Button>
+      </div>
+    </div>
   );
 };

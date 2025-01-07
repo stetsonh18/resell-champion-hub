@@ -4,8 +4,11 @@ import { SalesStats } from "@/components/sales/SalesStats";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
+import { useState } from "react";
 
 const Sales = () => {
+  const [isAddSaleOpen, setIsAddSaleOpen] = useState(false);
+
   const { data: sales, isLoading } = useQuery({
     queryKey: ["sales"],
     queryFn: async () => {
@@ -36,11 +39,13 @@ const Sales = () => {
               Track and manage your sales
             </p>
           </div>
-          <AddSaleDialog />
+          <AddSaleDialog 
+            isOpen={isAddSaleOpen}
+            onClose={() => setIsAddSaleOpen(false)}
+          />
         </div>
 
         <SalesStats sales={sales} />
-
         <SalesTable sales={sales} isLoading={isLoading} />
       </div>
     </DashboardLayout>

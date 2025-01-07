@@ -1,17 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { CalendarDays } from "lucide-react";
 import { useState } from "react";
 import { 
@@ -24,25 +17,11 @@ import {
   endOfQuarter,
   subQuarters
 } from "date-fns";
-
-export type DateRange = {
-  from: Date;
-  to: Date;
-};
-
-type DateRangeSelectorProps = {
-  onRangeChange: (current: DateRange, previous: DateRange) => void;
-};
+import { CustomRangeDialog } from "./CustomRangeDialog";
+import { DateRange, DateRangeSelectorProps } from "./types";
 
 export const DateRangeSelector = ({ onRangeChange }: DateRangeSelectorProps) => {
   const [customRangeOpen, setCustomRangeOpen] = useState(false);
-  const [selectedRange, setSelectedRange] = useState<{
-    from: Date;
-    to: Date | undefined;
-  }>({
-    from: new Date(),
-    to: undefined,
-  });
 
   const handlePresetSelect = (preset: string) => {
     const now = new Date();
@@ -130,25 +109,6 @@ export const DateRangeSelector = ({ onRangeChange }: DateRangeSelectorProps) => 
     onRangeChange(currentRange, previousRange);
   };
 
-  const handleCustomRangeSelect = (range: { from: Date; to: Date | undefined }) => {
-    if (range.from && range.to) {
-      const currentRange = {
-        from: startOfDay(range.from),
-        to: endOfDay(range.to)
-      };
-      
-      const daysDiff = Math.floor((range.to.getTime() - range.from.getTime()) / (1000 * 60 * 60 * 24));
-      
-      const previousRange = {
-        from: startOfDay(subDays(range.from, daysDiff)),
-        to: endOfDay(range.from)
-      };
-
-      onRangeChange(currentRange, previousRange);
-      setCustomRangeOpen(false);
-    }
-  };
-
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
@@ -186,27 +146,11 @@ export const DateRangeSelector = ({ onRangeChange }: DateRangeSelectorProps) => 
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Dialog open={customRangeOpen} onOpenChange={setCustomRangeOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Select custom date range</DialogTitle>
-          </DialogHeader>
-          <Calendar
-            mode="range"
-            selected={selectedRange}
-            onSelect={(range) => {
-              if (range) {
-                setSelectedRange(range);
-                if (range.from && range.to) {
-                  handleCustomRangeSelect(range);
-                }
-              }
-            }}
-            numberOfMonths={2}
-            className="rounded-md border"
-          />
-        </DialogContent>
-      </Dialog>
+      <CustomRangeDialog 
+        open={customRangeOpen}
+        onOpenChange={setCustomRangeOpen}
+        onRangeSelect={onRangeChange}
+      />
     </div>
   );
 };
