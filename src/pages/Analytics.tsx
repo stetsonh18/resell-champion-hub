@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { DateRangeSelector } from "@/components/analytics/DateRangeSelector";
 import { AnalyticsMetrics } from "@/components/analytics/AnalyticsMetrics";
 import { RevenueChart } from "@/components/analytics/RevenueChart";
+import { CategoryPieChart } from "@/components/analytics/CategoryPieChart";
+import { InventoryValueChart } from "@/components/analytics/InventoryValueChart";
 import { useState } from "react";
 import { DateRange } from "@/components/analytics/types";
 
@@ -13,7 +15,7 @@ const Analytics = () => {
     previous: DateRange;
   } | null>(null);
 
-  const { data: sales, isLoading } = useQuery({
+  const { data: sales, isLoading: salesLoading } = useQuery({
     queryKey: ["sales-analytics", dateRanges?.current, dateRanges?.previous],
     queryFn: async () => {
       if (!dateRanges) return [];
@@ -22,7 +24,8 @@ const Analytics = () => {
         .from("sales")
         .select(`
           *,
-          product:products(purchase_price)
+          product:products(purchase_price, category_id, name),
+          platform:platforms(name)
         `)
         .gte('sale_date', dateRanges.previous.from.toISOString())
         .lte('sale_date', dateRanges.current.to.toISOString());
@@ -31,6 +34,33 @@ const Analytics = () => {
       return data;
     },
     enabled: !!dateRanges,
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          *,
+          category:categories(name)
+        `);
+
+      if (error) throw error;
+      return data;
+    },
   });
 
   // Prepare data for the revenue chart
@@ -51,6 +81,35 @@ const Analytics = () => {
     
     return acc;
   }, []).sort((a, b) => a.date.getTime() - b.date.getTime()) || [];
+
+  // Prepare data for the category pie chart
+  const categoryData = sales?.reduce((acc: { [key: string]: number }, sale) => {
+    const categoryId = sale.product?.category_id;
+    const category = categories?.find(c => c.id === categoryId);
+    const categoryName = category?.name || 'Uncategorized';
+    
+    acc[categoryName] = (acc[categoryName] || 0) + sale.sale_price;
+    return acc;
+  }, {});
+
+  const pieChartData = Object.entries(categoryData || {}).map(([name, value]) => ({
+    name,
+    value
+  }));
+
+  // Prepare data for the inventory value chart
+  const inventoryData = products?.reduce((acc: { [key: string]: number }, product) => {
+    const categoryName = product.category?.name || 'Uncategorized';
+    const value = product.purchase_price * product.quantity;
+    
+    acc[categoryName] = (acc[categoryName] || 0) + value;
+    return acc;
+  }, {});
+
+  const inventoryChartData = Object.entries(inventoryData || {}).map(([name, value]) => ({
+    name,
+    value
+  }));
 
   // Helper function to calculate metrics for a date range
   const calculateMetricsForPeriod = (startDate: Date, endDate: Date) => {
@@ -140,7 +199,13 @@ const Analytics = () => {
         <AnalyticsMetrics metrics={metrics} growth={growth} />
         
         {dateRanges && (
-          <RevenueChart data={revenueData} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="md:col-span-2">
+              <RevenueChart data={revenueData} />
+            </div>
+            <CategoryPieChart data={pieChartData} />
+            <InventoryValueChart data={inventoryChartData} />
+          </div>
         )}
       </div>
     </DashboardLayout>
