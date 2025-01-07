@@ -1,39 +1,21 @@
-import { StatCard } from "@/components/dashboard/StatCard";
-import { Box, DollarSign, Package, ShoppingCart, TrendingUp, History } from "lucide-react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
-import { formatCurrency } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { Box, DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { AddProductDialog } from "@/components/inventory/dialogs/AddProductDialog";
 import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
 import { AddReturnDialog } from "@/components/returns/AddReturnDialog";
 import { AddExpenseDialog } from "@/components/expenses/AddExpenseDialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-type Product = Database["public"]["Tables"]["products"]["Row"];
-type Sale = Database["public"]["Tables"]["sales"]["Row"];
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { RecentActivity } from "@/components/dashboard/RecentActivity";
 
 const Index = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [isAddSaleOpen, setIsAddSaleOpen] = useState(false);
   const [isAddReturnOpen, setIsAddReturnOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
-
-  const { data: sales } = useQuery({
-    queryKey: ["recent-sales"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sales")
-        .select("*, product:products(name)")
-        .order("sale_date", { ascending: false });
-      
-      if (error) throw error;
-      return data as (Sale & { product: { name: string } })[];
-    },
-  });
 
   const { data: products } = useQuery({
     queryKey: ["products"],
@@ -43,45 +25,21 @@ const Index = () => {
         .select("*");
       
       if (error) throw error;
-      return data as Product[];
+      return data;
     },
   });
 
-  const { data: recentActivity } = useQuery({
-    queryKey: ["recent-activity"],
+  const { data: sales } = useQuery({
+    queryKey: ["recent-sales"],
     queryFn: async () => {
-      const [salesResult, returnsResult] = await Promise.all([
-        supabase
-          .from("sales")
-          .select("*, product:products(name)")
-          .order("created_at", { ascending: false })
-          .limit(5),
-        supabase
-          .from("returns")
-          .select("*, product:products(name)")
-          .order("created_at", { ascending: false })
-          .limit(5)
-      ]);
-
-      if (salesResult.error) throw salesResult.error;
-      if (returnsResult.error) throw returnsResult.error;
-
-      const combined = [
-        ...salesResult.data.map(sale => ({
-          type: 'sale' as const,
-          date: new Date(sale.created_at),
-          description: `Sold ${sale.product.name} for ${formatCurrency(sale.sale_price)}`
-        })),
-        ...returnsResult.data.map(return_ => ({
-          type: 'return' as const,
-          date: new Date(return_.created_at),
-          description: `Return processed for ${return_.product.name}`
-        }))
-      ].sort((a, b) => b.date.getTime() - a.date.getTime())
-      .slice(0, 5);
-
-      return combined;
-    }
+      const { data, error } = await supabase
+        .from("sales")
+        .select("*, products!sales_product_id_fkey(name)")
+        .order("sale_date", { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    },
   });
 
   // Calculate statistics
@@ -132,71 +90,24 @@ const Index = () => {
           />
           <StatCard
             title="Sales This Month"
-            value={formatCurrency(salesAmountThisMonth)}
+            value={`$${salesAmountThisMonth.toFixed(2)}`}
             icon={DollarSign}
           />
           <StatCard
             title="Average Sale Price"
-            value={formatCurrency(averageSalePrice)}
+            value={`$${averageSalePrice.toFixed(2)}`}
             icon={DollarSign}
           />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <Button 
-                  className="bg-secondary hover:bg-secondary/90"
-                  onClick={() => setIsAddProductOpen(true)}
-                >
-                  Add Product
-                </Button>
-                <Button 
-                  className="bg-secondary hover:bg-secondary/90"
-                  onClick={() => setIsAddSaleOpen(true)}
-                >
-                  Add Sale
-                </Button>
-                <Button 
-                  className="bg-secondary hover:bg-secondary/90"
-                  onClick={() => setIsAddReturnOpen(true)}
-                >
-                  Process Return
-                </Button>
-                <Button 
-                  className="bg-secondary hover:bg-secondary/90"
-                  onClick={() => setIsAddExpenseOpen(true)}
-                >
-                  Add Expense
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5" />
-                Recent Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivity?.map((activity, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground">
-                      {activity.date.toLocaleDateString()}
-                    </span>
-                    <span>{activity.description}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <QuickActions 
+            setIsAddProductOpen={setIsAddProductOpen}
+            setIsAddSaleOpen={setIsAddSaleOpen}
+            setIsAddReturnOpen={setIsAddReturnOpen}
+            setIsAddExpenseOpen={setIsAddExpenseOpen}
+          />
+          <RecentActivity />
         </div>
 
         <AddProductDialog 
@@ -204,16 +115,16 @@ const Index = () => {
           onClose={() => setIsAddProductOpen(false)} 
         />
         <AddSaleDialog 
-          open={isAddSaleOpen} 
-          onOpenChange={setIsAddSaleOpen} 
+          isOpen={isAddSaleOpen} 
+          onClose={setIsAddSaleOpen} 
         />
         <AddReturnDialog 
-          open={isAddReturnOpen} 
-          onOpenChange={setIsAddReturnOpen} 
+          isOpen={isAddReturnOpen} 
+          onClose={setIsAddReturnOpen} 
         />
         <AddExpenseDialog 
-          open={isAddExpenseOpen} 
-          onOpenChange={setIsAddExpenseOpen} 
+          isOpen={isAddExpenseOpen} 
+          onClose={setIsAddExpenseOpen} 
         />
       </div>
     </DashboardLayout>
