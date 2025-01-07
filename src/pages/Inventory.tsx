@@ -55,16 +55,16 @@ const Inventory = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Inventory</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight">Inventory</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Manage your product inventory
             </p>
           </div>
           <Button className="bg-secondary hover:bg-secondary/90" onClick={() => setIsAddDialogOpen(true)}>
-            <Plus className="mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Product
           </Button>
         </div>
