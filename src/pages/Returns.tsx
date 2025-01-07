@@ -14,8 +14,8 @@ export default function Returns() {
       <div className="flex flex-col gap-6 p-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold tracking-tight">Returns</h1>
-          <Button onClick={() => setIsAddReturnOpen(true)}>
-            <Plus className="h-4 w-4" />
+          <Button className="bg-secondary hover:bg-secondary/90">
+            <Plus className="h-4 w-4 mr-2" />
             Process Return
           </Button>
           <AddReturnDialog 

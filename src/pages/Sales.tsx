@@ -41,8 +41,8 @@ const Sales = () => {
               Track and manage your sales
             </p>
           </div>
-          <Button onClick={() => setIsAddSaleOpen(true)}>
-            <Plus className="h-4 w-4" />
+          <Button className="bg-secondary hover:bg-secondary/90">
+            <Plus className="h-4 w-4 mr-2" />
             Add Sale
           </Button>
           <AddSaleDialog 
