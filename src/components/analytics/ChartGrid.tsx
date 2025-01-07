@@ -34,13 +34,13 @@ export const ChartGrid = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div className="md:col-span-2">
-        <RevenueChart data={revenueData} />
-      </div>
-      <div className="md:col-span-2">
         <PlatformPerformanceTable data={platformPerformanceData} />
       </div>
       <div className="md:col-span-2">
         <CategoryPerformanceTable data={categoryPerformanceData} />
+      </div>
+      <div className="md:col-span-2">
+        <RevenueChart data={revenueData} />
       </div>
       <CategoryPieChart data={categoryData} />
       <InventoryValueChart data={inventoryData} />
