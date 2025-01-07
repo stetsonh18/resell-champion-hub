@@ -2,7 +2,7 @@ import { Package, ShoppingCart, Box, TrendingUp, DollarSign, RefreshCw, ListTodo
 import { StatCard } from "@/components/dashboard/StatCard";
 import { type DashboardStats } from "@/hooks/use-dashboard-stats";
 
-interface DashboardStatsComponentProps {
+export interface DashboardStatsComponentProps {
   stats: DashboardStats;
 }
 
