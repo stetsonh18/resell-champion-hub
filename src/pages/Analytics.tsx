@@ -3,30 +3,53 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { DollarSign, TrendingUp, ShoppingCart, BarChart3, Percent } from "lucide-react";
-import { startOfMonth, subMonths, endOfMonth } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Card } from "@/components/ui/card";
+import { useState } from "react";
 
 const Analytics = () => {
-  // Get date ranges for current and previous month
-  const currentMonthStart = startOfMonth(new Date());
-  const currentMonthEnd = endOfMonth(new Date());
-  const previousMonthStart = startOfMonth(subMonths(new Date(), 1));
-  const previousMonthEnd = endOfMonth(subMonths(new Date(), 1));
+  // State for date ranges
+  const [currentPeriod, setCurrentPeriod] = useState<{
+    from: Date;
+    to: Date | undefined;
+  }>({
+    from: new Date(),
+    to: undefined,
+  });
+
+  const [previousPeriod, setPreviousPeriod] = useState<{
+    from: Date;
+    to: Date | undefined;
+  }>({
+    from: new Date(),
+    to: undefined,
+  });
+
+  // Format date ranges for query
+  const currentStart = currentPeriod.from ? startOfDay(currentPeriod.from) : undefined;
+  const currentEnd = currentPeriod.to ? endOfDay(currentPeriod.to) : undefined;
+  const previousStart = previousPeriod.from ? startOfDay(previousPeriod.from) : undefined;
+  const previousEnd = previousPeriod.to ? endOfDay(previousPeriod.to) : undefined;
 
   const { data: sales, isLoading } = useQuery({
-    queryKey: ["sales-analytics"],
+    queryKey: ["sales-analytics", currentStart, currentEnd, previousStart, previousEnd],
     queryFn: async () => {
+      if (!currentStart || !currentEnd || !previousStart || !previousEnd) return [];
+
       const { data, error } = await supabase
         .from("sales")
         .select(`
           *,
           product:products(purchase_price)
         `)
-        .gte('sale_date', previousMonthStart.toISOString())
-        .lte('sale_date', currentMonthEnd.toISOString());
+        .gte('sale_date', previousStart.toISOString())
+        .lte('sale_date', currentEnd.toISOString());
 
       if (error) throw error;
       return data;
     },
+    enabled: !!(currentStart && currentEnd && previousStart && previousEnd),
   });
 
   // Helper function to calculate metrics for a date range
@@ -57,11 +80,14 @@ const Analytics = () => {
     };
   };
 
-  // Calculate current month metrics
-  const currentMetrics = calculateMetricsForPeriod(currentMonthStart, currentMonthEnd);
+  // Calculate metrics for both periods
+  const currentMetrics = currentStart && currentEnd 
+    ? calculateMetricsForPeriod(currentStart, currentEnd)
+    : { totalSales: 0, totalRevenue: 0, totalProfit: 0, profitMargin: 0 };
   
-  // Calculate previous month metrics
-  const previousMetrics = calculateMetricsForPeriod(previousMonthStart, previousMonthEnd);
+  const previousMetrics = previousStart && previousEnd
+    ? calculateMetricsForPeriod(previousStart, previousEnd)
+    : { totalSales: 0, totalRevenue: 0, totalProfit: 0, profitMargin: 0 };
 
   // Calculate growth percentages
   const calculateGrowth = (current: number, previous: number) => {
@@ -127,7 +153,40 @@ const Analytics = () => {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-4">Month over Month Growth</h2>
+          <h2 className="text-xl font-semibold mb-4">Period over Period Growth</h2>
+          
+          <div className="grid gap-6 md:grid-cols-2 mb-6">
+            <Card className="p-4">
+              <h3 className="font-medium mb-2">Current Period</h3>
+              <Calendar
+                mode="range"
+                selected={{
+                  from: currentPeriod.from,
+                  to: currentPeriod.to,
+                }}
+                onSelect={(range) => {
+                  if (range) setCurrentPeriod(range);
+                }}
+                className="rounded-md border"
+              />
+            </Card>
+            
+            <Card className="p-4">
+              <h3 className="font-medium mb-2">Previous Period</h3>
+              <Calendar
+                mode="range"
+                selected={{
+                  from: previousPeriod.from,
+                  to: previousPeriod.to,
+                }}
+                onSelect={(range) => {
+                  if (range) setPreviousPeriod(range);
+                }}
+                className="rounded-md border"
+              />
+            </Card>
+          </div>
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatCard
               title="Revenue Growth"
