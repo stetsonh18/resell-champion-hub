@@ -3,12 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { Box, DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
+import { Box, DollarSign, Package, ShoppingCart, TrendingUp, RefreshCw, ListTodo } from "lucide-react";
 import { AddProductDialog } from "@/components/inventory/dialogs/AddProductDialog";
 import { AddExpenseDialog } from "@/components/expenses/AddExpenseDialog";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { TaskManagement } from "@/components/dashboard/TaskManagement";
 
 const Index = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -39,6 +38,32 @@ const Index = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  const { data: taskCounts } = useQuery({
+    queryKey: ["task-counts"],
+    queryFn: async () => {
+      const [pendingShipments, pendingReturns, unlistedProducts] = await Promise.all([
+        supabase
+          .from("products")
+          .select("id", { count: "exact" })
+          .eq("status", "pending_shipment"),
+        supabase
+          .from("returns")
+          .select("id", { count: "exact" })
+          .eq("status", "pending"),
+        supabase
+          .from("products")
+          .select("id", { count: "exact" })
+          .eq("status", "in_stock")
+      ]);
+
+      return {
+        pendingShipments: pendingShipments.count || 0,
+        pendingReturns: pendingReturns.count || 0,
+        unlistedProducts: unlistedProducts.count || 0
+      };
+    }
   });
 
   // Calculate statistics
@@ -97,9 +122,22 @@ const Index = () => {
             value={`$${averageSalePrice.toFixed(2)}`}
             icon={DollarSign}
           />
+          <StatCard
+            title="Pending Shipments"
+            value={taskCounts?.pendingShipments.toString() || "0"}
+            icon={Package}
+          />
+          <StatCard
+            title="Returns to Process"
+            value={taskCounts?.pendingReturns.toString() || "0"}
+            icon={RefreshCw}
+          />
+          <StatCard
+            title="Items to List"
+            value={taskCounts?.unlistedProducts.toString() || "0"}
+            icon={ListTodo}
+          />
         </div>
-
-        <TaskManagement />
 
         <div className="grid gap-4 md:grid-cols-2">
           <QuickActions 
