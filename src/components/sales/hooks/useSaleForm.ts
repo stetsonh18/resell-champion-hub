@@ -13,7 +13,7 @@ export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onS
   const form = useForm<SaleFormValues>({
     resolver: zodResolver(saleFormSchema),
     defaultValues: defaultValues || {
-      sale_date: new Date().toISOString().split('T')[0],
+      sale_date: new Date().toISOString(),  // This will use the current date in local timezone
       sale_price: 0,
       quantity: 1,
       estimated_profit: 0,
