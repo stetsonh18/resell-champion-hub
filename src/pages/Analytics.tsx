@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DateRangeSelector } from "@/components/analytics/DateRangeSelector";
 import { AnalyticsMetrics } from "@/components/analytics/AnalyticsMetrics";
+import { RevenueChart } from "@/components/analytics/RevenueChart";
 import { useState } from "react";
 import { DateRange } from "@/components/analytics/types";
 
@@ -31,6 +32,25 @@ const Analytics = () => {
     },
     enabled: !!dateRanges,
   });
+
+  // Prepare data for the revenue chart
+  const revenueData = sales?.reduce((acc: { date: Date; revenue: number }[], sale) => {
+    const saleDate = new Date(sale.sale_date);
+    const dateStr = saleDate.toISOString().split('T')[0];
+    
+    const existingEntry = acc.find(entry => entry.date.toISOString().split('T')[0] === dateStr);
+    
+    if (existingEntry) {
+      existingEntry.revenue += sale.sale_price;
+    } else {
+      acc.push({
+        date: saleDate,
+        revenue: sale.sale_price
+      });
+    }
+    
+    return acc;
+  }, []).sort((a, b) => a.date.getTime() - b.date.getTime()) || [];
 
   // Helper function to calculate metrics for a date range
   const calculateMetricsForPeriod = (startDate: Date, endDate: Date) => {
@@ -118,6 +138,10 @@ const Analytics = () => {
         </div>
 
         <AnalyticsMetrics metrics={metrics} growth={growth} />
+        
+        {dateRanges && (
+          <RevenueChart data={revenueData} />
+        )}
       </div>
     </DashboardLayout>
   );
