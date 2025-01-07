@@ -1,15 +1,27 @@
 import { RevenueChart } from "./RevenueChart";
 import { CategoryPieChart } from "./CategoryPieChart";
 import { InventoryValueChart } from "./InventoryValueChart";
-import { PlatformPerformanceChart } from "./PlatformPerformanceChart";
-import { CategoryPerformanceChart } from "./CategoryPerformanceChart";
+import { PlatformPerformanceTable } from "./PlatformPerformanceTable";
+import { CategoryPerformanceTable } from "./CategoryPerformanceTable";
 
 interface ChartGridProps {
   revenueData: { date: Date; revenue: number }[];
   categoryData: { name: string; value: number }[];
   inventoryData: { name: string; value: number }[];
-  platformPerformanceData: { name: string; sales: number; revenue: number }[];
-  categoryPerformanceData: { name: string; sales: number; profit: number }[];
+  platformPerformanceData: { 
+    name: string;
+    sales: number;
+    profit: number;
+    orders: number;
+    margin: number;
+  }[];
+  categoryPerformanceData: { 
+    name: string;
+    sales: number;
+    profit: number;
+    orders: number;
+    margin: number;
+  }[];
 }
 
 export const ChartGrid = ({ 
@@ -25,10 +37,10 @@ export const ChartGrid = ({
         <RevenueChart data={revenueData} />
       </div>
       <div className="md:col-span-2">
-        <PlatformPerformanceChart data={platformPerformanceData} />
+        <PlatformPerformanceTable data={platformPerformanceData} />
       </div>
       <div className="md:col-span-2">
-        <CategoryPerformanceChart data={categoryPerformanceData} />
+        <CategoryPerformanceTable data={categoryPerformanceData} />
       </div>
       <CategoryPieChart data={categoryData} />
       <InventoryValueChart data={inventoryData} />

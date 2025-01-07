@@ -77,6 +77,74 @@ const Analytics = () => {
     value
   }));
 
+  // Prepare data for platform performance table
+  const platformPerformanceData = sales?.reduce((acc: { [key: string]: any }, sale) => {
+    const platformName = sale.platform?.name || 'Unknown';
+    
+    if (!acc[platformName]) {
+      acc[platformName] = {
+        name: platformName,
+        sales: 0,
+        profit: 0,
+        orders: 0,
+        margin: 0
+      };
+    }
+    
+    const revenue = sale.sale_price + (sale.shipping_amount_collected || 0);
+    const costs = (sale.product?.purchase_price || 0) * sale.quantity + 
+                 (sale.shipping_cost || 0) + 
+                 (sale.platform_fees || 0);
+    const profit = revenue - costs;
+    
+    acc[platformName].sales += revenue;
+    acc[platformName].profit += profit;
+    acc[platformName].orders += 1;
+    
+    return acc;
+  }, {});
+
+  // Calculate margins and convert to array
+  const platformTableData = Object.values(platformPerformanceData || {}).map((platform: any) => ({
+    ...platform,
+    margin: (platform.profit / platform.sales) * 100 || 0
+  }));
+
+  // Prepare data for category performance table
+  const categoryPerformanceData = sales?.reduce((acc: { [key: string]: any }, sale) => {
+    const categoryId = sale.product?.category_id;
+    const category = categories?.find(c => c.id === categoryId);
+    const categoryName = category?.name || 'Uncategorized';
+    
+    if (!acc[categoryName]) {
+      acc[categoryName] = {
+        name: categoryName,
+        sales: 0,
+        profit: 0,
+        orders: 0,
+        margin: 0
+      };
+    }
+    
+    const revenue = sale.sale_price + (sale.shipping_amount_collected || 0);
+    const costs = (sale.product?.purchase_price || 0) * sale.quantity + 
+                 (sale.shipping_cost || 0) + 
+                 (sale.platform_fees || 0);
+    const profit = revenue - costs;
+    
+    acc[categoryName].sales += revenue;
+    acc[categoryName].profit += profit;
+    acc[categoryName].orders += 1;
+    
+    return acc;
+  }, {});
+
+  // Calculate margins and convert to array
+  const categoryTableData = Object.values(categoryPerformanceData || {}).map((category: any) => ({
+    ...category,
+    margin: (category.profit / category.sales) * 100 || 0
+  }));
+
   const currentMetrics = calculateMetricsForPeriod(dateRanges.current.from, dateRanges.current.to);
   const previousMetrics = calculateMetricsForPeriod(dateRanges.previous.from, dateRanges.previous.to);
 
@@ -127,6 +195,8 @@ const Analytics = () => {
           revenueData={revenueData}
           categoryData={pieChartData}
           inventoryData={inventoryChartData}
+          platformPerformanceData={platformTableData}
+          categoryPerformanceData={categoryTableData}
         />
       </div>
     </DashboardLayout>
