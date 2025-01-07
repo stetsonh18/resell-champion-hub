@@ -22,8 +22,8 @@ export default function Returns() {
             Process Return
           </Button>
           <AddReturnDialog
-            open={isAddReturnOpen}
-            onOpenChange={setIsAddReturnOpen}
+            isOpen={isAddReturnOpen}
+            onClose={() => setIsAddReturnOpen(false)}
           />
         </div>
         

@@ -5,9 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Sales() {
   const [isAddSaleOpen, setIsAddSaleOpen] = useState(false);
+
+  const { data: sales, isLoading } = useQuery({
+    queryKey: ["sales"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sales")
+        .select(`
+          *,
+          products (
+            name,
+            purchase_price
+          ),
+          platforms (
+            name
+          )
+        `)
+        .order("sale_date", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
 
   return (
     <DashboardLayout>
@@ -27,13 +51,13 @@ export default function Sales() {
             Add Sale
           </Button>
           <AddSaleDialog 
-            open={isAddSaleOpen} 
-            onOpenChange={setIsAddSaleOpen} 
+            isOpen={isAddSaleOpen}
+            onClose={() => setIsAddSaleOpen(false)}
           />
         </div>
         
         <SalesStats />
-        <SalesTable />
+        <SalesTable sales={sales} isLoading={isLoading} />
       </div>
     </DashboardLayout>
   );
