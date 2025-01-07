@@ -87,8 +87,8 @@ const Inventory = () => {
         <ProductsTable products={filteredProducts} isLoading={isLoading} />
 
         <AddProductDialog 
-          isOpen={isAddDialogOpen} 
-          onClose={() => setIsAddDialogOpen(false)} 
+          open={isAddDialogOpen} 
+          onOpenChange={setIsAddDialogOpen} 
         />
       </div>
     </DashboardLayout>
