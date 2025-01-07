@@ -32,12 +32,12 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium">Revenue Over Time</h3>
         </div>
-        <div className="h-[350px] mt-4">
+        <div className="h-[300px] mt-4">
           <ChartContainer config={config}>
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height={280}>
               <LineChart
                 data={formattedData}
-                margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
+                margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
               >
                 <XAxis
                   dataKey="date"
