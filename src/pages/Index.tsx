@@ -111,20 +111,20 @@ const Index = () => {
         </div>
 
         <AddProductDialog 
-          isOpen={isAddProductOpen} 
-          onClose={() => setIsAddProductOpen(false)} 
+          open={isAddProductOpen} 
+          onOpenChange={setIsAddProductOpen} 
         />
         <AddSaleDialog 
-          isOpen={isAddSaleOpen} 
-          onClose={setIsAddSaleOpen} 
+          open={isAddSaleOpen} 
+          onOpenChange={setIsAddSaleOpen} 
         />
         <AddReturnDialog 
-          isOpen={isAddReturnOpen} 
-          onClose={setIsAddReturnOpen} 
+          open={isAddReturnOpen} 
+          onOpenChange={setIsAddReturnOpen} 
         />
         <AddExpenseDialog 
-          isOpen={isAddExpenseOpen} 
-          onClose={setIsAddExpenseOpen} 
+          open={isAddExpenseOpen} 
+          onOpenChange={setIsAddExpenseOpen} 
         />
       </div>
     </DashboardLayout>
