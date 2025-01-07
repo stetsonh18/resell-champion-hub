@@ -2,18 +2,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { saleFormSchema, type SaleFormValues } from "../types";
 
 export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onSuccess?: () => void) => {
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const form = useForm<SaleFormValues>({
     resolver: zodResolver(saleFormSchema),
     defaultValues: defaultValues || {
-      sale_date: new Date().toISOString(),  // This will use the current date in local timezone
+      sale_date: new Date().toISOString(),
       sale_price: 0,
       quantity: 1,
       estimated_profit: 0,
@@ -32,17 +31,13 @@ export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onS
         .from("products")
         .select("id, name, purchase_price");
 
-      // If editing an existing sale (saleId exists) or we have a default product,
-      // show both listed and pending_shipment products
       if (saleId || defaultValues?.product_id) {
         query = query.or('status.eq.listed,status.eq.pending_shipment');
         
-        // Add the specific product if we have a default value
         if (defaultValues?.product_id) {
           query = query.or(`id.eq.${defaultValues.product_id}`);
         }
       } else {
-        // For new sales, only show products with 'listed' status
         query = query.eq('status', 'listed');
       }
       
@@ -75,61 +70,64 @@ export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onS
 
   const onSubmit = async (values: SaleFormValues) => {
     try {
-      const user = (await supabase.auth.getUser()).data.user;
-      if (!user) throw new Error("No user found");
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      // First, get the product details
+      const { data: product, error: productError } = await supabase
+        .from("products")
+        .select("*")
+        .eq("id", values.product_id)
+        .single();
+
+      if (productError) throw productError;
+      if (!product) throw new Error("Product not found");
+
+      // Calculate estimated profit
+      const estimatedProfit = values.sale_price - (product.purchase_price * values.quantity);
 
       const saleData = {
-        ...values,
         user_id: user.id,
-        sale_date: values.sale_date,
         product_id: values.product_id,
         platform_id: values.platform_id,
         sale_price: values.sale_price,
+        quantity: values.quantity,
+        shipping_amount_collected: values.shipping_amount_collected || 0,
+        shipping_cost: values.shipping_cost || 0,
+        platform_fees: values.platform_fees || 0,
+        estimated_profit: estimatedProfit,
+        sale_date: new Date(values.sale_date).toISOString(),
       };
 
-      if (saleId) {
-        const { error: saleError } = await supabase
-          .from("sales")
-          .update(saleData)
-          .eq("id", saleId);
+      // Call the handle_product_sale function
+      const { error: transactionError } = await supabase.rpc(
+        'handle_product_sale',
+        {
+          p_product_id: values.product_id,
+          p_sale_quantity: values.quantity,
+          p_user_id: user.id,
+        }
+      );
 
-        if (saleError) throw saleError;
+      if (transactionError) throw transactionError;
 
-        toast({
-          title: "Sale updated successfully",
-          description: "The sale has been updated.",
-        });
-      } else {
-        const { error: saleError } = await supabase
-          .from("sales")
-          .insert(saleData);
+      // Create the sale record
+      const { error: saleError } = await supabase
+        .from("sales")
+        .insert(saleData);
 
-        if (saleError) throw saleError;
+      if (saleError) throw saleError;
 
-        const { error: productError } = await supabase
-          .from("products")
-          .update({ status: "pending_shipment" })
-          .eq("id", values.product_id);
-
-        if (productError) throw productError;
-
-        toast({
-          title: "Sale added successfully",
-          description: "The sale has been recorded and product status updated.",
-        });
-      }
-
+      toast.success("Sale created successfully");
+      form.reset();
       onSuccess?.();
-      if (!saleId) {
-        navigate("/sales");
-      }
     } catch (error) {
-      console.error("Error adding/updating sale:", error);
-      toast({
-        title: "Error with sale",
-        description: "There was a problem with the sale. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Error creating sale:", error);
+      toast.error("Failed to create sale");
+      throw error; // Re-throw the error to prevent modal from closing on failure
     }
   };
 
@@ -139,6 +137,6 @@ export const useSaleForm = (defaultValues?: SaleFormValues, saleId?: string, onS
     platforms,
     isLoading: isLoadingProducts || isLoadingPlatforms,
     calculatePlatformFees,
-    onSubmit,
+    onSubmit: form.handleSubmit(onSubmit),
   };
 };

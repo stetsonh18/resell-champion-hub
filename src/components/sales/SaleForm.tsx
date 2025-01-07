@@ -27,9 +27,19 @@ export function SaleForm({ defaultValues, saleId, onSuccess }: SaleFormProps) {
     return <div>Loading...</div>;
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await onSubmit(e);
+    } catch (error) {
+      // Error is already handled in useSaleForm
+      console.error("Form submission failed:", error);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <DateField form={form} />
         <ProductField form={form} products={products} />
         <PlatformField 
