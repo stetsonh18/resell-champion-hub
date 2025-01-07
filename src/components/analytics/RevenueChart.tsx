@@ -34,10 +34,10 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
         </div>
         <div className="h-[350px] mt-4">
           <ChartContainer config={config}>
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height={300}>
               <LineChart
                 data={formattedData}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
                 <CartesianGrid 
                   strokeDasharray="3 3" 
@@ -51,7 +51,7 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
                   fontSize={12}
                   tickLine={true}
                   axisLine={true}
-                  dy={5}
+                  dy={8}
                 />
                 <YAxis
                   stroke="#888888"
@@ -59,7 +59,7 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
                   tickLine={true}
                   axisLine={true}
                   tickFormatter={(value) => `$${value}`}
-                  width={50}
+                  width={60}
                 />
                 <Tooltip
                   contentStyle={{ 
