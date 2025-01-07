@@ -5,8 +5,6 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Box, DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { AddProductDialog } from "@/components/inventory/dialogs/AddProductDialog";
-import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
-import { AddReturnDialog } from "@/components/returns/AddReturnDialog";
 import { AddExpenseDialog } from "@/components/expenses/AddExpenseDialog";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
@@ -113,14 +111,6 @@ const Index = () => {
         <AddProductDialog 
           open={isAddProductOpen} 
           onOpenChange={setIsAddProductOpen} 
-        />
-        <AddSaleDialog 
-          open={isAddSaleOpen} 
-          onOpenChange={setIsAddSaleOpen} 
-        />
-        <AddReturnDialog 
-          open={isAddReturnOpen} 
-          onOpenChange={setIsAddReturnOpen} 
         />
         <AddExpenseDialog 
           open={isAddExpenseOpen} 
