@@ -1,24 +1,14 @@
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ReturnForm } from "./ReturnForm";
-import { Plus } from "lucide-react";
 
-export const AddReturnDialog = () => {
+interface AddReturnDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const AddReturnDialog = ({ isOpen, onClose }: AddReturnDialogProps) => {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="bg-secondary hover:bg-secondary/90">
-          <Plus className="mr-2 h-4 w-4" />
-          Process Return
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Return</DialogTitle>
@@ -26,8 +16,8 @@ export const AddReturnDialog = () => {
             Fill in the details to process a product return.
           </DialogDescription>
         </DialogHeader>
-        <ReturnForm />
+        <ReturnForm onSuccess={onClose} />
       </DialogContent>
     </Dialog>
   );
-}
+};

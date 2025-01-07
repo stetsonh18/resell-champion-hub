@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
+import { AddReturnDialog } from "@/components/returns/AddReturnDialog";
 import { useState } from "react";
 
 interface QuickActionsProps {
@@ -15,6 +16,7 @@ export const QuickActions = ({
   setIsAddExpenseOpen,
 }: QuickActionsProps) => {
   const [isAddSaleOpen, setIsAddSaleOpen] = useState(false);
+  const [isAddReturnDialogOpen, setIsAddReturnDialogOpen] = useState(false);
 
   return (
     <Card>
@@ -37,7 +39,7 @@ export const QuickActions = ({
           </Button>
           <Button 
             className="bg-secondary hover:bg-secondary/90"
-            onClick={() => setIsAddReturnOpen(true)}
+            onClick={() => setIsAddReturnDialogOpen(true)}
           >
             Process Return
           </Button>
@@ -51,6 +53,10 @@ export const QuickActions = ({
         <AddSaleDialog 
           isOpen={isAddSaleOpen}
           onClose={() => setIsAddSaleOpen(false)}
+        />
+        <AddReturnDialog 
+          isOpen={isAddReturnDialogOpen}
+          onClose={() => setIsAddReturnDialogOpen(false)}
         />
       </CardContent>
     </Card>
