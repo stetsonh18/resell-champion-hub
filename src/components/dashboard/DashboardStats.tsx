@@ -2,11 +2,11 @@ import { Package, ShoppingCart, Box, TrendingUp, DollarSign, RefreshCw, ListTodo
 import { StatCard } from "@/components/dashboard/StatCard";
 import { type DashboardStats } from "@/hooks/use-dashboard-stats";
 
-interface DashboardStatsProps {
+interface DashboardStatsComponentProps {
   stats: DashboardStats;
 }
 
-export const DashboardStats = ({ stats }: DashboardStatsProps) => {
+export const DashboardStats = ({ stats }: DashboardStatsComponentProps) => {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <StatCard
