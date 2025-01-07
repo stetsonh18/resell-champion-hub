@@ -2,6 +2,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { ProductFormValues } from "@/hooks/use-create-product";
+import { format } from "date-fns";
 
 interface DateFieldProps {
   form: UseFormReturn<ProductFormValues>;
@@ -12,10 +13,9 @@ export const PurchaseDateField = ({ form }: DateFieldProps) => (
     control={form.control}
     name="purchase_date"
     render={({ field }) => {
-      // Convert the date to YYYY-MM-DD format for the input
-      const value = field.value instanceof Date 
-        ? field.value.toISOString().split('T')[0]
-        : new Date(field.value).toISOString().split('T')[0];
+      // Convert UTC date to local date for input display
+      const localDate = field.value instanceof Date ? field.value : new Date(field.value);
+      const formattedDate = format(localDate, "yyyy-MM-dd");
 
       return (
         <FormItem className="w-full">
@@ -23,11 +23,19 @@ export const PurchaseDateField = ({ form }: DateFieldProps) => (
           <FormControl>
             <Input
               type="date"
-              value={value}
+              value={formattedDate}
               className="w-full"
               onChange={(e) => {
-                // Convert the string date back to a Date object
-                field.onChange(new Date(e.target.value));
+                // Convert local date back to UTC for storage
+                const localDate = new Date(e.target.value);
+                const utcDate = new Date(
+                  Date.UTC(
+                    localDate.getFullYear(),
+                    localDate.getMonth(),
+                    localDate.getDate()
+                  )
+                );
+                field.onChange(utcDate);
               }}
             />
           </FormControl>

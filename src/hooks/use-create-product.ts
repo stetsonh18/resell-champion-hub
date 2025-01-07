@@ -39,7 +39,13 @@ export const useCreateProduct = (onSuccess: () => void) => {
       notes: "",
       store_id: undefined,
       category_id: undefined,
-      purchase_date: new Date(),
+      purchase_date: new Date(
+        Date.UTC(
+          new Date().getFullYear(),
+          new Date().getMonth(),
+          new Date().getDate()
+        )
+      ),
       status: "in_stock",
       location: "",
     },

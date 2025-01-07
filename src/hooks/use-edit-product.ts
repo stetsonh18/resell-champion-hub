@@ -40,7 +40,13 @@ export const useEditProduct = (productId: string, onSuccess: () => void) => {
       store_id: null,
       category_id: null,
       status: "in_stock",
-      purchase_date: new Date(),
+      purchase_date: new Date(
+        Date.UTC(
+          new Date().getFullYear(),
+          new Date().getMonth(),
+          new Date().getDate()
+        )
+      ),
       location: "",
     },
   });
