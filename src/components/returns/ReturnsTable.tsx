@@ -35,7 +35,7 @@ export const ReturnsTable = () => {
         .from("returns")
         .select(`
           *,
-          sales!sale_id (
+          sales!returns_sale_id_fkey (
             sale_price,
             products (
               name
