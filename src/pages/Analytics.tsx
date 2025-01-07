@@ -15,6 +15,7 @@ const Analytics = () => {
     previous: DateRange;
   } | null>(null);
 
+  // Fetch sales data
   const { data: sales, isLoading: salesLoading } = useQuery({
     queryKey: ["sales-analytics", dateRanges?.current, dateRanges?.previous],
     queryFn: async () => {
@@ -36,6 +37,7 @@ const Analytics = () => {
     enabled: !!dateRanges,
   });
 
+  // Fetch categories
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -48,6 +50,7 @@ const Analytics = () => {
     },
   });
 
+  // Fetch products for inventory value
   const { data: products } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
@@ -111,7 +114,7 @@ const Analytics = () => {
     value
   }));
 
-  // Helper function to calculate metrics for a date range
+  // Calculate metrics for the current period
   const calculateMetricsForPeriod = (startDate: Date, endDate: Date) => {
     const periodSales = sales?.filter(sale => {
       const saleDate = new Date(sale.sale_date);
@@ -120,7 +123,6 @@ const Analytics = () => {
 
     const totalSales = periodSales.length;
     const totalRevenue = periodSales.reduce((sum, sale) => sum + sale.sale_price, 0);
-    
     const totalProfit = periodSales.reduce((sum, sale) => {
       const revenue = sale.sale_price + (sale.shipping_amount_collected || 0);
       const costs = (sale.product?.purchase_price || 0) + 
@@ -139,7 +141,6 @@ const Analytics = () => {
     };
   };
 
-  // Calculate metrics for both periods
   const currentMetrics = dateRanges
     ? calculateMetricsForPeriod(dateRanges.current.from, dateRanges.current.to)
     : { totalSales: 0, totalRevenue: 0, totalProfit: 0, profitMargin: 0 };
@@ -148,7 +149,6 @@ const Analytics = () => {
     ? calculateMetricsForPeriod(dateRanges.previous.from, dateRanges.previous.to)
     : { totalSales: 0, totalRevenue: 0, totalProfit: 0, profitMargin: 0 };
 
-  // Calculate growth percentages
   const calculateGrowth = (current: number, previous: number) => {
     if (previous === 0) return current > 0 ? 100 : 0;
     return ((current - previous) / previous) * 100;
@@ -164,7 +164,6 @@ const Analytics = () => {
   // Calculate all-time metrics
   const totalSales = sales?.length || 0;
   const totalRevenue = sales?.reduce((sum, sale) => sum + sale.sale_price, 0) || 0;
-  
   const totalProfit = sales?.reduce((sum, sale) => {
     const revenue = sale.sale_price + (sale.shipping_amount_collected || 0);
     const costs = (sale.product?.purchase_price || 0) + 
