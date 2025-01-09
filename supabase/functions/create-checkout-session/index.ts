@@ -15,8 +15,8 @@ serve(async (req) => {
   try {
     const { plan } = await req.json()
     const priceId = plan === 'monthly' 
-      ? 'price_1QRmPiL48WAyeSne6JqKIG4T'
-      : 'price_1QRmQJL48WAyeSnezutKOf2m'
+      ? 'price_1QdMXRL48WAyeSnenuhkAjBe'
+      : 'price_1QdMX1L48WAyeSneLj53WePV'
     
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',

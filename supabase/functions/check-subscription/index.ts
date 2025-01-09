@@ -57,7 +57,7 @@ serve(async (req) => {
 
     const subscription = subscriptions.data[0];
     const status = subscription?.status || 'inactive';
-    const plan = subscription?.items.data[0].price.id === 'price_1QRmPiL48WAyeSne6JqKIG4T' 
+    const plan = subscription?.items.data[0].price.id === 'price_1QdMXRL48WAyeSnenuhkAjBe' 
       ? 'monthly' 
       : 'annual';
 
