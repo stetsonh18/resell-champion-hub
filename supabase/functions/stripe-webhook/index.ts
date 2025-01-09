@@ -109,7 +109,7 @@ const handleSubscriptionEvent = async (
   const subscription = event.data.object as Stripe.Subscription;
   const status = subscription.status;
   const customerId = subscription.customer as string;
-  const plan = subscription.items.data[0].price.id === 'price_1QRmPiL48WAyeSne6JqKIG4T' 
+  const plan = subscription.items.data[0].price.id === 'price_1QdMXRL48WAyeSnenuhkAjBe' 
     ? 'monthly' 
     : 'annual';
 
@@ -117,7 +117,8 @@ const handleSubscriptionEvent = async (
     status,
     customerId,
     plan,
-    subscriptionId: subscription.id
+    subscriptionId: subscription.id,
+    priceId: subscription.items.data[0].price.id
   });
 
   const customer = await stripe.customers.retrieve(customerId);
