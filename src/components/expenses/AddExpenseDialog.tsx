@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { ExpenseForm } from "./ExpenseForm";
 
 type AddExpenseDialogProps = {
   open: boolean;
@@ -13,10 +13,7 @@ export const AddExpenseDialog = ({ open, onOpenChange }: AddExpenseDialogProps) 
         <DialogHeader>
           <DialogTitle>Create Expense</DialogTitle>
         </DialogHeader>
-        <div>
-          {/* Your form for adding an expense goes here */}
-          <Button onClick={() => onOpenChange(false)}>Submit Expense</Button>
-        </div>
+        <ExpenseForm onSuccess={() => onOpenChange(false)} />
       </DialogContent>
     </Dialog>
   );
