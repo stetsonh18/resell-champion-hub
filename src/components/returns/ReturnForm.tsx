@@ -7,7 +7,7 @@ import { ReturnFields } from "./form-fields/ReturnFields";
 import { FeeFields } from "./form-fields/FeeFields";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@supabase/auth-helpers-react";
+import { useSession } from "@supabase/auth-helpers-react";
 
 type ReturnFormProps = {
   onSuccess: () => void;
@@ -25,7 +25,7 @@ type FormValues = {
 export const ReturnForm = ({ onSuccess }: ReturnFormProps) => {
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const { toast } = useToast();
-  const auth = useAuth();
+  const session = useSession();
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -37,7 +37,7 @@ export const ReturnForm = ({ onSuccess }: ReturnFormProps) => {
   });
 
   const onSubmit = async (data: FormValues) => {
-    if (!auth?.user?.id || !selectedSale) {
+    if (!session?.user?.id || !selectedSale) {
       toast({
         title: "Error",
         description: "Missing required information",
@@ -48,7 +48,7 @@ export const ReturnForm = ({ onSuccess }: ReturnFormProps) => {
 
     try {
       const { error } = await supabase.from("returns").insert({
-        user_id: auth.user.id,
+        user_id: session.user.id,
         sale_id: data.sale_id,
         product_id: selectedSale.product_id,
         return_date: data.return_date,
